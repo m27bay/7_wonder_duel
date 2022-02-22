@@ -42,7 +42,7 @@ class TestJeu(unittest.TestCase):
 		# exemple du manuel
 		self.j1.monnaie = self.j2.monnaie = 12
 
-		self.j1.cartes.append(Carte("casrte custom", None, ["ressource pierre 2"], None, None, None, None))
+		self.j1.cartes.append(Carte("carte custom", None, ["ressource pierre 2"], None, None, None, None))
 		self.jeu.acheterRessource(["ressource pierre 3"])
 
 		self.assertEqual(0, self.jeu.quiJoue.monnaie)
@@ -80,6 +80,81 @@ class TestJeu(unittest.TestCase):
 					listeCartePrenable.append(self.jeu.cartesPlateau[ligne][colonne])
 
 		self.assertEqual(listeCartePrenable, self.jeu.listeCartesPrenable())
+
+	def testDemanderActionCarteDefausserSansCarteJaune(self):
+		self.j1.monnaie = 0
+		self.jeu.quiJoue = self.j1
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+
+		carte = Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
+		self.jeu.cartesPlateau[4][0] = carte
+
+		self.jeu.demanderActionCarte(carte)
+
+		try:
+			self.jeu.fausseCarte.index(carte)
+		except ValueError:
+			self.fail("la carte n'a pas été ajouté à la fausse.")
+
+		self.assertEqual(2, self.jeu.quiJoue.monnaie)
+
+	def testDemanderActionCarteDefausserAvecCarteJaune(self):
+		self.j1.monnaie = 0
+		self.jeu.quiJoue = self.j1
+
+		self.jeu.cartesPlateau = [
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+
+		carte = Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
+		self.jeu.cartesPlateau[4][0] = carte
+
+		self.j1.cartes.append(
+			Carte("arène", None, ["monnaie_par_merveille 2", "point_victoire 3"],
+			["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3)
+		)
+
+		self.jeu.demanderActionCarte(carte)
+		self.assertFalse(self.jeu.resteDesCartes())
+
+		try:
+			self.jeu.fausseCarte.index(carte)
+		except ValueError:
+			self.fail("la carte n'a pas été ajouté à la fausse.")
+
+		self.assertEqual(3, self.jeu.quiJoue.monnaie)
+		self.assertFalse(self.jeu.resteDesCartes())
+
+	def testDemanderActionCartePiocherAvecCarteChainage(self):
+		self.jeu.quiJoue = self.j1
+
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+		carte = Carte("arène ", None, ["monnaie_par_merveille 2", "point_victoire 3"],
+		              ["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
+		              "brasserie", "jaune", age=3)
+		self.jeu.cartesPlateau[4][0] = carte
+
+		self.j1.cartes.append(Carte("brasserie", None, ["monnaie 6"], None, "taverne", "jaune", age=2))
+
+		self.jeu.demanderActionCarte(carte)
+
+		self.assertFalse(self.jeu.resteDesCartes())
 
 
 if __name__ == '__main__':
