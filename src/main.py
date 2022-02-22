@@ -488,7 +488,7 @@ class Jeu:
 
 	def preparationPlateau(self) -> None:
 		"""
-		Prepare le plateau, les cartes, les jetons, l'argent des joueurs, les merveilles des joueurs.
+		Prepare le plateau, les cartes, les jetons, la monnaie des joueurs, les merveilles des joueurs.
 		"""
 		self.preparationCartes()
 		self.preparationJetonsProgres()
@@ -608,6 +608,8 @@ class Jeu:
 			for colonne in range(len(self.cartesPlateau[ligne])):
 				if self.cartesPlateau[ligne][colonne] == carte:
 					self.cartesPlateau[ligne][colonne] = 0
+					return
+		print("La carte n'est pas sur le plateau.")
 
 	def obtenirAdversaire(self):
 		"""
@@ -702,39 +704,68 @@ class Jeu:
 		strAction = f"[{self.quiJoue.nom}] defausser ou piocher ?\n > "
 		while True:
 			action = input(strAction)
-			if action == "défausser":
+
+			# defausser
+			if action == "defausser":
 				self.fausseCarte.append(carte)
-				self.quiJoue.argent = self.quiJoue.argent + 2
+				self.quiJoue.monnaie = self.quiJoue.monnaie + 2
+
+				# gain de une pièce par carte jaune
 				for carteJoueur in self.quiJoue.cartes:
-					if carteJoueur.couleur.name == "JAUNE":
-						self.quiJoue.argent += 1
+					if carteJoueur.couleur == "jaune":
+						self.quiJoue.monnaie += 1
+
+				# fin action carte
 				break
+
+			# piocher
 			elif action == "piocher":
-				listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
-				if self.quiJoue.possedeCarteChainage(carte):
-					# cout de construction gratuit
-					break
-				elif len(listeRessourceNecessaire) == 0:
-					# on retire uniquement la monnaie
-					for cout in carte.couts:
-						# monnaie x
-						coutSplit = cout.split(" ")
-						if coutSplit[0] == "monnaie":
-							self.quiJoue.monnaie -= int(coutSplit[1])
-					break
-				else:
-					for ressourceManquante in listeRessourceNecessaire:
-						ressourceManquanteSplit = ressourceManquante.split(" ")
-						if ressourceManquanteSplit[0] == "monnaie":
-							print("Vous n'avez pas assez de monnaie pour construire la carte.")
+
+				# construction de la carte gratuite via chainage
+				if not self.quiJoue.possedeCarteChainage(carte):
+
+					# vérification ressources joueur
+					listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
+
+					# le joueur possède toutes les ressouces
+					if len(listeRessourceNecessaire) == 0:
+
+						# on retire uniquement la monnaie
+						for cout in carte.couts:
+							# monnaie x
+							coutSplit = cout.split(" ")
+							if coutSplit[0] == "monnaie":
+								self.quiJoue.monnaie -= int(coutSplit[1])
+
+						# fin action carte
+						break
+
+					else:
+						# manque des ressouces
+						for ressourceManquante in listeRessourceNecessaire:
+							ressourceManquanteSplit = ressourceManquante.split(" ")
+
+							# manque monnaie
+							if ressourceManquanteSplit[0] == "monnaie":
+								print("Vous n'avez pas assez de monnaie pour construire la carte. "
+								      "Vous devez défausser la carte")
+								continue
+
+						# manque des ressources autre que monnaie
+						if self.acheterRessource(listeRessourceNecessaire) is None:
+							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
+							      "Vous devez défausser la carte")
 							continue
 
-					# il ne manque pas de monnaie pour construire
-					if self.acheterRessource(listeRessourceNecessaire) is None:
-						print("Impossible de faire le commerce, vous n'avez pas assez d'argent")
-						continue
+						# fin action carte
+						break
+
+				else:  # le joueur possde la carte chainage, construction gratuite
+					# fin action carte
+					break
 			else:
-				print("action carte inconnue")
+				print("action carte inconnue.")
+				continue
 
 		self.enleverCarte(carte)
 
