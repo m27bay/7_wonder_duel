@@ -4,33 +4,62 @@ from src.main import Joueur, Jeu, Carte
 
 
 class TestJeu(unittest.TestCase):
-	def testAcheterRessource(self):
+	def setUp(self) -> None:
+		self.j1 = Joueur("Bruno")
+		self.j2 = Joueur("Antoine")
+		self.jeu = Jeu(self.j1, self.j2)
+		self.j1.monnaie = self.j2.monnaie = 10
+		self.jeu.quiJoue = self.j2
+
+	def testAcheterRessourceNonProduiteParAdversaire(self):
+		self.jeu.acheterRessource(["ressource pierre 1"])
+
+		self.assertEqual(8, self.jeu.quiJoue.monnaie)
+
+	def testAcheterRessourceProduiteParAdversaire(self):
 		# exemple du manuel
-		j1 = Joueur("Bruno")
-		j2 = Joueur("Antoine")
-		jeu = Jeu(j1, j2)
+		# https://cdn.1j1ju.com/medias/bd/ad/a7-7-wonders-duel-regles.pdf
+		# page 9
 
-		j1.monnaie = j2.monnaie = 10
-		jeu.quiJoue = j2
+		self.j1.cartes.append(Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
+		self.jeu.acheterRessource(["ressource pierre 1"])
+		# j2 veut acheter une pierre, mais j1 en produit deux, [ 2 + (quantite_pierre_j1) ] * quantite_pierre_acheté
+		self.assertEqual(6, self.jeu.quiJoue.monnaie)
 
-		j1.cartes.append(Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		jeu.acheterRessource(["ressource pierre 1"])
-		# j2 veut acheter une pierre, mais j1 en produit deux, [ 2 + 2(quantite_pierre_j1) ] * quantite_pierre_acheté
-		self.assertEqual(6, jeu.quiJoue.monnaie)
+		self.j1.cartes.clear()
 
-	def testAcheterRessource2(self):
+	def testAcheterRessourceProduiteParAdversaire2(self):
 		# exemple du manuel
-		j1 = Joueur("Bruno")
-		j2 = Joueur("Antoine")
-		jeu = Jeu(j1, j2)
 
-		j1.monnaie = j2.monnaie = 10
-		jeu.quiJoue = j2
+		self.j1.cartes.append(Carte("bassin argileux", None, ["ressource argile 1"], None, None, "marron", age=1))
+		self.jeu.acheterRessource(["ressource argile 1", "ressource papyrus 1"])
 
-		j1.cartes.append(Carte("bassin argileux", None, ["ressource argile 1"], None, None, "marron", age=1))
-		jeu.acheterRessource(["ressource argile 1", "ressource papyrus 1"])
+		self.assertEqual(5, self.jeu.quiJoue.monnaie)
 
-		self.assertEqual(5, jeu.quiJoue.monnaie)
+		self.j1.cartes.clear()
+
+	def testAcheterRessourceProduiteParAdversaire3(self):
+		# exemple du manuel
+		self.j1.monnaie = self.j2.monnaie = 12
+
+		self.j1.cartes.append(Carte("casrte custom", None, ["ressource pierre 2"], None, None, None, None))
+		self.jeu.acheterRessource(["ressource pierre 3"])
+
+		self.assertEqual(0, self.jeu.quiJoue.monnaie)
+
+		self.j1.cartes.clear()
+
+	def testAcheterRessourceProduiteParAdversaireAvecReduction(self):
+		self.j1.cartes.append(Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
+		self.j2.cartes.append(
+			Carte("dépot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
+		)
+		self.jeu.acheterRessource(["ressource pierre 1"])
+
+		self.assertEqual(9, self.jeu.quiJoue.monnaie)
+
+		self.j1.cartes.clear()
+		self.j2.cartes.clear()
 
 
 if __name__ == '__main__':

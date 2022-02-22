@@ -637,6 +637,9 @@ class Jeu:
 			for ressourceManquante in ressourcesManquantes:
 				ressourceManquanteSplit = ressourceManquante.split(" ")
 
+				# si le joueur adversaire produit la ressource
+				ressourceTrouve = False
+
 				# parmis les cartes produisant la ressouce que j'achète
 				for carteRessourceAdversaire in carteListeRessourceAdversaire:
 
@@ -646,14 +649,19 @@ class Jeu:
 
 						# joueur adversaire produit ressource qu'il me manque ?
 						if ressourceManquanteSplit[1] == ressourceAdversaireSplit[1]:
+							ressourceTrouve = True
 
 							# ai je une réduction sur cette ressource ?
-							if self.quiJoue.possedeReduction(ressourceManquanteSplit[1]) != 0:
-								# (2 * quantite_ressource_adversaire) * quantite_ressource_necessaire pour le joueur
-								prixCommerce += (int(ressourceAdversaireSplit[2]) * int(ressourceManquanteSplit[2]))
+							prixReduc = self.quiJoue.possedeReduction(ressourceManquanteSplit[1])
+							if prixReduc != 0:
+								# (prixReduc * quantite_ressource_necessaire pour le joueur)
+								prixCommerce += (prixReduc * int(ressourceManquanteSplit[2]))
 							else:
-								# (2 * quantite_ressource_adversaire) * quantite_ressource_necessaire pour le joueur
-								prixCommerce += (2 * int(ressourceAdversaireSplit[2]) * int(ressourceManquanteSplit[2]))
+								# (2 + quantite_ressource_adversaire) * quantite_ressource_necessaire pour le joueur
+								prixCommerce += ((2 + int(ressourceAdversaireSplit[2])) * int(ressourceManquanteSplit[2]))
+
+					if not ressourceTrouve:
+						prixCommerce += (2 * int(ressourceManquanteSplit[2]))
 
 		if prixCommerce > self.quiJoue.monnaie:
 			return None
