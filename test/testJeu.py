@@ -61,6 +61,26 @@ class TestJeu(unittest.TestCase):
 		self.j1.cartes.clear()
 		self.j2.cartes.clear()
 
+	def testCartePrenable(self):
+		self.jeu.preparationCartes()
+
+		self.assertTrue(self.jeu.cartePrenable(4, 0))
+		self.assertTrue(self.jeu.cartePrenable(4, 10))
+		self.assertFalse(self.jeu.cartePrenable(3, 1))
+		self.assertFalse(self.jeu.cartePrenable(0, 4))
+
+	def testListeCartesPrenable(self):
+		self.jeu.preparationCartes()
+
+		listeCartePrenable = []
+
+		for ligne in range(len(self.jeu.cartesPlateau)):
+			for colonne in range(len(self.jeu.cartesPlateau[ligne])):
+				if self.jeu.cartesPlateau[ligne][colonne] != 0 and ligne == 4:
+					listeCartePrenable.append(self.jeu.cartesPlateau[ligne][colonne])
+
+		self.assertEqual(listeCartePrenable, self.jeu.listeCartesPrenable())
+
 
 if __name__ == '__main__':
 	unittest.main()
