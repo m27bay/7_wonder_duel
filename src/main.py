@@ -1,7 +1,13 @@
 import random
 
 
-class Carte:
+class Generique:
+	def __init__(self, nom, cheminImg):
+		self.nom = nom
+		self.cheminImg = cheminImg
+
+
+class Carte(Generique):
 	"""
 	Classe représentant une carte.
 	"""
@@ -18,8 +24,7 @@ class Carte:
 		:param couleur: couleur de la carte.
 		:param age: age de la carte (entre 1 et 3).
 		"""
-		self.nom = nom
-		self.cheminImg = cheminImg
+		super().__init__(nom, cheminImg)
 		self.effets = effets
 		self.couts = couts
 		self.carteChainage = carteChainage
@@ -46,7 +51,10 @@ class Carte:
 		:param other: une autre carte à comparer.
 		:return: compare les deux noms.
 		"""
-		return self.nom == other.nom
+		if isinstance(other, Carte):
+			return self.nom == other.nom
+		else:
+			return False
 
 	def __str__(self):
 		"""
@@ -79,6 +87,32 @@ class Merveille(Carte):
 		:param couts: liste de couts pour construire la merveille respactant un pattern précis.
 		"""
 		super().__init__(nom, cheminImg, effets, couts, None, None, None)
+
+
+class JetonProgres(Generique):
+	"""
+	Classe représentant un jeton progrès
+	"""
+
+	def __init__(self, nom, cheminImg, effets):
+		"""
+		Constructeur de la classe JetonProgres.
+
+		:param nom: nom du jeton.
+		:param effets: liste des effets du jeton.
+		"""
+		super().__init__(nom, cheminImg)
+		self.effets = effets
+
+	def __str__(self):
+		"""
+		Renvoie une chaine pour afficher les attributs.
+
+		:return: chaine avec les attributs de la classe.
+		"""
+		return f"nom : {self.nom}, " \
+		       f"cheminImg : {self.cheminImg}" \
+		       f"effets : {str(self.effets)}"
 
 
 class Joueur:
@@ -162,12 +196,12 @@ class Joueur:
 				return True
 		return False
 
-	def productionTypeRessources(self, ressource):
+	def productionTypeRessources(self, ressource: str):
 		"""
+		Retourne la carte produisant la ressource.
 
-
-		:param ressource:
-		:return:
+		:param ressource: la ressource dont on veut la carte.
+		:return: une carte si elle existe, None sinon.
 		"""
 		ressourceSplit = ressource.split(" ")
 		for carte in self.cartes:
@@ -176,39 +210,21 @@ class Joueur:
 				# ressource type quantite
 				if effetSplit[0] == "ressource" and effetSplit[1] == ressourceSplit[1]:
 					return carte
+		return None
 
 	def possedeReduction(self, ressource: str):
+		"""
+		Renvoie le prix de la réduction de la ressource.
+
+		:param ressource: la ressource dont on cherche la réduction.
+		:return: le prix réduit si le joueur possède une carte réduction de la ressource, 0 sinon.
+		"""
 		for carte in self.cartes:
 			for effet in carte.effets:
 				effetSplit = effet.split(" ")
 				if effetSplit[0] == "reduc_ressource" and effetSplit[1] == ressource:
 					return int(effetSplit[2])
 		return 0
-
-
-class JetonProgres:
-	"""
-	Classe représentant un jeton progrès
-	"""
-
-	def __init__(self, nom, effets):
-		"""
-		Constructeur de la classe JetonProgres.
-
-		:param nom: nom du jeton.
-		:param effets: liste des effets du jeton.
-		"""
-		self.nom = nom
-		self.effets = effets
-
-	def __str__(self):
-		"""
-		Renvoie une chaine pour afficher les attributs.
-
-		:return: chaine avec les attributs de la classe.
-		"""
-		return f"nom : {self.nom}, " \
-		       f"effets : {str(self.effets)}"
 
 
 def strListeElement(liste: list):
@@ -238,7 +254,7 @@ def trouverElmentAvecNom(nom: str, liste: list):
 	return None
 
 
-def demanderElementDansUneListe(joueur: Joueur, typeElement: str, listeElement: list) -> Carte:
+def demanderElementDansUneListe(joueur: Joueur, typeElement: str, listeElement: list):
 	"""
 	Renvoie l'élément contenu dans listeElement correspondant au nom renseigné par le joueur.
 
@@ -308,16 +324,16 @@ class Jeu:
 
 		# liste des jetons progrès, constructeur : JetonProgres(nom, effets)
 		self.jetonsProgres = [
-			JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"]),
-			JetonProgres("architecture", "reduc_merveille"),
-			JetonProgres("économie", "gain monnaie adversaire"),
-			JetonProgres("loi", "symbole_scientifique"),
-			JetonProgres("maçonnerie", "reduc_carte bleu"),
-			JetonProgres("philosophie", "point_victoire_fin_partie 7"),
-			JetonProgres("mathématiques", ["point_victoire_par_jeton 3", "point_victoire 3"]),
-			JetonProgres("stratégie", "bonus attaque"),
-			JetonProgres("théologie", "bonus rejouer"),
-			JetonProgres("urbanisme", ["monnaie 6", "bonus_monnaie_chainage 4"]),
+			JetonProgres("agriculture", None, ["monnaie 6", "point_victoire 4"]),
+			JetonProgres("architecture", None, "reduc_merveille"),
+			JetonProgres("économie", None, "gain monnaie adversaire"),
+			JetonProgres("loi", None, "symbole_scientifique"),
+			JetonProgres("maçonnerie", None, "reduc_carte bleu"),
+			JetonProgres("philosophie", None, "point_victoire_fin_partie 7"),
+			JetonProgres("mathématiques", None, ["point_victoire_par_jeton 3", "point_victoire 3"]),
+			JetonProgres("stratégie", None, "bonus attaque"),
+			JetonProgres("théologie", None, "bonus rejouer"),
+			JetonProgres("urbanisme", None, ["monnaie 6", "bonus_monnaie_chainage 4"]),
 		]
 		# Jeton choisi et placé sur le plateau
 		self.jetonsProgresPlateau = []
@@ -605,8 +621,15 @@ class Jeu:
 			return self.joueur1
 
 	def acheterRessource(self, ressourcesManquantes: list):
+		"""
+		Permet au joueur qui joue d'acheter les ressources qui lui manque pour construire sa carte.
+
+		:param ressourcesManquantes: liste des ressources manquantes
+		"""
+
 		prixCommerce = 0
 
+		# Vérification si le joueur adverse produit les ressources manquantes
 		adversaire = self.obtenirAdversaire()
 		carteListeRessourceAdversaire = []
 		for ressourceManquante in ressourcesManquantes:
@@ -614,7 +637,7 @@ class Jeu:
 			if carteProduction is not None:
 				carteListeRessourceAdversaire.append(carteProduction)
 
-		# si le joueur adverse ne produit aucune ressouces qui me manquent
+		# si le joueur adverse ne produit aucune ressouces ressources manquantes
 		if len(carteListeRessourceAdversaire) == 0:
 			for ressourceManquante in ressourcesManquantes:
 				ressourceManquanteSplit = ressourceManquante.split(" ")
@@ -669,6 +692,13 @@ class Jeu:
 			self.monnaieMax += prixCommerce
 
 	def demanderActionCarte(self, carte: Carte):
+		"""
+
+
+		:param carte:
+		:return:
+		"""
+
 		strAction = f"[{self.quiJoue.nom}] defausser ou piocher ?\n > "
 		while True:
 			action = input(strAction)
@@ -677,7 +707,7 @@ class Jeu:
 				self.quiJoue.argent = self.quiJoue.argent + 2
 				for carteJoueur in self.quiJoue.cartes:
 					if carteJoueur.couleur.name == "JAUNE":
-						self.quiJoue.argent+=1
+						self.quiJoue.argent += 1
 				break
 			elif action == "piocher":
 				listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
@@ -708,50 +738,91 @@ class Jeu:
 
 		self.enleverCarte(carte)
 
+	def demanderActionMerveille(self):
+		strAction = f"[{self.quiJoue.nom}] construire une merveille (oui/non) ?\n > "
+		while True:
+			action = input(strAction)
+			if action == "oui":
+				return demanderElementDansUneListe(self.quiJoue, "merveille", self.quiJoue.merveilles)
+			elif action == "non":
+				return None
+			else:
+				print("action merveille inconnue")
+
+	def resteDesCartes(self) -> bool:
+		for ligneCarte in self.cartesPlateau:
+			for carte in ligneCarte:
+				if carte != 0:
+					return True
+		return False
+
+	def changementAge(self):
+		if self.age != 3:
+			self.age += 1
+			self.preparationCartes()
+		else:
+			self.finDePartie()
+
 	def cartePrenable(self, ligne: int, colonne: int):
+		"""
+		Indique si une carte est prenable ou non. C'est à dire qu'aucune autre carte n'est posée par dessus.
+
+		:param ligne: ligne de la carte
+		:param colonne: colonne de la carte.
+		:return: vrai/ faux.
+		"""
+
 		if ligne == 4:
 			return True
 		elif ligne == 0:
 			if colonne == 0:
-				return self.cartesPlateau[ligne + 1][colonne + 1] == 1
-			elif colonne == len(self.cartesPlateau[ligne]):
-				return self.cartesPlateau[ligne + 1][colonne - 1] == 1
-		elif (self.cartesPlateau[ligne + 1][colonne - 1] == 1) and (self.cartesPlateau[ligne + 1][colonne + 1] == 1):
-			return True
+				return self.cartesPlateau[ligne + 1][colonne + 1] == 0
+			elif colonne == len(self.cartesPlateau[ligne]) - 1:
+				return self.cartesPlateau[ligne + 1][colonne - 1] == 0
 		else:
-			return False
+			return (self.cartesPlateau[ligne + 1][colonne - 1] == 0) \
+			       and (self.cartesPlateau[ligne + 1][colonne + 1] == 0)
 
 	def listeCartesPrenable(self):
+		"""
+		Renvoie la liste des cartes prenable sur le plateau.
+
+		:return: list carte prenable.
+		"""
 		cartesPrenable = []
 		for ligne in range(len(self.cartesPlateau)):
 			for colonne in range(len(self.cartesPlateau[ligne])):
-				carte = self.cartesPlateau[ligne][colonne]
-				if carte != 0 and self.cartePrenable(ligne, colonne):
-					cartesPrenable.append(carte)
+				if self.cartesPlateau[ligne][colonne] != 0 and self.cartePrenable(ligne, colonne):
+					cartesPrenable.append(self.cartesPlateau[ligne][colonne])
 
 		return cartesPrenable
 
-	def choisirCartePlateau(self):
-		strDemande = f"[{self.quiJoue.nom}] Nom de la carte choisie ?\n > "
-		print(f"\n * liste des cartes *\n{self.listeCartesPrenable()}")
-		nomCarte = input(strDemande)
-		carteChoisie = trouverElmentAvecNom(nomCarte, self.listeCartesPrenable())
-		while carteChoisie is None:
-			print("Carte inconnue ou non prenable, veuillez recommencer")
-			nomCarte = input(strDemande)
-			carteChoisie = trouverElmentAvecNom(nomCarte, self.listeCartesPrenable())
-		return carteChoisie
+	def defausserCarteAdversaire(self, couleur: str):
+		adversaire = self.obtenirAdversaire()
+		carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte de l'adversaire ", adversaire.cartes)
 
-	def choisirJetonsProgres(self):
-		strDemande = f"[{self.quiJoue.nom}] Nom du jeton choisie ?\n > "
-		print(f"\n * liste des jetons *\n", str(self.jetonsProgresPlateau))
-		nomJeton = input(strDemande)
-		jetonChoisi = trouverElmentAvecNom(nomJeton, self.jetonsProgresPlateau)
-		while jetonChoisi is None:
-			print("Jeton inconnu, veuillez recommencer")
-			nomJeton = input(strDemande)
-			jetonChoisi = trouverElmentAvecNom(nomJeton, self.jetonsProgresPlateau)
-		return jetonChoisi
+		for carteAdversaire in adversaire.cartes:
+			if carteAdversaire.couleur == couleur:
+				adversaire.cartes.remove(carteAdversaire)
+				self.fausseCarte.append(carteChoisie)
+
+	def gainJetonProgresAleatoire(self):
+		listeJetons = []
+		for _ in range(3):
+			jetonRandom = random.choice(self.jetonsProgres)
+			listeJetons.append(jetonRandom)
+			self.jetonsProgres.remove(jetonRandom)
+
+		jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jetons progrès", listeJetons)
+		listeJetons.remove(jetonChoisi)
+
+		for jeton in listeJetons:
+			self.jetonsProgres.append(jeton)
+
+	def constructionCarteDefausser(self):
+		carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte défausser", self.fausseCarte)
+		self.quiJoue.cartes.append(carteChoisie)
+		self.appliquerEffetCarte(carteChoisie)
 
 	def demanderRessourceAuChoix(self, listeRessources: str):
 		ressource = "ressource "
@@ -776,7 +847,8 @@ class Jeu:
 						# si on possède une carte donnant le même symbole
 						if effetMaCarteSplit[0] == "symbole_scientifique" and effetMaCarteSplit[1] == effetSplit[1]:
 							# 2 symboles identiques => gain jeton
-							jetonChoisi = self.choisirJetonsProgres()
+							jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jeton",
+							                                          self.jetonsProgresPlateau)
 							self.quiJoue.jetons.append(jetonChoisi)
 							# Suppression du jeton du plateau
 							self.jetonsProgresPlateau.remove(jetonChoisi)
@@ -797,77 +869,6 @@ class Jeu:
 					if maCarte.couleur == effetSplit[1]:
 						self.quiJoue.monnaie += int(effetSplit[2])
 
-	def demanderMerveilleAConstruire(self):
-		strDemande = f"[{self.quiJoue.nom}] Nom de la merveille choisie ?\n > "
-		print(f"\n * liste des merveilles *\n", str(self.quiJoue.merveilles))
-		nomMerveille = input(strDemande)
-		merveilleChoisie = trouverElmentAvecNom(nomMerveille, self.quiJoue.merveilles)
-		while merveilleChoisie is None:
-			print("Merveille inconnu, veuillez recommencer")
-			nomMerveille = input(strDemande)
-			merveilleChoisie = trouverElmentAvecNom(nomMerveille, self.quiJoue.merveilles)
-		return merveilleChoisie
-
-	def demanderActionMerveille(self):
-		strAction = f"[{self.quiJoue.nom}] construire une merveille (oui/non) ?\n > "
-		while True:
-			action = input(strAction)
-			if action == "oui":
-				return self.demanderMerveilleAConstruire()
-			elif action == "non":
-				return None
-			else:
-				print("action merveille inconnue")
-
-	def defausserCarteAdversaire(self, couleur: str):
-		adversaire = self.obtenirAdversaire()
-		strDemande = f"[{self.quiJoue.nom}] Nom de la carte de l'adversaire choisie ?\n > "
-		print(f"\n * liste des cartes *\n{adversaire.cartes}")
-		nomCarte = input(strDemande)
-		carteChoisie = trouverElmentAvecNom(nomCarte, adversaire.cartes)
-		while carteChoisie is None:
-			print("Carte inconnue, veuillez recommencer")
-			nomCarte = input(strDemande)
-			carteChoisie = trouverElmentAvecNom(nomCarte, adversaire.cartes)
-
-		for carteAdversaire in adversaire.cartes:
-			if carteAdversaire.couleur == couleur:
-				adversaire.cartes.remove(carteAdversaire)
-				self.fausseCarte.append(carteChoisie)
-
-	def gainJetonProgresAleatoire(self):
-		listeJetons = []
-		for _ in range(3):
-			jetonRandom = random.choice(self.jetonsProgres)
-			listeJetons.append(jetonRandom)
-			self.jetonsProgres.remove(jetonRandom)
-
-		strDemande = f"[{self.quiJoue.nom}] Nom du jetons progrès choisie ?\n > "
-		print(f"\n * liste des jetons *\n{listeJetons}")
-		nomJeton = input(strDemande)
-		jetonChoisi = trouverElmentAvecNom(nomJeton, listeJetons)
-		while jetonChoisi is None:
-			print("jetons inconnue, veuillez recommencer")
-			nomJeton = input(strDemande)
-			jetonChoisi = trouverElmentAvecNom(nomJeton, listeJetons)
-
-		listeJetons.remove(jetonChoisi)
-		for jeton in listeJetons:
-			self.jetonsProgres.append(jeton)
-
-	def constructionCarteDefausser(self):
-		strDemande = f"[{self.quiJoue.nom}] Nom de la carte choisie ?\n > "
-		print(f"\n * liste des cartes *\n{self.fausseCarte}")
-		nomCarte = input(strDemande)
-		carteChoisie = trouverElmentAvecNom(nomCarte, self.fausseCarte)
-		while carteChoisie is None:
-			print("Carte inconnue, veuillez recommencer")
-			nomCarte = input(strDemande)
-			carteChoisie = trouverElmentAvecNom(nomCarte, self.fausseCarte)
-
-		self.quiJoue.cartes.append(carteChoisie)
-		self.appliquerEffetCarte(carteChoisie)
-
 	def appliquerEffetMerveille(self, merveille: Merveille):
 		for effet in merveille.effets:
 			effetSplit = effet.split(" ")
@@ -876,7 +877,7 @@ class Jeu:
 			elif effetSplit[0] == "defausse_carte_adversaire":
 				self.defausserCarteAdversaire(effetSplit[1])
 			elif effetSplit[0] == "rejouer":
-				pass
+				return "rejouer"
 			elif effetSplit[0] == "jeton_progrès_aléatoire":
 				self.gainJetonProgresAleatoire()
 			elif effetSplit[0] == "construction_fausse_gratuite":
@@ -885,17 +886,30 @@ class Jeu:
 				adversaire = self.obtenirAdversaire()
 				adversaire.monnaie -= int(effetSplit[1])
 
+	def changementJoueur(self):
+		self.quiJoue = self.obtenirAdversaire()
+
+	def finDePartie(self):
+		pass
+
 	def bouclePrincipale(self):
 		self.quiJoue = self.joueur1
 		while True:
-			carteChoisie = self.choisirCartePlateau()
+			if not self.resteDesCartes():
+				self.changementAge()
+
+			carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte", self.listeCartesPrenable())
 			self.demanderActionCarte(carteChoisie)
 			self.appliquerEffetCarte(carteChoisie)
 			self.quiJoue.cartes.append(carteChoisie)
 
 			merveille = self.demanderActionMerveille()
+			sortieEffet = ""
 			if merveille is not None:
-				self.appliquerEffetMerveille(merveille)
+				sortieEffet = self.appliquerEffetMerveille(merveille)
+
+			if sortieEffet != "rejouer":
+				self.changementJoueur()
 
 	def lancer(self):
 		self.preparationPlateau()
