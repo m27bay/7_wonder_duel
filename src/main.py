@@ -66,7 +66,7 @@ class Carte:
 
 class Merveille(Carte):
 	"""
-	Classe représentant une merveille, une clase fille de la classe Carte.
+	Classe représentant une merveille, une classe fille de la classe Carte.
 	"""
 
 	def __init__(self, nom, cheminImg, effets, couts):
@@ -306,7 +306,6 @@ class Jeu:
 		# -9: victoire militaire joueur1
 		self.positionJetonMilitaire = 0
 
-		# liste des jetons progrès, constructeur : JetonProgres(nom, effets)
 		# liste des jetons progrès, constructeur : JetonProgres(nom, effets)
 		self.jetonsProgres = [
 			JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"]),
@@ -678,7 +677,7 @@ class Jeu:
 				self.quiJoue.argent = self.quiJoue.argent + 2
 				for carteJoueur in self.quiJoue.cartes:
 					if carteJoueur.couleur.name == "JAUNE":
-						self.quiJoue.argent = self.quiJoue.argent + 1
+						self.quiJoue.argent+=1
 				break
 			elif action == "piocher":
 				listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
