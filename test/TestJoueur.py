@@ -37,9 +37,18 @@ class TestJoeur(unittest.TestCase):
 
 	def testPossedeCarteChainage(self):
 		self.joueur.cartes.append(Carte("carte", None, None, None, None, None, None))
-		self.assertTrue(self.joueur.possedeCarteChainage(Carte("carte2", None, None, None, "carte", None, None)))
 
+		self.assertTrue(self.joueur.possedeCarteChainage(Carte("carte2", None, None, None, "carte", None, None)))
 		self.assertFalse(self.joueur.possedeCarteChainage(Carte("carte3", None, None, None, "erreur", None, None)))
+
+		self.joueur.cartes.clear()
+
+	def testProductionTypeRessources(self):
+		self.joueur.cartes.append(Carte("carte", None, ["ressource bois 1"], None, None, None, None))
+
+		self.assertEqual("carte", self.joueur.productionTypeRessources("ressource bois 1").nom)
+		self.assertEqual(None, self.joueur.productionTypeRessources("ressource pierre 1"))
+
 		self.joueur.cartes.clear()
 
 	def testListeRessourcePrixReduit(self):
