@@ -226,6 +226,13 @@ class Joueur:
 					return int(effetSplit[2])
 		return 0
 
+	def cartesCouleur(self, couleur: str) -> list:
+		listeCartesCouleur = []
+		for carte in self.cartes:
+			if carte.couleur == couleur:
+				listeCartesCouleur.append(carte)
+		return listeCartesCouleur
+
 
 def strListeElement(liste: list):
 	"""
@@ -263,8 +270,8 @@ def demanderElementDansUneListe(joueur: Joueur, typeElement: str, listeElement: 
 	:param listeElement: la liste où l'on cherche l'élément.
 	:return: l'élément choisi.
 	"""
-	print(f"\n * liste choix possibles *\n{strListeElement(listeElement)}")
 	while True:
+		print(f"\n * liste choix possibles *\n{strListeElement(listeElement)}")
 		typeElement = input(f"[{joueur.nom}] Choix {typeElement} ?\n > ")
 		elementChoisi = trouverElmentAvecNom(typeElement, listeElement)
 		if elementChoisi is None:
@@ -293,6 +300,18 @@ def selectionMerveille(nbrRepetition: int, joueur: Joueur, listeMerveillesAlea: 
 			merveilleChoisie = demanderElementDansUneListe(joueur, "merveille", listeMerveillesAlea)
 			joueur.merveilles.append(merveilleChoisie)
 			listeMerveillesAlea.remove(merveilleChoisie)
+
+
+def afficher(liste: list) -> str:
+	if liste is None:
+		return "None"
+	if len(liste) == 0:
+		return "vide"
+
+	affichage = ""
+	for elem in liste:
+		affichage += str(elem)
+	return affichage
 
 
 class Jeu:
@@ -335,10 +354,10 @@ class Jeu:
 			JetonProgres("théologie", None, "bonus rejouer"),
 			JetonProgres("urbanisme", None, ["monnaie 6", "bonus_monnaie_chainage 4"]),
 		]
-		# Jeton choisi et placé sur le plateau
+		# jeton choisi et placé sur le plateau
 		self.jetonsProgresPlateau = []
 
-		# Pour stocker les cartes défaussées
+		# pour stocker les cartes défaussées
 		self.fausseCarte = []
 
 		# listes des cartes, constructeur : Carte(nom, cheminImg, effets, couts, carteChainage, couleur, age)
@@ -369,7 +388,7 @@ class Jeu:
 			Carte("bains", None, ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
 			Carte("taverne", None, ["monnaie 4"], None, None, "jaune", age=1)
 		]
-		self.cartesAgeII = [  # Initialisation cartes age II
+		self.cartesAgeII = [  # initialisation cartes age II
 			Carte("scierie", None, ["ressource bois 2"], ["monnaie 2"], None, "marron", age=2),
 			Carte("briqueterie", None, ["ressource argile 2"], ["monnaie 2"], None, "marron", age=2),
 			Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2),
@@ -407,7 +426,7 @@ class Jeu:
 			      None, "bleu", age=2),
 			Carte("brasserie", None, ["monnaie 6"], None, "taverne", "jaune", age=2)
 		]
-		self.cartesAgeIII = [  # Initialisation cartes age III
+		self.cartesAgeIII = [  # initialisation cartes age III
 			Carte("arsenal", None, ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3),
 			Carte("prétoire", None, ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
 			Carte("académie", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
@@ -453,7 +472,7 @@ class Jeu:
 		]
 
 		#  TODO : Ajouter cartes guilde dans ageIII
-		# Carte sur le plateau de jeu
+		# carte sur le plateau de jeu
 		self.cartesPlateau = []
 
 		# liste des merveilles, constructeur : Merveille(nom, cheminImg, effets)
@@ -622,11 +641,112 @@ class Jeu:
 		else:
 			return self.joueur1
 
-	def acheterRessource(self, ressourcesManquantes: list):
+	def demanderActionCarte(self, carte: Carte):
+		"""
+		Demande à l'utilisateur l'action qu'il souhaite faire avec la carte (défausser, ou piocher).
+
+		:param carte: la carte choisie par le joueur.
+		"""
+
+		strAction = f"[{self.quiJoue.nom}] defausser ou piocher ?\n > "
+		while True:
+			action = input(strAction)
+
+			# defausser
+			if action == "defausser":
+				self.fausseCarte.append(carte)
+				self.quiJoue.monnaie = self.quiJoue.monnaie + 2
+
+				# gain de une pièce par carte jaune
+				for carteJoueur in self.quiJoue.cartes:
+					if carteJoueur.couleur == "jaune":
+						self.quiJoue.monnaie += 1
+
+				# fin action carte
+				break
+
+			# piocher
+			elif action == "piocher":
+
+				# construction de la carte gratuite via chainage
+				if not self.quiJoue.possedeCarteChainage(carte):
+
+					if carte.couts is None:
+						# fin action carte
+						break
+
+					# vérification ressources joueur
+					listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
+
+					# le joueur possède toutes les ressouces
+					if len(listeRessourceNecessaire) == 0:
+
+						# on retire uniquement la monnaie
+						for cout in carte.couts:
+							# monnaie x
+							coutSplit = cout.split(" ")
+							if coutSplit[0] == "monnaie":
+								self.quiJoue.monnaie -= int(coutSplit[1])
+
+						# fin action carte
+						break
+
+					else:
+						# manque des ressouces
+						for ressourceManquante in listeRessourceNecessaire:
+							ressourceManquanteSplit = ressourceManquante.split(" ")
+
+							# manque monnaie
+							if ressourceManquanteSplit[0] == "monnaie":
+								print("Vous n'avez pas assez de monnaie pour construire la carte. "
+								      "Vous devez défausser la carte")
+								continue
+
+						# manque des ressources autre que monnaie
+						prix = self.acheterRessource(listeRessourceNecessaire)
+						if prix > self.quiJoue.monnaie:
+							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
+							      "Vous devez défausser la carte")
+							continue
+						else:
+							self.quiJoue.monnaie -= prix
+							self.monnaieMax += prix
+
+							# fin action carte
+							break
+
+				else:  # le joueur possde la carte chainage, construction gratuite
+					# fin action carte
+					break
+			else:
+				print("action carte inconnue.")
+				continue
+
+		# suppression de la carte du plateau
+		self.enleverCarte(carte)
+
+	def demanderActionMerveille(self):
+		"""
+		Demande à l'utilisateur si il souhaite construire une merveille.
+		"""
+
+		strAction = f"[{self.quiJoue.nom}] construire une merveille (oui/non) ?\n > "
+		while True:
+			action = input(strAction)
+			if action == "oui":
+				# TODO : carte a sacrfier ?
+				return demanderElementDansUneListe(self.quiJoue, "merveille", self.quiJoue.merveilles)
+			elif action == "non":
+				return None
+			else:
+				print("action merveille inconnue")
+
+	def acheterRessource(self, ressourcesManquantes: list) -> int:
 		"""
 		Permet au joueur qui joue d'acheter les ressources qui lui manque pour construire sa carte.
 
 		:param ressourcesManquantes: liste des ressources manquantes
+		:return prixDesRessources
 		"""
 
 		prixCommerce = 0
@@ -684,117 +804,36 @@ class Jeu:
 								# (2 + quantite_ressource_adversaire) * quantite_ressource_necessaire pour le joueur
 								prixCommerce += ((2 + int(ressourceAdversaireSplit[2])) * int(ressourceManquanteSplit[2]))
 
-					if not ressourceTrouve:
-						prixCommerce += (2 * int(ressourceManquanteSplit[2]))
+				# si l'adversaire ne produit pas la ressource
+				if not ressourceTrouve:
+					prixCommerce += (2 * int(ressourceManquanteSplit[2]))
 
-		if prixCommerce > self.quiJoue.monnaie:
-			return None
-		else:
-			self.quiJoue.monnaie -= prixCommerce
-			self.monnaieMax += prixCommerce
-
-	def demanderActionCarte(self, carte: Carte):
-		"""
-
-
-		:param carte:
-		:return:
-		"""
-
-		strAction = f"[{self.quiJoue.nom}] defausser ou piocher ?\n > "
-		while True:
-			action = input(strAction)
-
-			# defausser
-			if action == "defausser":
-				self.fausseCarte.append(carte)
-				self.quiJoue.monnaie = self.quiJoue.monnaie + 2
-
-				# gain de une pièce par carte jaune
-				for carteJoueur in self.quiJoue.cartes:
-					if carteJoueur.couleur == "jaune":
-						self.quiJoue.monnaie += 1
-
-				# fin action carte
-				break
-
-			# piocher
-			elif action == "piocher":
-
-				# construction de la carte gratuite via chainage
-				if not self.quiJoue.possedeCarteChainage(carte):
-
-					# vérification ressources joueur
-					listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
-
-					# le joueur possède toutes les ressouces
-					if len(listeRessourceNecessaire) == 0:
-
-						# on retire uniquement la monnaie
-						for cout in carte.couts:
-							# monnaie x
-							coutSplit = cout.split(" ")
-							if coutSplit[0] == "monnaie":
-								self.quiJoue.monnaie -= int(coutSplit[1])
-
-						# fin action carte
-						break
-
-					else:
-						# manque des ressouces
-						for ressourceManquante in listeRessourceNecessaire:
-							ressourceManquanteSplit = ressourceManquante.split(" ")
-
-							# manque monnaie
-							if ressourceManquanteSplit[0] == "monnaie":
-								print("Vous n'avez pas assez de monnaie pour construire la carte. "
-								      "Vous devez défausser la carte")
-								continue
-
-						# manque des ressources autre que monnaie
-						if self.acheterRessource(listeRessourceNecessaire) is None:
-							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
-							      "Vous devez défausser la carte")
-							continue
-
-						# fin action carte
-						break
-
-				else:  # le joueur possde la carte chainage, construction gratuite
-					# fin action carte
-					break
-			else:
-				print("action carte inconnue.")
-				continue
-
-		self.enleverCarte(carte)
-
-	def demanderActionMerveille(self):
-		strAction = f"[{self.quiJoue.nom}] construire une merveille (oui/non) ?\n > "
-		while True:
-			action = input(strAction)
-			if action == "oui":
-				return demanderElementDansUneListe(self.quiJoue, "merveille", self.quiJoue.merveilles)
-			elif action == "non":
-				return None
-			else:
-				print("action merveille inconnue")
+		return prixCommerce
 
 	def resteDesCartes(self) -> bool:
+		"""
+		Indique s'il reste des cartes sur le plateau.
+
+		:return: vrai/ faux
+		"""
 		for ligneCarte in self.cartesPlateau:
 			for carte in ligneCarte:
 				if carte != 0:
 					return True
 		return False
 
-	def changementAge(self):
+	def changementAge(self) -> None:
+		"""
+		Permet de changer d'âge et de changer la structure des cartes du plateau.
+		"""
+
 		if self.age != 3:
 			self.age += 1
 			self.preparationCartes()
 		else:
 			self.finDePartie()
 
-	def cartePrenable(self, ligne: int, colonne: int):
+	def cartePrenable(self, ligne: int, colonne: int) -> bool:
 		"""
 		Indique si une carte est prenable ou non. C'est à dire qu'aucune autre carte n'est posée par dessus.
 
@@ -830,12 +869,18 @@ class Jeu:
 
 	def defausserCarteAdversaire(self, couleur: str):
 		adversaire = self.obtenirAdversaire()
-		carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte de l'adversaire ", adversaire.cartes)
+		while True:
+			print(f"\n * liste choix possibles *\n{afficher(adversaire.cartes)}")
+			typeElement = input(f"[{self.quiJoue.nom}] Choix d'une carte {couleur}?\n > ")
+			elementChoisi = trouverElmentAvecNom(typeElement, adversaire.cartes)
+			if elementChoisi is None or elementChoisi.couleur != couleur:
+				print("Choix incorrect")
+				continue
+			else:
+				break
 
-		for carteAdversaire in adversaire.cartes:
-			if carteAdversaire.couleur == couleur:
-				adversaire.cartes.remove(carteAdversaire)
-				self.fausseCarte.append(carteChoisie)
+		adversaire.cartes.remove(elementChoisi)
+		self.fausseCarte.append(elementChoisi)
 
 	def gainJetonProgresAleatoire(self):
 		listeJetons = []
@@ -906,7 +951,10 @@ class Jeu:
 			if effetSplit[0] in ["attaquer", "symbole_scientifique", "point_victoire", "monnaie", "monnaie_par_carte"]:
 				self.appliquerEffetCarte(merveille)
 			elif effetSplit[0] == "defausse_carte_adversaire":
-				self.defausserCarteAdversaire(effetSplit[1])
+				if len(self.obtenirAdversaire().cartesCouleur(effetSplit[2])) != 0:
+					self.defausserCarteAdversaire(effetSplit[1])
+				else:
+					print("Le joueur adverse ne possède aucune carte de cette couleur.")
 			elif effetSplit[0] == "rejouer":
 				return "rejouer"
 			elif effetSplit[0] == "jeton_progrès_aléatoire":
