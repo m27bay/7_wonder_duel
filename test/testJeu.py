@@ -12,9 +12,9 @@ class TestJeu(unittest.TestCase):
 		self.jeu.quiJoue = self.j2
 
 	def testAcheterRessourceNonProduiteParAdversaire(self):
-		self.jeu.acheterRessource(["ressource pierre 1"])
+		prix = self.jeu.acheterRessource(["ressource pierre 1"])
 
-		self.assertEqual(8, self.jeu.quiJoue.monnaie)
+		self.assertEqual(2, prix)
 
 	def testAcheterRessourceProduiteParAdversaire(self):
 		# exemple du manuel
@@ -22,9 +22,9 @@ class TestJeu(unittest.TestCase):
 		# page 9
 
 		self.j1.cartes.append(Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		self.jeu.acheterRessource(["ressource pierre 1"])
+		prix = self.jeu.acheterRessource(["ressource pierre 1"])
 		# j2 veut acheter une pierre, mais j1 en produit deux, [ 2 + (quantite_pierre_j1) ] * quantite_pierre_acheté
-		self.assertEqual(6, self.jeu.quiJoue.monnaie)
+		self.assertEqual(4, prix)
 
 		self.j1.cartes.clear()
 
@@ -32,9 +32,9 @@ class TestJeu(unittest.TestCase):
 		# exemple du manuel
 
 		self.j1.cartes.append(Carte("bassin argileux", None, ["ressource argile 1"], None, None, "marron", age=1))
-		self.jeu.acheterRessource(["ressource argile 1", "ressource papyrus 1"])
+		prix = self.jeu.acheterRessource(["ressource argile 1", "ressource papyrus 1"])
 
-		self.assertEqual(5, self.jeu.quiJoue.monnaie)
+		self.assertEqual(5, prix)
 
 		self.j1.cartes.clear()
 
@@ -43,9 +43,9 @@ class TestJeu(unittest.TestCase):
 		self.j1.monnaie = self.j2.monnaie = 12
 
 		self.j1.cartes.append(Carte("carte custom", None, ["ressource pierre 2"], None, None, None, None))
-		self.jeu.acheterRessource(["ressource pierre 3"])
+		prix = self.jeu.acheterRessource(["ressource pierre 3"])
 
-		self.assertEqual(0, self.jeu.quiJoue.monnaie)
+		self.assertEqual(12, prix)
 
 		self.j1.cartes.clear()
 
@@ -54,32 +54,28 @@ class TestJeu(unittest.TestCase):
 		self.j2.cartes.append(
 			Carte("dépot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
 		)
-		self.jeu.acheterRessource(["ressource pierre 1"])
+		prix = self.jeu.acheterRessource(["ressource pierre 1"])
 
-		self.assertEqual(9, self.jeu.quiJoue.monnaie)
+		self.assertEqual(1, prix)
 
 		self.j1.cartes.clear()
 		self.j2.cartes.clear()
 
-	def testCartePrenable(self):
-		self.jeu.preparationCartes()
+	def testDemanderActionCartePiocherCarteQuiNeCouteRien(self):
+		self.jeu.quiJoue = self.j1
 
-		self.assertTrue(self.jeu.cartePrenable(4, 0))
-		self.assertTrue(self.jeu.cartePrenable(4, 10))
-		self.assertFalse(self.jeu.cartePrenable(3, 1))
-		self.assertFalse(self.jeu.cartePrenable(0, 4))
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+		self.jeu.cartesPlateau[4][0] = Carte("presse", None, ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1)
 
-	def testListeCartesPrenable(self):
-		self.jeu.preparationCartes()
+		self.jeu.demanderActionCarte(self.jeu.cartesPlateau[4][0])
 
-		listeCartePrenable = []
-
-		for ligne in range(len(self.jeu.cartesPlateau)):
-			for colonne in range(len(self.jeu.cartesPlateau[ligne])):
-				if self.jeu.cartesPlateau[ligne][colonne] != 0 and ligne == 4:
-					listeCartePrenable.append(self.jeu.cartesPlateau[ligne][colonne])
-
-		self.assertEqual(listeCartePrenable, self.jeu.listeCartesPrenable())
+		self.assertFalse(self.jeu.resteDesCartes())
 
 	def testDemanderActionCarteDefausserSansCarteJaune(self):
 		self.j1.monnaie = 0
@@ -91,18 +87,13 @@ class TestJeu(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-
 		carte = Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
 		self.jeu.cartesPlateau[4][0] = carte
 
 		self.jeu.demanderActionCarte(carte)
 
-		try:
-			self.jeu.fausseCarte.index(carte)
-		except ValueError:
-			self.fail("la carte n'a pas été ajouté à la fausse.")
-
 		self.assertEqual(2, self.jeu.quiJoue.monnaie)
+		self.assertFalse(self.jeu.resteDesCartes())
 
 	def testDemanderActionCarteDefausserAvecCarteJaune(self):
 		self.j1.monnaie = 0
@@ -115,7 +106,6 @@ class TestJeu(unittest.TestCase):
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-
 		carte = Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
 		self.jeu.cartesPlateau[4][0] = carte
 
@@ -155,6 +145,115 @@ class TestJeu(unittest.TestCase):
 		self.jeu.demanderActionCarte(carte)
 
 		self.assertFalse(self.jeu.resteDesCartes())
+
+	def testDemanderActionCartePiocherJoueurPossedeRessourceMonnaie(self):
+		self.jeu.quiJoue = self.j1
+
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+		carte = Carte("presse", None, ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1)
+		self.jeu.cartesPlateau[4][0] = carte
+
+		self.jeu.demanderActionCarte(carte)
+
+		self.assertFalse(self.jeu.resteDesCartes())
+		self.assertEqual(9, self.j1.monnaie)
+
+	def testDemanderActionCartePiocherJoueurPossedePasRessources(self):
+		self.jeu.quiJoue = self.j1
+
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+		self.jeu.quiJoue.cartes.append(
+			Carte(
+				"presse", None, ["ressource papyrus 1"], ["monnaie 1"], None,
+				"grise", age=1
+			)
+		)
+
+		carte2 = Carte(
+			"apothicaire", None,
+			["symbole_scientifique roue", "point_victoire 1"],
+			["ressource verre 1"],
+			None, "vert", age=1
+		)
+		self.jeu.cartesPlateau[4][0] = carte2
+
+		self.jeu.demanderActionCarte(carte2)
+
+		self.assertFalse(self.jeu.resteDesCartes())
+		self.assertEqual(8, self.j1.monnaie)
+
+	def testResteDesCartes(self):
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+
+		self.assertTrue(self.jeu.resteDesCartes())
+
+		self.jeu.cartesPlateau = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		]
+
+		self.assertFalse(self.jeu.resteDesCartes())
+
+	def testCartePrenable(self):
+		self.jeu.preparationCartes()
+
+		self.assertTrue(self.jeu.cartePrenable(4, 0))
+		self.assertTrue(self.jeu.cartePrenable(4, 10))
+		self.assertFalse(self.jeu.cartePrenable(3, 1))
+		self.assertFalse(self.jeu.cartePrenable(0, 4))
+
+	def testListeCartesPrenable(self):
+		self.jeu.preparationCartes()
+
+		listeCartePrenable = []
+
+		for ligne in range(len(self.jeu.cartesPlateau)):
+			for colonne in range(len(self.jeu.cartesPlateau[ligne])):
+				if self.jeu.cartesPlateau[ligne][colonne] != 0 and ligne == 4:
+					listeCartePrenable.append(self.jeu.cartesPlateau[ligne][colonne])
+
+		self.assertEqual(listeCartePrenable, self.jeu.listeCartesPrenable())
+
+	def testDefausserCarteAdversairePossedeCarteCouleur(self):
+		self.jeu.quiJoue = self.j1
+		carte = Carte("chantier", None, ["ressource bois 1"], None, None, "marron", age=1)
+		self.j2.cartes.append(carte)
+
+		self.jeu.defausserCarteAdversaire("marron")
+
+		self.assertEqual([], self.j2.cartes)
+		self.assertEqual([carte], self.jeu.fausseCarte)
+
+	def testDefausserCarteAdversairePossedePasCarteCouleur(self):
+		self.jeu.quiJoue = self.j1
+		carte = Carte("chantier", None, ["ressource bois 1"], None, None, "marron", age=1)
+		self.j2.cartes.append(carte)
+
+		self.jeu.defausserCarteAdversaire("grise")
+
+		self.assertEqual([], self.j2.cartes)
+		self.assertEqual([carte], self.jeu.fausseCarte)
 
 
 if __name__ == '__main__':
