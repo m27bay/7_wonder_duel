@@ -55,8 +55,35 @@ class TestJoeur(unittest.TestCase):
 		douane = Carte("douanes", None, ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
 		      None, "jaune", age=2)
 		self.joueur.cartes.append(douane)
+
 		self.assertEqual(1, self.joueur.possedeReduction("papyrus"))
 		self.assertEqual(0, self.joueur.possedeReduction("pierre"))
+
+		self.joueur.cartes.clear()
+
+	def testPossedeCartesCouleur(self):
+		carte = Carte("chantier", None, ["ressource bois 1"], None, None, "marron", age=1)
+		self.joueur.cartes.append(carte)
+		listeCarteCoul = self.joueur.cartesCouleur("marron")
+
+		self.assertEqual([carte], listeCarteCoul)
+
+		carte2 = Carte("exploitation", None, ["ressource bois 1"], ["monnaie 1"], None, "marron", age=1)
+		self.joueur.cartes.append(carte2)
+		listeCarteCoul = self.joueur.cartesCouleur("marron")
+
+		self.assertEqual([carte, carte2], listeCarteCoul)
+
+		self.joueur.cartes.clear()
+
+	def testPossedePasCartesCouleur(self):
+		carte = Carte("chantier", None, ["ressource bois 1"], None, None, "marron", age=1)
+		self.joueur.cartes.append(carte)
+		listeCarteCoul = self.joueur.cartesCouleur("grise")
+
+		self.assertEqual([], listeCarteCoul)
+
+		self.joueur.cartes.clear()
 
 
 if __name__ == '__main__':
