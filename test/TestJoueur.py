@@ -12,18 +12,18 @@ class TestJoeur(unittest.TestCase):
 
 	def testRessourcesManquantes(self):
 		self.joueur.cartes.append(Carte(None, None, ["ressource bois 2"], None, None, None, None))
-		carte = Carte(None, None, None, ["ressource bois 2"], None, None, None)
+		carte = Carte("carte", None, None, ["ressource bois 2"], None, None, None)
 		self.assertEqual([], self.joueur.coutsManquant(carte))
 		self.joueur.cartes.clear()
 
 		self.joueur.cartes.append(Carte(None, None, ["ressource bois 2"], None, None, None, None))
-		carte = Carte(None, None, None, ["ressource bois 1", "ressource verre 2"], None, None, None)
-		self.assertEqual(["ressource verre 2"], self.joueur.coutsManquant(carte))
+		carte2 = Carte("carte2", None, None, ["ressource bois 1", "ressource verre 2"], None, None, None)
+		self.assertEqual(["ressource verre 2"], self.joueur.coutsManquant(carte2))
 		self.joueur.cartes.clear()
 
 		self.joueur.cartes.append(Carte(None, None, ["ressource bois 1"], None, None, None, None))
-		carte = Carte(None, None, None, ["ressource bois 2", "ressource verre 2"], None, None, None)
-		self.assertEqual(["ressource bois 1", "ressource verre 2"], self.joueur.coutsManquant(carte))
+		carte3 = Carte("carte3", None, None, ["ressource bois 2", "ressource verre 2"], None, None, None)
+		self.assertEqual(["ressource bois 1", "ressource verre 2"], self.joueur.coutsManquant(carte3))
 		self.joueur.cartes.clear()
 
 	def testMonnaiesManquantes(self):
