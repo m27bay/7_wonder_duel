@@ -1,6 +1,6 @@
 import unittest
 
-from src.main import Joueur, Jeu, Carte
+from src.main import Joueur, Jeu, Carte, JetonProgres, demanderElementDansUneListe
 
 
 class TestJeu(unittest.TestCase):
@@ -10,6 +10,20 @@ class TestJeu(unittest.TestCase):
 		self.jeu = Jeu(self.j1, self.j2)
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.jeu.quiJoue = self.j2
+
+	def testDemanderElementDansUneListe(self):
+		# entrée carte2
+		j1 = Joueur("j1")
+
+		carte1 = Carte("carte1", None, None, None, None, None, None)
+		carte2 = Carte("carte2", None, None, None, None, None, None)
+		carte3 = Carte("carte3", None, None, None, None, None, None)
+		carte4 = Carte("carte4", None, None, None, None, None, None)
+
+		liste = [carte1, carte2, carte3, carte4]
+
+		carteChoisie = demanderElementDansUneListe(j1, "carte", liste)
+		self.assertEqual(carte2, carteChoisie)
 
 	def testAcheterRessourceNonProduiteParAdversaire(self):
 		prix = self.jeu.acheterRessource(["ressource pierre 1"])
@@ -254,6 +268,31 @@ class TestJeu(unittest.TestCase):
 
 		self.assertEqual([], self.j2.cartes)
 		self.assertEqual([carte], self.jeu.fausseCarte)
+
+	def testDemanderRessourceAuChoix(self):
+		# entrée bois
+		ressource = self.jeu.demanderRessourceAuChoix(["bois", "pierre"])
+
+		self.assertEqual("ressource bois 1", ressource)
+
+	def testGainSymboleScientifique(self):
+		# entrée agriculture
+
+		jeton = JetonProgres("agriculture", None, ["monnaie 6", "point_victoire 4"])
+		self.jeu.jetonsProgresPlateau.append(jeton)
+
+		carte = Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
+			      None, "vert", age=1)
+		self.jeu.quiJoue.cartes.append(carte)
+
+		self.jeu.gainSymboleScientifique("pendule")
+
+		carteCustom = Carte("atelier", None, ["point_victoire 1"], ["ressource papurys 1"], None, "vert", age=1)
+		self.assertEqual([jeton], self.jeu.quiJoue.jetons)
+		self.assertEqual([], self.jeu.jetonsProgresPlateau)
+		self.assertEqual(carteCustom, self.jeu.quiJoue.cartes[0])
+
+	# def test
 
 
 if __name__ == '__main__':
