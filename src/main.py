@@ -1,4 +1,10 @@
+import logging
 import random
+
+
+logging.basicConfig(filename="../logger.log", format='%(asctime)s %(message)s', filemode='w')
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 
 class Generique:
@@ -9,7 +15,7 @@ class Generique:
 
 class Carte(Generique):
 	"""
-	Classe représentant une carte.
+	Classe representant une carte.
 	"""
 
 	def __init__(self, nom, cheminImg, effets, couts, carteChainage, couleur, age):
@@ -18,8 +24,8 @@ class Carte(Generique):
 
 		:param nom: nom de la carte.
 		:param cheminImg: chemin pour afficher la carte.
-		:param effets: liste d'effets que donne la carte respectant un pattern précis.
-		:param couts: liste de couts pour construire la carte respactant un pattern précis.
+		:param effets: liste d effets que donne la carte respectant un pattern precis.
+		:param couts: liste de couts pour construire la carte respactant un pattern precis.
 		:param carteChainage: nom de la carte permettant de construire gratuitement la carte.
 		:param couleur: couleur de la carte.
 		:param age: age de la carte (entre 1 et 3).
@@ -34,22 +40,25 @@ class Carte(Generique):
 
 	def devoiler(self):
 		"""
-		Devoile la carte, indique que la carte n'est plus face cachée.
+		Devoile la carte, indique que la carte n est plus face cachee.
 		"""
+		logger.debug(f"devoilement carte {self.nom}")
 		self.faceCachee = False
 
 	def cacher(self):
 		"""
-		Cacher la carte, indique que la carte est face cachée.
+		Cacher la carte, indique que la carte est face cachee.
 		"""
+		logger.debug(f"cachement carte {self.nom}")
 		self.faceCachee = True
 
 	def __eq__(self, other):
 		"""
-		Redéfinition de l'opérateur == pour une Carte.
+		Redefinition de l operateur == pour une Carte.
+		Deux cartes sont identiques si elles ont le meme nom.
 
-		:param other: une autre carte à comparer.
-		:return: compare les deux noms.
+		:param other: une autre carte a comparer.
+		:return: vrai/ faux
 		"""
 		if isinstance(other, Carte):
 			return self.nom == other.nom
@@ -69,12 +78,12 @@ class Carte(Generique):
 		       f"cout chainage : {self.carteChainage}, " \
 		       f"couleur : {self.couleur}, " \
 		       f"age : {self.age}, " \
-		       f"face cachée : {self.faceCachee}"
+		       f"face cachee : {self.faceCachee}"
 
 
 class Merveille(Carte):
 	"""
-	Classe représentant une merveille, une classe fille de la classe Carte.
+	Classe representant une merveille, une classe fille de la classe Carte.
 	"""
 
 	def __init__(self, nom, cheminImg, effets, couts):
@@ -83,15 +92,15 @@ class Merveille(Carte):
 
 		:param nom: nom de la merveille.
 		:param cheminImg: chemin pour afficher la merveille.
-		:param effets: liste d'effets que donne la merveille respectant un pattern précis.
-		:param couts: liste de couts pour construire la merveille respactant un pattern précis.
+		:param effets: liste d effets que donne la merveille respectant un pattern precis.
+		:param couts: liste de couts pour construire la merveille respactant un pattern precis.
 		"""
 		super().__init__(nom, cheminImg, effets, couts, None, None, None)
 
 
 class JetonProgres(Generique):
 	"""
-	Classe représentant un jeton progrès
+	Classe representant un jeton progres
 	"""
 
 	def __init__(self, nom, cheminImg, effets):
@@ -111,13 +120,13 @@ class JetonProgres(Generique):
 		:return: chaine avec les attributs de la classe.
 		"""
 		return f"nom : {self.nom}, " \
-		       f"cheminImg : {self.cheminImg}" \
+		       f"cheminImg : {self.cheminImg}, " \
 		       f"effets : {str(self.effets)}"
 
 
 class Joueur:
 	"""
-	Classe représentant un joueur.
+	Classe representant un joueur.
 	"""
 
 	def __init__(self, nom):
@@ -137,63 +146,88 @@ class Joueur:
 
 	def coutsManquant(self, carte: Carte):
 		"""
-		Renvoie une liste des ressourcesManquantes (monnaie ou matière première/ produit manufacturé) que le joueur
-		ne possède pas pour construire une carte.
+		Renvoie une liste des ressourcesManquantes (monnaie ou matiere premiere/ produit manufacture)
+		que le joueur ne possede pas pour construire une carte.
 
-		:param carte: carte à construire.
+		:param carte: carte a construire.
 		:return: une liste avec les ressourcesManquantes manquantes.
 		"""
-		# Coût ou Effet
+
+		logger.debug(f"[{self.nom}] coutsManquant avec la carte [{carte}]")
+
+		# Cout ou Effet
 		# "monnaie prix"
 		# "ressource type quantite"
 		listeCoutsManquant = carte.couts.copy()
 		for coutManquant in carte.couts:
+
+			# decoupage couts de la carte
 			coutManquantSplit = coutManquant.split(" ")
 
-			# coût monnetaire
+			# cout monnetaire
 			if coutManquantSplit[0] == "monnaie":
+
 				if self.monnaie < int(coutManquantSplit[1]):
-					# changement du coût avec le coût manquant
+					# changement du cout avec le cout manquant
 					prixManquant = str(int(coutManquantSplit[1]) - self.monnaie)
 					nouvMonnaie = "monnaie " + prixManquant
 					listeCoutsManquant[listeCoutsManquant.index(coutManquant)] = nouvMonnaie
-				else:
-					# ce n'est pas un coût manquant
-					listeCoutsManquant.remove(coutManquant)
 
-			# coût ressource
+					logger.debug(f"\t[{self.nom}] manque {nouvMonnaie}")
+
+				else:
+					# ce n'est pas un cout manquant
+					listeCoutsManquant.remove(coutManquant)
+					logger.debug(f"\t[{self.nom}] possede argent necessaire")
+
+			# cout ressource
 			else:
 				for maCarte in self.cartes:
 					for effet in maCarte.effets:
+
+						# decoupage effets
 						effetSplit = effet.split(" ")
+
 						# si c'est la même ressource
 						if coutManquantSplit[1] == effetSplit[1]:
+
 							if int(effetSplit[2]) < int(coutManquantSplit[2]):
-								# changement du coût avec le coût manquant
+								# changement du cout avec le cout manquant
 								quantiteManquante = str(int(coutManquantSplit[2]) - int(effetSplit[2]))
 								nouvEffet = effetSplit[0] + " " + effetSplit[1] + " " + quantiteManquante
 								listeCoutsManquant[listeCoutsManquant.index(coutManquant)] = nouvEffet
+
+								logger.debug(f"\t[{self.nom}] manque {nouvEffet}")
+
 							else:
-								# ce n'est pas un coût manquant
+								# ce n'est pas un cout manquant
 								listeCoutsManquant.remove(coutManquant)
+								logger.debug(f"\t[{self.nom}] possede {coutManquantSplit[1]}")
 
 		return listeCoutsManquant
 
 	def possedeCarteChainage(self, carte: Carte):
 		"""
-		Indique si le joueur possède la carte de chainage de la carte en paramètre.
+		Indique si le joueur possede la carte de chainage de la carte en parametre.
 
 		:param carte: la carte dont on cherche la carte de chainage.
-		:return: vrai/ faux
+		:return: vrai/ faux.
 		"""
-		# si la carte ne possède pas de carte de chainage
+
+		logger.debug(f"[{self.nom}] possedeCarteChainage avec la carte \'{carte}\'")
+
+		# si la carte ne possede pas de carte de chainage
 		if carte.carteChainage is None:
+			logger.debug(f"\t[{self.nom}] la carte n a pas de carte de chainage")
 			return False
 
 		#
 		for maCarte in self.cartes:
 			if maCarte.nom == carte.carteChainage:
+				logger.debug(f"\t[{self.nom}] possede la carte chainage")
 				return True
+
+		logger.debug(f"\t[{self.nom}] ne possede pas carte chainage")
 		return False
 
 	def productionTypeRessources(self, ressource: str):
@@ -203,82 +237,111 @@ class Joueur:
 		:param ressource: la ressource dont on veut la carte.
 		:return: une carte si elle existe, None sinon.
 		"""
+
+		logger.debug(f"[{self.nom}] productionTypeRessources avec la ressource \'{ressource}\'")
+
 		ressourceSplit = ressource.split(" ")
 		for carte in self.cartes:
 			for effet in carte.effets:
 				effetSplit = effet.split(" ")
+
 				# ressource type quantite
 				if effetSplit[0] == "ressource" and effetSplit[1] == ressourceSplit[1]:
+
+					logger.debug(f"\t[{self.nom}] possede une carte qui produit la ressource")
 					return carte
+
+		logger.debug(f"\t[{self.nom}] ne possede pas de carte qui produit la ressource")
 		return None
 
 	def possedeReduction(self, ressource: str):
 		"""
-		Renvoie le prix de la réduction de la ressource.
+		Renvoie le prix de la reduction de la ressource.
 
-		:param ressource: la ressource dont on cherche la réduction.
-		:return: le prix réduit si le joueur possède une carte réduction de la ressource, 0 sinon.
+		:param ressource: la ressource dont on cherche la reduction.
+		:return: le prix reduit si le joueur possede une carte reduction de la ressource, 0 sinon.
 		"""
+
+		logger.debug(f"[{self.nom}] possedeReduction avec la ressource \'{ressource}\'")
+
 		for carte in self.cartes:
 			for effet in carte.effets:
 				effetSplit = effet.split(" ")
+
+				# reduc_ressource type prixReduc
 				if effetSplit[0] == "reduc_ressource" and effetSplit[1] == ressource:
+
+					logger.debug(f"\t[{self.nom}] possede une carte donnant une reduction")
 					return int(effetSplit[2])
+
+		logger.debug(f"\t[{self.nom}] ne possede pas de carte donnant une reduction")
 		return 0
 
 	def cartesCouleur(self, couleur: str) -> list:
+		"""
+		Renvoie une liste de carte de la même couleur que celle en parametre.
+
+		:param couleur: la couleur a rechercher.
+		:return: une liste de carte.
+		"""
+
+		logger.debug(f"[{self.nom}] cartesCouleur avec la couleur \'{couleur}\'")
+
 		listeCartesCouleur = []
 		for carte in self.cartes:
 			if carte.couleur == couleur:
+
+				logger.debug(f"\t[{self.nom}] la carte \'{carte.nom}\' est de la même couleur")
 				listeCartesCouleur.append(carte)
+
 		return listeCartesCouleur
-
-
-def strListeElement(liste: list):
-	"""
-	Retourne une chaine pour afficher le contenu d'une liste d'éléments (carte, merveille).
-
-	:param liste: a liste d'éléments à afficher.
-	:return: La concaténation de tous les éléments de la liste.
-	"""
-	strListe = ""
-	for elem in liste:
-		strListe += str(elem) + "\n"
-	return strListe
 
 
 def trouverElmentAvecNom(nom: str, liste: list):
 	"""
-	Trouver un élément (carte, merveille) avec son nom dans une liste.
+	Trouver un element (carte, merveille) avec son nom dans une liste.
 
-	:param nom: nom de l'élément à chercher.
-	:param liste: liste des objets où chercher l'élément.
-	:return: l'élément si trouvée, None sinon.
+	:param nom: nom de l element a chercher.
+	:param liste: liste des objets ou chercher l element.
+	:return: l element si trouvee, None sinon.
 	"""
+
+	logger.debug(f"trouverElmentAvecNom avec le nom \'{nom}\' dans la liste : \n {afficher(liste)}")
+
 	for element in liste:
 		if element.nom == nom:
+
+			logger.debug(f"\t\'{nom}\' est dans la liste")
 			return element
+
+	logger.debug(f"\t\'{nom}\' n'est pas dans la liste")
 	return None
 
 
 def demanderElementDansUneListe(joueur: Joueur, typeElement: str, listeElement: list):
 	"""
-	Renvoie l'élément contenu dans listeElement correspondant au nom renseigné par le joueur.
+	Renvoie l element contenu dans listeElement correspondant au nom renseigne par le joueur.
 
-	:param joueur: le joueur à qui on demande l'élément.
-	:param typeElement: le type d'élément de que l'on cherche (uniquement pour l'affichage) (carte, merveille, ..).
-	:param listeElement: la liste où l'on cherche l'élément.
-	:return: l'élément choisi.
+	:param joueur: le joueur a qui on demande l element.
+	:param typeElement: le type d element de que l on cherche (uniquement pour l'affichage) (carte, merveille, ..).
+	:param listeElement: la liste ou l on cherche l element.
+	:return: l element choisi.
 	"""
+
+	logger.debug(f"[{joueur.nom}] demanderElementDansUneListe choisit \'{typeElement}\' "
+	             f"dans la liste : \n {afficher(listeElement)}")
+
 	while True:
-		print(f"\n * liste choix possibles *\n{strListeElement(listeElement)}")
-		typeElement = input(f"[{joueur.nom}] Choix {typeElement} ?\n > ")
-		elementChoisi = trouverElmentAvecNom(typeElement, listeElement)
+		print(f"* liste choix possibles *\n{afficher(listeElement)}")
+		nomElement = input(f"[{joueur.nom}] Choix {typeElement} ?\n > ")
+		elementChoisi = trouverElmentAvecNom(nomElement, listeElement)
 		if elementChoisi is None:
-			print("Choix incorrect")
+			print(f" * ERREUR * Aucun element ne repond au nom \'{nomElement}\', veuillez recommencer * ERREUR * ")
 			continue
 		else:
 			break
+
+	logger.debug(f"[{joueur.nom}] a choisit \'{elementChoisi.nom}\'")
 	return elementChoisi
 
 
@@ -286,12 +349,12 @@ def selectionMerveille(nbrRepetition: int, joueur: Joueur, listeMerveillesAlea: 
 	"""
 	Selection d'un ou des merveilles pour le joueur parmis une liste de merveille.
 
-	:param nbrRepetition: nombre de merveille à choisir.
+	:param nbrRepetition: nombre de merveille a choisir.
 	:param joueur: joueur qui choisi.
-	:param listeMerveillesAlea: une liste de merveille où choisir la/les merveille(s).
+	:param listeMerveillesAlea: une liste de merveille ou choisir la/les merveille(s).
 	"""
 	if len(listeMerveillesAlea) == 1:
-		print(f"\nAttribution de la dernière merveille ({listeMerveillesAlea[0].nom})"
+		print(f"\nAttribution de la derniere merveille ({listeMerveillesAlea[0].nom})"
 		      f" au [{joueur.nom}]")
 		joueur.merveilles.append(listeMerveillesAlea[0])
 		listeMerveillesAlea.remove(listeMerveillesAlea[0])
@@ -303,6 +366,12 @@ def selectionMerveille(nbrRepetition: int, joueur: Joueur, listeMerveillesAlea: 
 
 
 def afficher(liste: list) -> str:
+	"""
+	Affiche une liste de Carte, Merveille, ...
+
+	:param liste: la liste a afficher.
+	:return: return l'affichage de la liste.
+	"""
 	if liste is None:
 		return "None"
 	if len(liste) == 0:
@@ -310,7 +379,7 @@ def afficher(liste: list) -> str:
 
 	affichage = ""
 	for elem in liste:
-		affichage += str(elem)
+		affichage += str(elem) + "\n"
 	return affichage
 
 
@@ -324,7 +393,7 @@ class Jeu:
 		Constructeur de la classe jeu.
 
 		:param joueur1: premier joueur.
-		:param joueur2: deuxième joueur.
+		:param joueur2: deuxieme joueur.
 		:param choixAutoMerveilles: boolean indiquant si le choix des merveilles est automatique ou non.
 		"""
 		self.joueur1 = joueur1
@@ -341,23 +410,23 @@ class Jeu:
 		# -9: victoire militaire joueur1
 		self.positionJetonMilitaire = 0
 
-		# liste des jetons progrès, constructeur : JetonProgres(nom, effets)
+		# liste des jetons progres, constructeur : JetonProgres(nom, effets)
 		self.jetonsProgres = [
 			JetonProgres("agriculture", None, ["monnaie 6", "point_victoire 4"]),
 			JetonProgres("architecture", None, "reduc_merveille"),
-			JetonProgres("économie", None, "gain monnaie adversaire"),
+			JetonProgres("economie", None, "gain_monnaie_adversaire"),
 			JetonProgres("loi", None, "symbole_scientifique"),
-			JetonProgres("maçonnerie", None, "reduc_carte bleu"),
+			JetonProgres("maconnerie", None, "reduc_carte bleu"),
 			JetonProgres("philosophie", None, "point_victoire_fin_partie 7"),
-			JetonProgres("mathématiques", None, ["point_victoire_par_jeton 3", "point_victoire 3"]),
-			JetonProgres("stratégie", None, "bonus attaque"),
-			JetonProgres("théologie", None, "bonus rejouer"),
+			JetonProgres("mathematiques", None, ["point_victoire_par_jeton 3", "point_victoire 3"]),
+			JetonProgres("strategie", None, "bonus_attaque"),
+			JetonProgres("theologie", None, "rejouer"),
 			JetonProgres("urbanisme", None, ["monnaie 6", "bonus_monnaie_chainage 4"]),
 		]
-		# jeton choisi et placé sur le plateau
+		# jeton choisi et place sur le plateau
 		self.jetonsProgresPlateau = []
 
-		# pour stocker les cartes défaussées
+		# pour stocker les cartes defaussees
 		self.fausseCarte = []
 
 		# listes des cartes, constructeur : Carte(nom, cheminImg, effets, couts, carteChainage, couleur, age)
@@ -375,15 +444,15 @@ class Jeu:
 			      None, "vert", age=1),
 			Carte("apothicaire", None, ["symbole_scientifique roue", "point_victoire 1"], ["ressource verre 1"],
 			      None, "vert", age=1),
-			Carte("dépot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
-			Carte("dépot d'argile", None, ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
-			Carte("dépot de bois", None, ["reduc_ressource bois 1"], ["monnaie 3"], None, "jaune", age=1),
-			Carte("écuries", None, ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
+			Carte("depot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
+			Carte("depot d argile", None, ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
+			Carte("depot de bois", None, ["reduc_ressource bois 1"], ["monnaie 3"], None, "jaune", age=1),
+			Carte("ecuries", None, ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
 			Carte("caserne", None, ["attaquer 1"], ["ressource argile 1"], None, "rouge", age=1),
 			Carte("palissade", None, ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
 			Carte("scriptorium", None, ["symbole_scientifique plume"], ["monnaie 2"], None, "vert", age=1),
 			Carte("officine", None, ["symbole_scientifique pilon"], ["monnaie 2"], None, "vert", age=1),
-			Carte("théatre", None, ["point_victoire 3"], None, None, "blue", age=1),
+			Carte("theatre", None, ["point_victoire 3"], None, None, "blue", age=1),
 			Carte("autel", None, ["point_victoire 3"], None, None, "blue", age=1),
 			Carte("bains", None, ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
 			Carte("taverne", None, ["monnaie 4"], None, None, "jaune", age=1)
@@ -391,34 +460,34 @@ class Jeu:
 		self.cartesAgeII = [  # initialisation cartes age II
 			Carte("scierie", None, ["ressource bois 2"], ["monnaie 2"], None, "marron", age=2),
 			Carte("briqueterie", None, ["ressource argile 2"], ["monnaie 2"], None, "marron", age=2),
-			Carte("carrière", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2),
+			Carte("carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2),
 			Carte("soufflerie", None, ["ressource verre 1"], None, None, "gris", age=2),
-			Carte("séchoir", None, ["ressource papyrus 1"], None, None, "gris", age=2),
+			Carte("sechoir", None, ["ressource papyrus 1"], None, None, "gris", age=2),
 			Carte("muraille", None, ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2),
 			Carte("forum", None, ["ressource_au_choix verre papyrus"], ["monnaie 3", "ressource argile 1"],
 			      None, "jaune", age=2),
-			Carte("caravansérail", None, ["ressource_au_choix bois argile pierre"],
+			Carte("caravanserail", None, ["ressource_au_choix bois argile pierre"],
 			      ["monnaie 2", "ressource verre 1", "ressource papyrus 1"], None, "jaune", age=2),
 			Carte("douanes", None, ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
 			      None, "jaune", age=2),
 			Carte("tribunal", None, ["point_victoire 5"], ["ressource bois 2", "ressource verre 1"], None,
 			      "bleu", age=2),
-			Carte("haras", None, ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "écuries", "rouge", age=2),
+			Carte("haras", None, ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2),
 			Carte("baraquements", None, ["attaquer 1"], ["monnaie 3"], "caserne", "rouge", age=2),
 			Carte("champ de tir", None, ["attaquer 2"],
 			      ["ressource pierre 1", "ressource bois 1", "ressource papyrus 1"],
 			      None, "rouge", age=2),
 			Carte("place d'armes", None, ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
 			      age=2),
-			Carte("bibliothèque", None, ["symbole_scientifique plume", "point_victoire 2"],
+			Carte("bibliotheque", None, ["symbole_scientifique plume", "point_victoire 2"],
 			      ["ressource pierre 1", "ressource bois 1", "ressource verre 1"], "scriptorium", "vert", age=2),
 			Carte("dispensaire", None, ["symbole_scientifique pilon", "point_victoire 2"],
 			      ["ressource argile 2", "ressource verre 1"], "officine", "vert", age=2),
-			Carte("école", None, ["symbole_scientifique roue", "point_victoire 1"],
+			Carte("ecole", None, ["symbole_scientifique roue", "point_victoire 1"],
 			      ["ressource papyrus 2", "ressource bois 1"], None, "vert", age=2),
 			Carte("laboratoire", None, ["symbole_scientifique pendule", "point_victoire 1"],
 			      ["ressource verre 2", "ressource bois 1"], None, "vert", age=2),
-			Carte("statue", None, ["point_victoire 4"], ["ressource argile 2"], "théatre", "bleu", age=2),
+			Carte("statue", None, ["point_victoire 4"], ["ressource argile 2"], "theatre", "bleu", age=2),
 			Carte("temple", None, ["point_victoire 4"], ["ressource papyrus 1", "ressource bois 1"], "autel",
 			      "bleu", age=2),
 			Carte("aqueduc", None, ["point_victoire 5"], ["ressource pierre 3"], "bains", "bleu", age=2),
@@ -428,10 +497,10 @@ class Jeu:
 		]
 		self.cartesAgeIII = [  # initialisation cartes age III
 			Carte("arsenal", None, ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3),
-			Carte("prétoire", None, ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
-			Carte("académie", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
+			Carte("pretoire", None, ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
+			Carte("academie", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
 			      ["ressource pierre 1", "ressource bois 1", "ressource verre 2"], None, "vert", age=3),
-			Carte("étude", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
+			Carte("etude", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
 			      ["ressource papyrus 1", "ressource bois 2", "ressource verre 1"], None, "vert", age=3),
 			Carte("chambre de commerce", None, ["monnaie_par_carte grise 3", "point_victoire 3"],
 			      ["ressource papyrus 2"], None, "jaune", age=3),
@@ -444,30 +513,30 @@ class Jeu:
 			      None, "bleu", age=3),
 			Carte("hôtel de ville", None, ["point_victoire 7"], ["ressource pierre 3", "ressource bois 2"],
 			      None, "bleu", age=3),
-			Carte("obélisque", None, ["point_victoire 5"], ["ressource pierre 2", "ressource verre 1"],
+			Carte("obelisque", None, ["point_victoire 5"], ["ressource pierre 2", "ressource verre 1"],
 			      None, "bleu", age=3),
 			Carte("fortification", None, ["attaquer 2"],
 			      ["ressource pierre 2", "ressource argile 1", "ressource papyrus 1"],
 			      "palissade", "rouge", age=3),
-			Carte("atelier de siège", None, ["attaquer 2"], ["ressource bois 3", "ressource verre 1"],
+			Carte("atelier de siege", None, ["attaquer 2"], ["ressource bois 3", "ressource verre 1"],
 			      "champ de tir", "rouge", age=3),
 			Carte("cirque", None, ["attaquer 2"], ["ressource argile 2", "ressource pierre 2"],
 			      "place d'arme", "rouge", age=3),
-			Carte("université", None, ["symbole_scientifique sphère_armillaire", "point_victoire 2"],
-			      ["ressource argile 1", "ressource verre 1", "ressource papyrus 1"], "école", "vert", age=3),
-			Carte("observatoire", None, ["symbole_scientifique sphère_armillaire", "point_victoire 2"],
+			Carte("universite", None, ["symbole_scientifique sphere_armillaire", "point_victoire 2"],
+			      ["ressource argile 1", "ressource verre 1", "ressource papyrus 1"], "ecole", "vert", age=3),
+			Carte("observatoire", None, ["symbole_scientifique sphere_armillaire", "point_victoire 2"],
 			      ["ressource pierre 1", "ressource papyrus 2"], "laboratoire", "vert", age=3),
 			Carte("jardin", None, ["point_victoire 6"], ["ressource argile 2", "ressource bois 2"], "statue",
 			      "bleu", age=3),
-			Carte("panthéon", None, ["point_victoire 6"],
+			Carte("pantheon", None, ["point_victoire 6"],
 			      ["ressource argile 1", "ressource bois 1", "ressource papyrus 2"],
 			      "temple", "bleu", age=3),
-			Carte("sénat", None, ["point_victoire 5"],
+			Carte("senat", None, ["point_victoire 5"],
 			      ["ressource argile 2", "ressource pierre 1", "ressource papyrus 2"],
 			      "rostres", "bleu", age=3),
 			Carte("phare", None, ["monnaie_par_carte jaune 1", "point_victoire 3"],
 			      ["ressource argile 2", "ressource verre 1"], "taverne", "jaune", age=3),
-			Carte("arène", None, ["monnaie_par_merveille 2", "point_victoire 3"],
+			Carte("arene", None, ["monnaie_par_merveille 2", "point_victoire 3"],
 			      ["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3),
 		]
 
@@ -485,11 +554,11 @@ class Jeu:
 			          ["ressource_au_choix bois argile pierre", "point_victoire 4"]),
 			Merveille("jardin suspendus", None, ["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"],
 			          ["monnaie 6", "rejouer", "point_victoire 3"]),
-			Merveille("grande bibliothèque", None, ["ressource bois 3", "ressource verre 1", "ressource papyrus 1"],
-			          ["jeton_progrès_aléatoire", "point_victoire 4"]),
-			Merveille("mausolée", None, ["ressource argile 2", "ressource verre 2", "ressource papyrus 1"],
+			Merveille("grande bibliotheque", None, ["ressource bois 3", "ressource verre 1", "ressource papyrus 1"],
+			          ["jeton_progres_aleatoire", "point_victoire 4"]),
+			Merveille("mausolee", None, ["ressource argile 2", "ressource verre 2", "ressource papyrus 1"],
 			          ["construction_fausse_gratuite", "point_victoire 2"]),
-			Merveille("pirée", None, ["ressource bois 2", "ressource pierre 1", "ressource argile 1"],
+			Merveille("piree", None, ["ressource bois 2", "ressource pierre 1", "ressource argile 1"],
 			          ["ressource_au_choix papyrus verre", "rejouer", "point_victoire 2"]),
 			Merveille("pyramides", None, ["ressource pierre 3", "ressource papyrus 1"],
 			          "point_victoire 9"),
@@ -498,7 +567,7 @@ class Jeu:
 			Merveille("statue de zeus", None, ["ressource pierre 1", "ressource bois 1", "ressource argile 1",
 			                                   "ressource papyrus 2"],
 			          ["defausse_carte_adversaire marron", "attaquer 1", "point_victoire 3"]),
-			Merveille("temple d'artémis", None, ["ressource bois 1", "ressource pierre 1", "ressource verre 1",
+			Merveille("temple d'artemis", None, ["ressource bois 1", "ressource pierre 1", "ressource verre 1",
 			                                     "ressource papyrus 1"],
 			          ["monnaie 12", "rejouer"]),
 			Merveille("via appia", None, ["ressource pierre 2", "ressource argile 2", "ressource papyrus 1"],
@@ -509,6 +578,7 @@ class Jeu:
 		"""
 		Prepare le plateau, les cartes, les jetons, la monnaie des joueurs, les merveilles des joueurs.
 		"""
+		logger.debug("preparationPlateau")
 		self.preparationCartes()
 		self.preparationJetonsProgres()
 		self.preparationArgent()
@@ -516,10 +586,12 @@ class Jeu:
 
 	def preparationCartes(self) -> None:
 		"""
-		Prepare les cartes, sort aléatoirement des cartes et le place selon une structure précise.
+		Prepare les cartes, sort aleatoirement des cartes et le place selon une structure precise.
 		"""
-		# préparation de la structure des cartes en fonction de l'age.
+		logger.debug("preparationCartes")
+		# preparation de la structure des cartes en fonction de l age.
 		if self.age == 1:
+			logger.debug(f"\tpreparationCartes age {self.age}")
 			self.cartesPlateau = [
 				[0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
 				[0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
@@ -529,6 +601,7 @@ class Jeu:
 			]
 			listeCarte = self.cartesAgeI
 		elif self.age == 2:
+			logger.debug(f"\tpreparationCartes age {self.age}")
 			self.cartesPlateau = [
 				[1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
 				[0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
@@ -538,6 +611,7 @@ class Jeu:
 			]
 			listeCarte = self.cartesAgeII
 		else:  # Age 3
+			logger.debug(f"\tpreparationCartes age {self.age}")
 			self.cartesPlateau = [
 				[0, 0, 1, 0, 1, 0, 0],
 				[0, 1, 0, 1, 0, 1, 0],
@@ -549,22 +623,24 @@ class Jeu:
 			]
 			listeCarte = self.cartesAgeIII
 
-		# remplissage de la structure avec des cartes aléatoires.
+		# remplissage de la structure avec des cartes aleatoires.
 		for ligne in range(len(self.cartesPlateau)):
 			for colonne in range(len(self.cartesPlateau[ligne])):
 				if self.cartesPlateau[ligne][colonne] == 1:
 					carte = random.choice(listeCarte)
-					# suppresion carte choisie pour ne pas la choisir à nouveau
+					# suppresion carte choisie pour ne pas la choisir a nouveau
 					listeCarte.remove(carte)
-					# une ligne sur deux la carte sont face cachée, par défaut une carte n'est pas face cachée
+					# une ligne sur deux la carte sont face cachee, par defaut une carte
+					# n est pas face cachee
 					if ligne % 2 != 0:
 						carte.cacher()
 					self.cartesPlateau[ligne][colonne] = carte
 
 	def preparationJetonsProgres(self) -> None:
 		"""
-		Prépare les 5 jetons progrès aléatoire du plateau.
+		Prepare les 5 jetons progres aleatoire du plateau.
 		"""
+		logger.debug("preparationJetonsProgres")
 		for _ in range(5):
 			jetonRandom = random.choice(self.jetonsProgres)
 			self.jetonsProgres.remove(jetonRandom)
@@ -572,56 +648,60 @@ class Jeu:
 
 	def preparationArgent(self) -> None:
 		"""
-		Prépare les monnaies des deux joueurs.
+		Prepare les monnaies des deux joueurs.
 		"""
+		logger.debug("preparationArgent")
 		self.joueur1.monnaie = self.joueur2.monnaie = 7
 
 	def preparationMerveilles(self) -> None:
 		"""
-		Prépare les merveilles.
-		Sort aléatoirement 4 merveiles, le joueur1 en choisie 1, puis le joueur2 en choisie 2,
-		enfin le joueur1 prend la dernière.
-		Sort aléatoirement 4 merveiles, le joueur2 en choisie 1, puis le joueur1 en choisie 2,
-		enfin le joueur2 prend la dernière.
+		Prepare les merveilles.
+		Sort aleatoirement 4 merveiles, le joueur1 en choisie 1, puis le joueur2 en choisie 2,
+		enfin le joueur1 prend la derniere.
+		Sort aleatoirement 4 merveiles, le joueur2 en choisie 1, puis le joueur1 en choisie 2,
+		enfin le joueur2 prend la derniere.
 		"""
+		logger.debug("preparationMerveilles")
 		if not self.choixAutoMerveilles:
-			print("\n * Première selection de merveille aléatoire * \n")
-			# choix aléatoire des 4 premières merveilles
+			logger.debug("\tchoix non automatique")
+			print("\n * Premiere selection de merveille aleatoire * \n")
+			# choix aleatoire des 4 premieres merveilles
 			listeMerveillesAlea = []
 			for _ in range(4):
 				listeMerveillesAlea.append(random.choice(self.merveilles))
 
-			# les joueurs choississent leurs 4 premières merveilles
+			# les joueurs choississent leurs 4 premieres merveilles
 			selectionMerveille(1, self.joueur1, listeMerveillesAlea)
 			selectionMerveille(2, self.joueur2, listeMerveillesAlea)
 			selectionMerveille(1, self.joueur1, listeMerveillesAlea)
 
-			print("\n * Deuxième selection de merveille aléatoire * \n")
-			# choix aléatoire des 4 dernières merveilles
+			print("\n * Deuxieme selection de merveille aleatoire * \n")
+			# choix aleatoire des 4 dernieres merveilles
 			for _ in range(4):
 				listeMerveillesAlea.append(random.choice(self.merveilles))
 
-			# les joueurs choississent leurs 4 dernières merveilles
+			# les joueurs choississent leurs 4 dernieres merveilles
 			selectionMerveille(1, self.joueur2, listeMerveillesAlea)
 			selectionMerveille(2, self.joueur1, listeMerveillesAlea)
 			selectionMerveille(1, self.joueur2, listeMerveillesAlea)
 
-		else:  # choix automatique des merveilles (d'après les régles)
+		else:  # choix automatique des merveilles (d'apres les regles)
+			logger.debug("\tchoix automatique")
 			self.joueur1.merveilles.append(trouverElmentAvecNom("pyramides", self.merveilles))
 			self.joueur1.merveilles.append(trouverElmentAvecNom("grand phare", self.merveilles))
-			self.joueur1.merveilles.append(trouverElmentAvecNom("temple d'artémis", self.merveilles))
+			self.joueur1.merveilles.append(trouverElmentAvecNom("temple d artemis", self.merveilles))
 			self.joueur1.merveilles.append(trouverElmentAvecNom("statue de zeus", self.merveilles))
 
 			self.joueur2.merveilles.append(trouverElmentAvecNom("circus maximus", self.merveilles))
-			self.joueur2.merveilles.append(trouverElmentAvecNom("pirée", self.merveilles))
+			self.joueur2.merveilles.append(trouverElmentAvecNom("piree", self.merveilles))
 			self.joueur2.merveilles.append(trouverElmentAvecNom("via appia", self.merveilles))
 			self.joueur2.merveilles.append(trouverElmentAvecNom("colosse", self.merveilles))
 
 	def enleverCarte(self, carte: Carte) -> None:
 		"""
-		Enlève une carte du plateau.
+		Enleve une carte du plateau.
 
-		:param carte: la carte à enlever.
+		:param carte: la carte a enlever.
 		"""
 		for ligne in range(len(self.cartesPlateau)):
 			for colonne in range(len(self.cartesPlateau[ligne])):
@@ -632,7 +712,7 @@ class Jeu:
 
 	def obtenirAdversaire(self):
 		"""
-		Renvoie le joueur adverse, le joueur qui n'est pas stocké dans l'attribut quiJoue.
+		Renvoie le joueur adverse, le joueur qui n'est pas stocke dans l attribut quiJoue.
 
 		:return: joueur adverse
 		"""
@@ -643,7 +723,7 @@ class Jeu:
 
 	def demanderActionCarte(self, carte: Carte):
 		"""
-		Demande à l'utilisateur l'action qu'il souhaite faire avec la carte (défausser, ou piocher).
+		Demande a l'utilisateur l action qu'il souhaite faire avec la carte (defausser, ou piocher).
 
 		:param carte: la carte choisie par le joueur.
 		"""
@@ -657,7 +737,7 @@ class Jeu:
 				self.fausseCarte.append(carte)
 				self.quiJoue.monnaie = self.quiJoue.monnaie + 2
 
-				# gain de une pièce par carte jaune
+				# gain de une piece par carte jaune
 				for carteJoueur in self.quiJoue.cartes:
 					if carteJoueur.couleur == "jaune":
 						self.quiJoue.monnaie += 1
@@ -675,10 +755,10 @@ class Jeu:
 						# fin action carte
 						break
 
-					# vérification ressources joueur
+					# verification ressources joueur
 					listeRessourceNecessaire = self.quiJoue.coutsManquant(carte)
 
-					# le joueur possède toutes les ressouces
+					# le joueur possede toutes les ressouces
 					if len(listeRessourceNecessaire) == 0:
 
 						# on retire uniquement la monnaie
@@ -699,14 +779,14 @@ class Jeu:
 							# manque monnaie
 							if ressourceManquanteSplit[0] == "monnaie":
 								print("Vous n'avez pas assez de monnaie pour construire la carte. "
-								      "Vous devez défausser la carte")
+								      "Vous devez defausser la carte")
 								continue
 
 						# manque des ressources autre que monnaie
 						prix = self.acheterRessource(listeRessourceNecessaire)
 						if prix > self.quiJoue.monnaie:
 							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
-							      "Vous devez défausser la carte")
+							      "Vous devez defausser la carte")
 							continue
 						else:
 							self.quiJoue.monnaie -= prix
@@ -727,7 +807,7 @@ class Jeu:
 
 	def demanderActionMerveille(self):
 		"""
-		Demande à l'utilisateur si il souhaite construire une merveille.
+		Demande a l'utilisateur si il souhaite construire une merveille.
 		"""
 
 		strAction = f"[{self.quiJoue.nom}] construire une merveille (oui/non) ?\n > "
@@ -751,7 +831,7 @@ class Jeu:
 
 		prixCommerce = 0
 
-		# Vérification si le joueur adverse produit les ressources manquantes
+		# Verification si le joueur adverse produit les ressources manquantes
 		adversaire = self.obtenirAdversaire()
 		carteListeRessourceAdversaire = []
 		for ressourceManquante in ressourcesManquantes:
@@ -784,7 +864,7 @@ class Jeu:
 				# si le joueur adversaire produit la ressource
 				ressourceTrouve = False
 
-				# parmis les cartes produisant la ressouce que j'achète
+				# parmis les cartes produisant la ressouce que j'achete
 				for carteRessourceAdversaire in carteListeRessourceAdversaire:
 
 					# parmis les effets de cette carte
@@ -795,7 +875,7 @@ class Jeu:
 						if ressourceManquanteSplit[1] == ressourceAdversaireSplit[1]:
 							ressourceTrouve = True
 
-							# ai je une réduction sur cette ressource ?
+							# ai je une reduction sur cette ressource ?
 							prixReduc = self.quiJoue.possedeReduction(ressourceManquanteSplit[1])
 							if prixReduc != 0:
 								# (prixReduc * quantite_ressource_necessaire pour le joueur)
@@ -835,7 +915,7 @@ class Jeu:
 
 	def cartePrenable(self, ligne: int, colonne: int) -> bool:
 		"""
-		Indique si une carte est prenable ou non. C'est à dire qu'aucune autre carte n'est posée par dessus.
+		Indique si une carte est prenable ou non. C'est a dire qu'aucune autre carte n'est posee par dessus.
 
 		:param ligne: ligne de la carte
 		:param colonne: colonne de la carte.
@@ -867,7 +947,13 @@ class Jeu:
 
 		return cartesPrenable
 
-	def defausserCarteAdversaire(self, couleur: str):
+	def defausserCarteAdversaire(self, couleur: str) -> None:
+		"""
+		Retire une carte de couleur de l'adversaire pour l'ajouter dans la liste des cartes faussees.
+
+		:param couleur: la couleur de la carte a defausser.
+		"""
+
 		adversaire = self.obtenirAdversaire()
 		while True:
 			print(f"\n * liste choix possibles *\n{afficher(adversaire.cartes)}")
@@ -882,34 +968,71 @@ class Jeu:
 		adversaire.cartes.remove(elementChoisi)
 		self.fausseCarte.append(elementChoisi)
 
-	def gainJetonProgresAleatoire(self):
+	def gainJetonProgresAleatoire(self) -> None:
+		"""
+		Le joueur gain 1 jeton parmis 3 jetons aleatoire non selectionnes au debut de la partie.
+		"""
+
+		# tirage aleatoire des 3 jetons
 		listeJetons = []
 		for _ in range(3):
 			jetonRandom = random.choice(self.jetonsProgres)
 			listeJetons.append(jetonRandom)
 			self.jetonsProgres.remove(jetonRandom)
 
-		jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jetons progrès", listeJetons)
+		# le joueur en choisit 1
+		jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jetons progres", listeJetons)
 		listeJetons.remove(jetonChoisi)
 
+		# les autres sont remis dans la boite
 		for jeton in listeJetons:
 			self.jetonsProgres.append(jeton)
 
-	def constructionCarteDefausser(self):
-		carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte défausser", self.fausseCarte)
+	def constructionCarteDefausser(self) -> None:
+		"""
+		Le joueur construit gratuitement une carte defaussee.
+		"""
+
+		carteChoisie = demanderElementDansUneListe(self.quiJoue, "carte defausser", self.fausseCarte)
 		self.quiJoue.cartes.append(carteChoisie)
 		self.appliquerEffetCarte(carteChoisie)
 
-	def demanderRessourceAuChoix(self, listeRessources: str):
+	def demanderRessourceAuChoix(self, listeRessources: list) -> str:
+		"""
+		Si une carte possede l'effet "ressource_au_choix" le joueur doit choisir quel ressource il souhaite produire.
+
+		:param listeRessources: la liste des ressources au choix.
+		:return: un nouvel effet, "ressource x 1", avec x la ressource choisit.
+		"""
+
 		ressource = "ressource "
-		listeRessourcesSplit = listeRessources.split(" ")
 		strDemande = f"[{self.quiJoue.nom}] Nom de la ressource choisie ?\n > "
-		print(f"\n * liste des ressourcesManquantes *\n", str(listeRessourcesSplit[1:]))
+		print(f"\n * liste des ressources *\n", listeRessources)
 		nomRessource = input(strDemande)
-		while nomRessource not in listeRessourcesSplit[1:]:
+		while nomRessource not in listeRessources:
 			print("Ressource inconnu, veuillez recommencer")
 			nomRessource = input(strDemande)
 		return ressource + nomRessource + " 1"
+
+	def gainSymboleScientifique(self, nomSymboleScientifique: str) -> bool:
+		for maCarte in self.quiJoue.cartes:
+			for effetMaCarte in maCarte.effets:
+				effetMaCarteSplit = effetMaCarte.split(" ")
+
+				# si possede une carte donnant le même symbole
+				if effetMaCarteSplit[0] == "symbole_scientifique" and effetMaCarteSplit[1] == nomSymboleScientifique:
+
+					# 2 symboles identiques => gain jeton
+					jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jeton", self.jetonsProgresPlateau)
+					self.quiJoue.jetons.append(jetonChoisi)
+
+					# Suppression du jeton du plateau
+					self.jetonsProgresPlateau.remove(jetonChoisi)
+
+					# suppression de l'effet gain symbole scientifique
+					maCarte.effets.remove(effetMaCarte)
+					return True
+		return False
 
 	def appliquerEffetCarte(self, carte: Carte):
 		for effet in carte.effets:
@@ -917,29 +1040,22 @@ class Jeu:
 			if effetSplit[0] == "attaquer":
 				self.positionJetonMilitaire += int(effetSplit[1])
 			elif effetSplit[0] == "symbole_scientifique":
-				for maCarte in self.quiJoue.cartes:
-					for effetMaCarte in maCarte.effets:
-						effetMaCarteSplit = effetMaCarte.split(" ")
-						# si on possède une carte donnant le même symbole
-						if effetMaCarteSplit[0] == "symbole_scientifique" and effetMaCarteSplit[1] == effetSplit[1]:
-							# 2 symboles identiques => gain jeton
-							jetonChoisi = demanderElementDansUneListe(self.quiJoue, "jeton",
-							                                          self.jetonsProgresPlateau)
-							self.quiJoue.jetons.append(jetonChoisi)
-							# Suppression du jeton du plateau
-							self.jetonsProgresPlateau.remove(jetonChoisi)
-							# suppression de l'effet gain symbole scientifique
-							carte.effets.remove(effet)
-							maCarte.effets.remove(effetMaCarte)
+				if self.gainSymboleScientifique(effetSplit[1]):
+					carte.effets.remove(effet)
 			elif effetSplit[0] == "point_victoire":
 				self.quiJoue.pointVictoire += int(effetSplit[1])
 			elif effetSplit[0] == "monnaie":
 				self.quiJoue.monnaie += int(effetSplit[1])
 			elif effetSplit[0] == "ressource_au_choix":
 				# remplace effet ressource au choix par un ressource classique
-				ressource = self.demanderRessourceAuChoix(effetSplit)
-				nouvEffet = [ressource]
-				carte.effets = nouvEffet
+				ressource = ""
+				# "ressource_au_choix x y"
+				if len(effetSplit) == 3:
+					ressource = self.demanderRessourceAuChoix([effetSplit[1], effetSplit[2]])
+				# "ressource_au_choix x y z"
+				elif len(effetSplit) == 4:
+					ressource = self.demanderRessourceAuChoix([effetSplit[1], effetSplit[2], effetSplit[3]])
+				carte.effets = [ressource]
 			elif effetSplit[0] == "monnaie_par_carte":
 				for maCarte in self.quiJoue.cartes:
 					if maCarte.couleur == effetSplit[1]:
@@ -954,10 +1070,10 @@ class Jeu:
 				if len(self.obtenirAdversaire().cartesCouleur(effetSplit[2])) != 0:
 					self.defausserCarteAdversaire(effetSplit[1])
 				else:
-					print("Le joueur adverse ne possède aucune carte de cette couleur.")
+					print("Le joueur adverse ne possede aucune carte de cette couleur.")
 			elif effetSplit[0] == "rejouer":
 				return "rejouer"
-			elif effetSplit[0] == "jeton_progrès_aléatoire":
+			elif effetSplit[0] == "jeton_progres_aleatoire":
 				self.gainJetonProgresAleatoire()
 			elif effetSplit[0] == "construction_fausse_gratuite":
 				self.constructionCarteDefausser()
