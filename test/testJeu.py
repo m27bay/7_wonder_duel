@@ -156,8 +156,8 @@ class TestJeu(unittest.TestCase):
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
 		carte = Carte("arène ", None, ["monnaie_par_merveille 2", "point_victoire 3"],
-		              ["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
-		              "brasserie", "jaune", age=3)
+						["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
+						"brasserie", "jaune", age=3)
 		self.jeu.cartes_plateau[4][0] = carte
 
 		self.j1.cartes.append(Carte("brasserie", None, ["monnaie 6"], None, "taverne", "jaune", age=2))
