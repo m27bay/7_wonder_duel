@@ -111,8 +111,10 @@ class TestJoeur(unittest.TestCase):
 				["ressource argile 3", "ressource verre 1"]
 			)
 		)
-		self.assertEqual(6, self.joueur.compter_point_victoire())
+		self.joueur.compter_point_victoire()
+		self.assertEqual(6, self.joueur.points_victoire)
 		self.joueur.merveilles.clear()
+		self.joueur.points_victoire = 0
 
 	def testCompterPointVictoireAvecLesJetons(self):
 		self.joueur.jetons.append(
@@ -121,8 +123,10 @@ class TestJoeur(unittest.TestCase):
 		self.joueur.jetons.append(
 			JetonProgres("mathematiques_custom", None, ["point_victoire 3"]),
 		)
-		self.assertEqual(7, self.joueur.compter_point_victoire())
-		self.joueur.merveilles.clear()
+		self.joueur.compter_point_victoire()
+		self.assertEqual(7, self.joueur.points_victoire)
+		self.joueur.jetons.clear()
+		self.joueur.points_victoire = 0
 
 	def testCompterPointVictoireAvecLesJetons2(self):
 		self.joueur.jetons.append(
@@ -131,8 +135,10 @@ class TestJoeur(unittest.TestCase):
 		self.joueur.jetons.append(
 			JetonProgres("mathematiques", None, ["point_victoire_par_jeton 3", "point_victoire 3"]),
 		)
-		self.assertEqual(13, self.joueur.compter_point_victoire())
-		self.joueur.merveilles.clear()
+		self.joueur.compter_point_victoire()
+		self.assertEqual(13, self.joueur.points_victoire)
+		self.joueur.jetons.clear()
+		self.joueur.points_victoire = 0
 
 
 if __name__ == '__main__':
