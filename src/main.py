@@ -79,13 +79,13 @@ class Carte(Generique):
 		:return: chaine avec les attributs de la classe.
 		"""
 		return f"nom : {self.nom}, " \
-		       f"image : {self.chemin_image}, " \
-		       f"effets : {str(self.effets)}, " \
-		       f"couts : {str(self.couts)}, " \
-		       f"cout chainage : {self.nom_carte_chainage}, " \
-		       f"couleur : {self.couleur}, " \
-		       f"age : {self.age}, " \
-		       f"face cachee : {self.est_face_cachee}"
+				f"image : {self.chemin_image}, " \
+				f"effets : {str(self.effets)}, " \
+				f"couts : {str(self.couts)}, " \
+				f"cout chainage : {self.nom_carte_chainage}, " \
+				f"couleur : {self.couleur}, " \
+				f"age : {self.age}, " \
+				f"face cachee : {self.est_face_cachee}"
 
 
 class Merveille(Carte):
@@ -127,8 +127,8 @@ class JetonProgres(Generique):
 		:return: chaine avec les attributs de la classe.
 		"""
 		return f"nom : {self.nom}, " \
-		       f"chemin_image : {self.chemin_image}, " \
-		       f"effets : {str(self.effets)}"
+				f"chemin_image : {self.chemin_image}, " \
+				f"effets : {str(self.effets)}"
 
 
 class JetonMilitaire(Generique):
@@ -379,7 +379,7 @@ def demander_element_dans_une_liste(joueur: Joueur, type_element: str, liste_ele
 	"""
 	
 	logger.debug(f"[{joueur.nom}] demander_element_dans_une_liste choisit \'{type_element}\' "
-	             f"dans la liste : \n {afficher(liste_element)}")
+		f"dans la liste : \n {afficher(liste_element)}")
 	
 	while True:
 		print(f"* liste choix possibles *\n{afficher(liste_element)}")
@@ -405,7 +405,7 @@ def selection_merveille(nbr_repetition: int, joueur: Joueur, liste_merveilles_al
 	"""
 	if len(liste_merveilles_alea) == 1:
 		print(f"\nAttribution de la derniere merveille ({liste_merveilles_alea[0].nom})"
-		      f" au [{joueur.nom}]")
+			f" au [{joueur.nom}]")
 		joueur.merveilles.append(liste_merveilles_alea[0])
 		liste_merveilles_alea.remove(liste_merveilles_alea[0])
 	else:
@@ -861,14 +861,14 @@ class Jeu:
 							# manque monnaie
 							if ressource_manquante_split[0] == "monnaie":
 								print("Vous n'avez pas assez de monnaie pour construire la carte. "
-								      "Vous devez defausser la carte")
+									"Vous devez defausser la carte")
 								continue
 						
 						# manque des ressources autre que monnaie
 						prix = self.acheter_ressources(liste_ressource_necessaire)
 						if prix > self.joueur_qui_joue.monnaie:
 							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
-							      "Vous devez defausser la carte")
+								"Vous devez defausser la carte")
 							continue
 						else:
 							self.joueur_qui_joue.monnaie -= prix
@@ -1014,7 +1014,7 @@ class Jeu:
 				return self.cartes_plateau[ligne + 1][colonne - 1] == 0
 		else:
 			return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) \
-			       and (self.cartes_plateau[ligne + 1][colonne + 1] == 0)
+				and (self.cartes_plateau[ligne + 1][colonne + 1] == 0)
 	
 	def liste_cartes_prenables(self):
 		"""
@@ -1098,6 +1098,12 @@ class Jeu:
 		return ressource + nom_ressource + " 1"
 	
 	def gain_symbole_scientifique(self, nom_symbole_scientifique: str) -> bool:
+		"""
+		Documentation a faire
+
+		:param nom_symbole_scientifique:
+		:return:
+		"""
 		for ma_carte in self.joueur_qui_joue.cartes:
 			for effet_ma_carte in ma_carte.effets:
 				effet_ma_carte_split = effet_ma_carte.split(" ")
@@ -1117,9 +1123,19 @@ class Jeu:
 		return False
 	
 	def deplacer_pion_miltaire(self, nbr_deplacement: int):
+		"""
+		documentation a faire
+
+		:param nbr_deplacement:
+		"""
 		pass
 	
 	def appliquer_effets_carte(self, carte: Carte):
+		"""
+		documentation a faire
+
+		:param carte:
+		"""
 		for effet in carte.effets:
 			effet_split = effet.split(" ")
 			if effet_split[0] == "attaquer":

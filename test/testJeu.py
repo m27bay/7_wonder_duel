@@ -288,7 +288,7 @@ class TestJeu(unittest.TestCase):
 		self.jeu.jetons_progres_plateau.append(jeton)
 
 		carte = Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
-			      None, "vert", age=1)
+			None, "vert", age=1)
 		self.jeu.joueur_qui_joue.cartes.append(carte)
 
 		self.jeu.gain_symbole_scientifique("pendule")

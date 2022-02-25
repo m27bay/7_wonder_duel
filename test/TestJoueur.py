@@ -60,7 +60,7 @@ class TestJoeur(unittest.TestCase):
 
 	def testListeRessourcePrixReduit(self):
 		douane = Carte("douanes", None, ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
-		      None, "jaune", age=2)
+			None, "jaune", age=2)
 		self.joueur.cartes.append(douane)
 
 		self.assertEqual(1, self.joueur.possede_carte_reduction("papyrus"))
