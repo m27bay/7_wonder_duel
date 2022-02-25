@@ -382,7 +382,7 @@ def demander_element_dans_une_liste(joueur: Joueur, type_element: str, liste_ele
 		f"dans la liste : \n {afficher(liste_element)}")
 	
 	while True:
-		print(f"* liste choix possibles *\n{afficher(liste_element)}")
+		print("* liste choix possibles *\n", afficher(liste_element))
 		nom_element = input(f"[{joueur.nom}] Choix {type_element} ?\n > ")
 		element_choisi = trouver_element_avec_nom(nom_element, liste_element)
 		if element_choisi is None:
@@ -455,10 +455,10 @@ class Jeu:
 		self.monnaie_banque = 86  # 14 de valeur 1, 10 de valeur 3, 7 de valeur 6
 		self.age = 1
 		
-		#  0: neutre
-		# +9: victoire militaire joueur1
-		# -9: victoire militaire joueur2
-		self.position_jeton_militaire = 0
+		# 9 : neutre
+		# 0 : victoire militaire joueur2
+		# 18: victoire militaire joueur1
+		self.position_jeton_conflit = 9
 		self.jetons_militaire = [
 			JetonMilitaire("5piecesJ1", None, 5, 10),
 			JetonMilitaire("2piecesJ1", None, 2, 5),
@@ -497,7 +497,7 @@ class Jeu:
 			Carte("mine", None, ["ressource pierre 1"], ["monnaie 1"], None, "marron", age=1),
 			Carte("verrerie", None, ["ressource verre 1"], ["monnaie 1"], None, "grise", age=1),
 			Carte("presse", None, ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1),
-			Carte("tour de garde", None, "attaquer 1", None, None, "rouge", age=1),
+			Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1),
 			Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
 				None, "vert", age=1),
 			Carte("apothicaire", None, ["symbole_scientifique roue", "point_victoire 1"], ["ressource verre 1"],
@@ -817,7 +817,7 @@ class Jeu:
 			# defausser
 			if action == "defausser":
 				self.cartes_defaussees.append(carte)
-				self.joueur_qui_joue.monnaie = self.joueur_qui_joue.monnaie + 2
+				self.joueur_qui_joue.monnaie += 2
 				
 				# gain de une piece par carte jaune
 				for carte_joueur in self.joueur_qui_joue.cartes:
@@ -993,8 +993,6 @@ class Jeu:
 		if self.age != 3:
 			self.age += 1
 			self.preparation_cartes()
-		else:
-			self.fin_de_partie()
 	
 	def cartes_prenable(self, ligne: int, colonne: int) -> bool:
 		"""
@@ -1039,7 +1037,7 @@ class Jeu:
 		
 		adversaire = self.obtenir_adversaire()
 		while True:
-			print(f"\n * liste choix possibles *\n{afficher(adversaire.cartes)}")
+			print("\n * liste choix possibles *\n", afficher(adversaire.cartes))
 			type_element = input(f"[{self.joueur_qui_joue.nom}] Choix d'une carte {couleur}?\n > ")
 			element_choisi = trouver_element_avec_nom(type_element, adversaire.cartes)
 			if element_choisi is None or element_choisi.couleur != couleur:
@@ -1104,14 +1102,24 @@ class Jeu:
 		:param nom_symbole_scientifique:
 		:return:
 		"""
+		
+		logger.debug(f"[{self.joueur_qui_joue.nom}] gain_symbole_scientifique(\'{nom_symbole_scientifique}\')")
+		
 		for ma_carte in self.joueur_qui_joue.cartes:
 			for effet_ma_carte in ma_carte.effets:
 				effet_ma_carte_split = effet_ma_carte.split(" ")
 				
 				# si possede une carte donnant le même symbole
-				if effet_ma_carte_split[0] == "symbole_scientifique" and effet_ma_carte_split[1] == nom_symbole_scientifique:
+				if effet_ma_carte_split[0] == "symbole_scientifique" \
+						and effet_ma_carte_split[1] == nom_symbole_scientifique:
 					# 2 symboles identiques => gain jeton
-					jeton_choisi = demander_element_dans_une_liste(self.joueur_qui_joue, "jeton", self.jetons_progres_plateau)
+					jeton_choisi = demander_element_dans_une_liste(
+						self.joueur_qui_joue, "jeton", self.jetons_progres_plateau
+					)
+					
+					logger.debug(
+						f"[{self.joueur_qui_joue.nom}] ajout du jeton (\'{jeton_choisi.nom}\')")
+					
 					self.joueur_qui_joue.jetons.append(jeton_choisi)
 					
 					# Suppression du jeton du plateau
@@ -1122,13 +1130,80 @@ class Jeu:
 					return True
 		return False
 	
+	def numero_jeton_militaire(self):
+		"""
+		Renvoie le numero du jeton militaire dans le tableau en fonction de la postion
+		du jeton conflit.
+		
+		:return: le numero du jeton militaire.
+		"""
+		
+		if self.position_jeton_conflit in [1, 2, 3]:
+			return 0
+		elif self.position_jeton_conflit in [4, 5, 6]:
+			return 1
+		elif self.position_jeton_conflit in [7, 8]:
+			return 2
+		elif self.position_jeton_conflit in [10, 11]:
+			return 3
+		elif self.position_jeton_conflit in [12, 13, 14]:
+			return 4
+		elif self.position_jeton_conflit in [15, 16, 17]:
+			return 5
+		else:
+			return -1
+	
 	def deplacer_pion_miltaire(self, nbr_deplacement: int):
 		"""
 		documentation a faire
 
 		:param nbr_deplacement:
 		"""
-		pass
+		
+		logger.debug(f"[{self.joueur_qui_joue.nom}] deplacer_pion_miltaire(\'{nbr_deplacement}\')")
+		
+		# On deplace le pion case par case
+		for _ in range(nbr_deplacement):
+			self.position_jeton_conflit += 1
+			
+			logger.debug(f"\t[{self.joueur_qui_joue.nom}] deplacement du pion conflit, nouvelle position "
+				f"{self.position_jeton_conflit}")
+			
+			# si le pion se situe au bou du plateau militaire, il y a une victoire militaire
+			if self.position_jeton_conflit == 0 or self.position_jeton_conflit == 18:
+				logger.debug(f"\t[{self.joueur_qui_joue.nom}] le jeton est à la fin de plateau ({self.position_jeton_conflit})")
+				self.fin_de_partie("militaire")
+				
+			else:
+				numero_jeton = self.numero_jeton_militaire()
+				logger.debug(f"\t[{self.joueur_qui_joue.nom}] position du jeton militaire : {numero_jeton}")
+				
+				if numero_jeton != -1:
+					
+					jeton = self.jetons_militaire[numero_jeton]
+					if not jeton.est_utilise:
+						logger.debug(f"\t[{self.joueur_qui_joue.nom}] prend le jeton {numero_jeton}, "
+							f"gagne {jeton.points_victoire} points de victoire, l'adversaire perd "
+							f"{jeton.pieces} monnaies")
+						
+						self.joueur_qui_joue.points_victoire += jeton.points_victoire
+						self.obtenir_adversaire().monnaie -= jeton.pieces
+						jeton.est_utilise = True
+						
+	def joueur_deplace_pion_militaire(self, nbr_deplacement: int):
+		"""
+		Remplace le nombre de deplacement par son oppose si le joueur
+		qui attaque est le joueur2
+		
+		:param nbr_deplacement:
+		:return:
+		"""
+		
+		logger.debug(f"[{self.joueur_qui_joue.nom}] joueur_deplace_pion_militaire(\'{nbr_deplacement}\')")
+		
+		if self.joueur_qui_joue == self.joueur2:
+			nbr_deplacement = -nbr_deplacement
+		self.deplacer_pion_miltaire(nbr_deplacement)
 	
 	def appliquer_effets_carte(self, carte: Carte):
 		"""
@@ -1136,17 +1211,29 @@ class Jeu:
 
 		:param carte:
 		"""
+		
+		logger.debug(f"[{self.joueur_qui_joue.nom}] appliquer_effets_carte(\'{carte.nom}\')")
+		
 		for effet in carte.effets:
+			
+			logger.debug(f"\t[{self.joueur_qui_joue.nom}] \'{carte.nom}\' \'{effet}\'")
 			effet_split = effet.split(" ")
+			
 			if effet_split[0] == "attaquer":
-				self.deplacer_pion_miltaire(int(effet_split[1]))
+				self.joueur_deplace_pion_militaire(int(effet_split[1]))
+			
 			elif effet_split[0] == "symbole_scientifique":
 				if self.gain_symbole_scientifique(effet_split[1]):
 					carte.effets.remove(effet)
+			
 			elif effet_split[0] == "point_victoire":
+				logger.debug(f"[{self.joueur_qui_joue.nom}] gain de {effet_split[1]} points de victoire")
 				self.joueur_qui_joue.points_victoire += int(effet_split[1])
+			
 			elif effet_split[0] == "monnaie":
+				logger.debug(f"[{self.joueur_qui_joue.nom}] gain de {effet_split[1]} monnaies")
 				self.joueur_qui_joue.monnaie += int(effet_split[1])
+			
 			elif effet_split[0] == "ressource_au_choix":
 				# remplace effet ressource au choix par un ressource classique
 				ressource = ""
@@ -1156,13 +1243,24 @@ class Jeu:
 				# "ressource_au_choix x y z"
 				elif len(effet_split) == 4:
 					ressource = self.demander_ressource_au_choix([effet_split[1], effet_split[2], effet_split[3]])
-				carte.effets = [ressource]
+				
+				logger.debug(f"[{self.joueur_qui_joue.nom}] choix : {ressource}")
+				carte.effets.remove(effet)
+				carte.effets.append(ressource)
+			
 			elif effet_split[0] == "monnaie_par_carte":
-				for maCarte in self.joueur_qui_joue.cartes:
-					if maCarte.couleur == effet_split[1]:
+				logger.debug(f"[{self.joueur_qui_joue.nom}] monnaie_par_carte : {effet_split[1]}")
+				for ma_carte in self.joueur_qui_joue.cartes:
+					if ma_carte.couleur == effet_split[1]:
 						self.joueur_qui_joue.monnaie += int(effet_split[2])
 	
 	def appliquer_effet_merveille(self, merveille: Merveille):
+		"""
+
+		:param merveille:
+		:return:
+		"""
+		
 		for effet in merveille.effets:
 			effet_split = effet.split(" ")
 			if effet_split[0] in ["attaquer", "symbole_scientifique", "point_victoire", "monnaie", "monnaie_par_carte"]:
@@ -1188,12 +1286,31 @@ class Jeu:
 		"""
 		self.joueur_qui_joue = self.obtenir_adversaire()
 	
-	def fin_de_partie(self):
+	def fin_de_partie(self, raison_fin: str):
 		"""
-		documentation
+
+		:param raison_fin:
 		"""
-		# sommePointVictoireJ1 = self.joueur1.compter_point_victoire()
-		pass
+		
+		if raison_fin == "militaire":
+			if self.position_jeton_conflit == 0:
+				print(f"victoire militaire de \'{self.joueur2.nom}\'")
+			elif self.position_jeton_conflit == 18:
+				print(f"victoire militaire de \'{self.joueur1.nom}\'")
+		elif raison_fin == "scientifique":
+			pass
+		elif raison_fin == "cartes_vide":
+			self.joueur1.compter_point_victoire()
+			self.obtenir_adversaire().compter_point_victoire()
+			
+			if self.joueur1.points_victoire > self.joueur2.points_victoire:
+				print(f"victoire par points de \'{self.joueur1.nom}\' "
+					f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
+				print(f"victoire par points de \'{self.joueur2.nom}\' "
+					f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+			else:
+				print(f"Egalite ({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 	
 	def boucle_principale(self):
 		"""
@@ -1204,20 +1321,25 @@ class Jeu:
 		while True:
 			if not self.reste_des_cartes():
 				self.changement_age()
-			
-			carte_choisie = demander_element_dans_une_liste(self.joueur_qui_joue, "carte", self.liste_cartes_prenables())
-			self.demander_action_carte(carte_choisie)
-			self.appliquer_effets_carte(carte_choisie)
-			self.joueur_qui_joue.cartes.append(carte_choisie)
-			
-			merveille = self.demander_action_merveille()
-			sortie_effet = ""
-			if merveille is not None:
-				sortie_effet = self.appliquer_effet_merveille(merveille)
-			
-			if sortie_effet != "rejouer":
-				self.changement_joueur()
-	
+				
+				carte_choisie = demander_element_dans_une_liste(self.joueur_qui_joue, "carte",
+				                                                self.liste_cartes_prenables())
+				self.demander_action_carte(carte_choisie)
+				self.appliquer_effets_carte(carte_choisie)
+				self.joueur_qui_joue.cartes.append(carte_choisie)
+				
+				merveille = self.demander_action_merveille()
+				sortie_effet = ""
+				if merveille is not None:
+					sortie_effet = self.appliquer_effet_merveille(merveille)
+				
+				if sortie_effet != "rejouer":
+					self.changement_joueur()
+					
+			else:
+				self.fin_de_partie("cartes_vide")
+				break
+				
 	def lancer(self):
 		"""
 		Lance le jeu, prepare le plateau et lance la boucle principale.
