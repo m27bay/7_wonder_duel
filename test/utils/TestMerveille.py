@@ -4,7 +4,7 @@ Fichier test de la classe Merveille.
 
 import unittest
 
-from src.main import Merveille
+from src.utils.Merveille import Merveille
 
 
 class TestMerveille(unittest.TestCase):
@@ -20,8 +20,7 @@ class TestMerveille(unittest.TestCase):
 	def testConstructeurMerveille(self):
 		str_merveille = "nom : merveille, image : images\\merveille.png, effets : " \
 			"[\'defausse_carte_adversaire grise\', \'attaquer 1\', \'point_victoire 3\']" \
-			", couts : [\'ressource bois 2\', \'ressource verre 3\']" \
-			", cout chainage : None, couleur : None, age : None, face cachée : False"
+			", couts : [\'ressource bois 2\', \'ressource verre 3\']"
 		self.assertEqual(str(self.merveille), str_merveille)
 
 	def testCarteEgal(self):

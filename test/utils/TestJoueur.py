@@ -4,13 +4,16 @@ Fichier test de la classe Joueur.
 
 import unittest
 
-from src.main import Joueur, Carte, Merveille, JetonProgres
+from src.utils.Carte import Carte
+from src.utils.Joueur import Joueur
+from src.utils.Merveille import Merveille
+from src.utils.JetonProgres import JetonProgres
 
 
 class TestJoeur(unittest.TestCase):
 	def setUp(self) -> None:
 		"""
-		Initialise un joueur pour la suite des test.
+		Initialise un nom_joueur pour la suite des test.
 		"""
 		self.joueur = Joueur("pierre")
 
@@ -95,7 +98,8 @@ class TestJoeur(unittest.TestCase):
 	def testCompterPointVictoireAvecLesCartes(self):
 		self.joueur.cartes.append(Carte("theatre", None, ["point_victoire 3"], None, None, "blue", age=1))
 		self.joueur.cartes.append(Carte("autel", None, ["point_victoire 3"], None, None, "blue", age=1))
-		self.assertEqual(6, self.joueur.compter_point_victoire())
+		self.joueur.compter_point_victoire()
+		self.assertEqual(6, self.joueur.points_victoire)
 		self.joueur.cartes.clear()
 
 	def testCompterPointVictoireAvecLesMerveilles(self):
@@ -139,6 +143,21 @@ class TestJoeur(unittest.TestCase):
 		self.assertEqual(13, self.joueur.points_victoire)
 		self.joueur.jetons.clear()
 		self.joueur.points_victoire = 0
+		
+	def testSelectionMerveille(self):
+		liste_merveilles = [
+			Merveille("merveille0", None, None, None),
+			Merveille("merveille1", None, None, None),
+			Merveille("merveille2", None, None, None),
+			Merveille("merveille3", None, None, None),
+			Merveille("merveille4", None, None, None)
+		]
+	
+		# entree : merveille3, merveille1
+		joueur = Joueur("joueur2")
+		# copy de la liste car on supprime les merveilles une fois choisie.
+		joueur.selection_merveille(2, liste_merveilles.copy())
+		self.assertEqual([liste_merveilles[3], liste_merveilles[1]], joueur.merveilles)
 
 
 if __name__ == '__main__':

@@ -4,15 +4,14 @@ Fichier test de fonction.
 
 import unittest
 
-from src.main import Carte
-from src.main import Joueur
-from src.main import Merveille
-from src.main import selection_merveille
-from src.main import trouver_element_avec_nom
-from src.main import demander_element_dans_une_liste
+from src.utils.Carte import Carte
+from src.utils.Merveille import Merveille
+
+from src.utils.Outils import trouver_element_avec_nom
+from src.utils.Outils import demander_element_dans_une_liste
 
 
-class TestFonction(unittest.TestCase):
+class TestOutils(unittest.TestCase):
 	def setUp(self) -> None:
 		"""
 		Initialise deux listes utilisees pour la suite des tests.
@@ -43,15 +42,8 @@ class TestFonction(unittest.TestCase):
 
 	def testDemanderCarteDansUneListe(self):
 		# entree : carte0
-		carte_demandee = demander_element_dans_une_liste(Joueur("joueur1"), "carte", self.liste_cartes)
+		carte_demandee = demander_element_dans_une_liste("joueur1", "carte", self.liste_cartes)
 		self.assertEqual(self.liste_cartes[0], carte_demandee)
-
-	def testSelectionMerveille(self):
-		# entree : merveille3, merveille1
-		joueur = Joueur("joueur2")
-		# copy de la liste car on supprime les merveilles une fois choisie.
-		selection_merveille(2, joueur, self.liste_merveilles.copy())
-		self.assertEqual([self.liste_merveilles[3], self.liste_merveilles[1]], joueur.merveilles)
 
 
 if __name__ == '__main__':
