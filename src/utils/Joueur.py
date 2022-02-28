@@ -230,21 +230,21 @@ class Joueur:
 				if effet_split[0] == "point_victoire_par_jeton":
 					
 					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-					             f"{effet_split[1]} points de victoire par jeton")
+						f"{effet_split[1]} points de victoire par jeton")
 					
 					self.points_victoire += int(effet_split[1]) * len(self.jetons)
 					
 				elif effet_split[0] == "point_victoire":
 					
 					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-					             f"{effet_split[1]} points de victoire par jeton")
+						f"{effet_split[1]} points de victoire par jeton")
 					
 					self.points_victoire += int(effet_split[1])
 				
 				elif effet_split[0] == "point_victoire_fin_partie":
 					
 					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-					             f"{effet_split[1]} points de victoire en fin de partie")
+						f"{effet_split[1]} points de victoire en fin de partie")
 					
 					self.points_victoire += int(effet_split[1])
 	
@@ -257,7 +257,7 @@ class Joueur:
 		"""
 		if len(liste_merveilles_alea) == 1:
 			print(f"\nAttribution de la derniere merveille ({liste_merveilles_alea[0].nom})"
-			      f" au [{self.nom}]")
+				f" au [{self.nom}]")
 			self.merveilles.append(liste_merveilles_alea[0])
 			liste_merveilles_alea.remove(liste_merveilles_alea[0])
 		else:

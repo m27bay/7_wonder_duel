@@ -412,9 +412,11 @@ class Plateau:
 		
 		logger.debug(f"[{self.joueur_qui_joue.nom}] la carte n'est pas sur le plateau")
 	
-	"""
-	Partie outils
-	"""
+	#
+	#
+	# Partie outils
+	#
+	#
 	
 	def obtenir_adversaire(self):
 		"""
@@ -563,16 +565,18 @@ class Plateau:
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
 				print(f"victoire par points de \'{self.joueur1.nom}\' "
-					  f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+						f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
 				print(f"victoire par points de \'{self.joueur2.nom}\' "
-					  f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+						f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 			else:
 				print(f"Egalite ({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 	
-	"""
-	Partie interaction utilisateur
-	"""
+	#
+	#
+	# Partie interaction utilisateur
+	#
+	#
 	
 	def demander_action_carte(self, carte: Carte):
 		"""
@@ -695,9 +699,11 @@ class Plateau:
 			nom_ressource = input(str_demande)
 		return ressource + nom_ressource + " 1"
 	
-	"""
-	Partie effets
-	"""
+	#
+	#
+	# Partie effets
+	#
+	#
 	
 	def defausser_carte_adversaire(self, couleur: str) -> None:
 		"""
@@ -825,10 +831,10 @@ class Plateau:
 			self.position_jeton_conflit += 1
 			
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] deplacement du pion conflit, nouvelle position "
-						 f"{self.position_jeton_conflit}")
+							f"{self.position_jeton_conflit}")
 			
 			# si le pion se situe au bou du plateau militaire, il y a une victoire militaire
-			if self.position_jeton_conflit == 0 or self.position_jeton_conflit == 18:
+			if self.position_jeton_conflit in [0, 18]:
 				logger.debug(
 					f"\t[{self.joueur_qui_joue.nom}] le jeton est à la fin de plateau ({self.position_jeton_conflit})")
 				self.fin_de_partie("militaire")

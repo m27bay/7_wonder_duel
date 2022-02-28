@@ -25,7 +25,7 @@ class TestCarte(unittest.TestCase):
 		self.carte.cacher()
 		str_carte = "nom : carte_a_enlever test, image : images\\carte_test.png, effets : " \
 			"[\'ressource bois 2\'], couts : [\'monnaie 4\'], cout chainage : " \
-			 "None, couleur : marron, age : 1, face cachee : True"
+			"None, couleur : marron, age : 1, face cachee : True"
 		self.assertEqual(str_carte, str(self.carte))
 
 	def testDevoilerCarte(self):
