@@ -23,10 +23,12 @@ class Jeu:
 		self.plateau.joueur_qui_joue = self.plateau.joueur1
 		while True:
 			if not self.plateau.reste_des_cartes():
-				self.plateau.changement_age()
-				
+				# changement d'age
+				self.plateau.age += 1
+				self.plateau.preparation_cartes()
+			else:
 				carte_choisie = demander_element_dans_une_liste(
-					self.plateau.joueur_qui_joue.nom, "carte",
+					self.plateau.joueur_qui_joue.nom, "carte_a_enlever",
 					self.plateau.liste_cartes_prenables()
 				)
 				self.plateau.demander_action_carte(carte_choisie)
@@ -39,11 +41,11 @@ class Jeu:
 					sortie_effet = self.plateau.appliquer_effet_merveille(merveille)
 				
 				if sortie_effet != "rejouer":
-					self.plateau.changement_joueur()
-			
-			else:
-				self.plateau.fin_de_partie("cartes_vide")
-				break
+					self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+				
+				else:
+					self.plateau.fin_de_partie("cartes_vide")
+					break
 	
 	def lancer(self):
 		"""
