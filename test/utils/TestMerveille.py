@@ -1,10 +1,10 @@
 """
-Fichier test de la classe Merveille.
+Fichier test de la classe CarteFille.
 """
 
 import unittest
 
-from src.utils.Merveille import Merveille
+from src.utils.CarteFille import CarteFille
 
 
 class TestMerveille(unittest.TestCase):
@@ -12,10 +12,10 @@ class TestMerveille(unittest.TestCase):
 		"""
 		Initialise une merveille utilisee durant tous les tests.
 		"""
-		self.merveille = Merveille("merveille", "images\\merveille.png",
-			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-			["ressource bois 2", "ressource verre 3"]
-		)
+		self.merveille = CarteFille("merveille", "images\\merveille.png",
+		                            ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+		                            ["ressource bois 2", "ressource verre 3"]
+		                            )
 
 	def testConstructeurMerveille(self):
 		str_merveille = "nom : merveille, image : images\\merveille.png, effets : " \
@@ -24,19 +24,19 @@ class TestMerveille(unittest.TestCase):
 		self.assertEqual(str(self.merveille), str_merveille)
 
 	def testCarteEgal(self):
-		merveille2 = Merveille("merveille", "images\\carte_test.png", None, None)
+		merveille2 = CarteFille("merveille", "images\\carte_test.png", None, None)
 		self.assertEqual(self.merveille, merveille2)
 
-		merveille3 = Merveille("merveille", "images\\merveille.png",
-			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-			["ressource bois 2", "ressource verre 3"]
-		)
+		merveille3 = CarteFille("merveille", "images\\merveille.png",
+		                        ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+		                        ["ressource bois 2", "ressource verre 3"]
+		                        )
 		self.assertEqual(self.merveille, merveille3)
 
-		merveille4 = Merveille("merveille2", "images\\merveille.png",
-			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-			["ressource bois 2", "ressource verre 3"]
-		)
+		merveille4 = CarteFille("merveille2", "images\\merveille.png",
+		                        ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+		                        ["ressource bois 2", "ressource verre 3"]
+		                        )
 		self.assertNotEqual(self.merveille, merveille4)
 
 

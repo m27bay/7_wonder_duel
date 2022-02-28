@@ -5,7 +5,7 @@ Fichier test de fonction.
 import unittest
 
 from src.utils.Carte import Carte
-from src.utils.Merveille import Merveille
+from src.utils.CarteFille import CarteFille
 
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
@@ -25,11 +25,11 @@ class TestOutils(unittest.TestCase):
 		]
 
 		self.liste_merveilles = [
-			Merveille("merveille0", None, None, None),
-			Merveille("merveille1", None, None, None),
-			Merveille("merveille2", None, None, None),
-			Merveille("merveille3", None, None, None),
-			Merveille("merveille4", None, None, None)
+			CarteFille("merveille0", None, None, None),
+			CarteFille("merveille1", None, None, None),
+			CarteFille("merveille2", None, None, None),
+			CarteFille("merveille3", None, None, None),
+			CarteFille("merveille4", None, None, None)
 		]
 
 	def testTrouverCarteAvecNom(self):
@@ -42,7 +42,7 @@ class TestOutils(unittest.TestCase):
 
 	def testDemanderCarteDansUneListe(self):
 		# entree : carte0
-		carte_demandee = demander_element_dans_une_liste("joueur1", "carte", self.liste_cartes)
+		carte_demandee = demander_element_dans_une_liste("joueur1", "carte_a_enlever", self.liste_cartes)
 		self.assertEqual(self.liste_cartes[0], carte_demandee)
 
 

@@ -43,13 +43,13 @@ class Joueur:
 	def couts_manquants(self, carte: Carte):
 		"""
 		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
-		que le nom_joueur ne possede pas pour construire une carte.
+		que le nom_joueur ne possede pas pour construire une carte_a_enlever.
 
-		:param carte: carte a construire.
+		:param carte: carte_a_enlever a construire.
 		:return: une liste avec les ressources_manquantes manquantes.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] couts_manquants avec la carte [{carte}]")
+		logger_test.debug(f"[{self.nom}] couts_manquants avec la carte_a_enlever [{carte}]")
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -57,7 +57,7 @@ class Joueur:
 		couts_manquants_carte = carte.couts.copy()
 		for cout_manquant in carte.couts:
 			
-			# decoupage couts de la carte
+			# decoupage couts de la carte_a_enlever
 			cout_manquant_split = cout_manquant.split(" ")
 			
 			# cout monnetaire
@@ -104,34 +104,34 @@ class Joueur:
 	
 	def possede_carte_chainage(self, carte: Carte):
 		"""
-		Indique si le nom_joueur possede la carte de chainage de la carte en parametre.
+		Indique si le nom_joueur possede la carte_a_enlever de chainage de la carte_a_enlever en parametre.
 
-		:param carte: la carte dont on cherche la carte de chainage.
+		:param carte: la carte_a_enlever dont on cherche la carte_a_enlever de chainage.
 		:return: vrai/ faux.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] possede_carte_chainage avec la carte \'{carte}\'")
+		logger_test.debug(f"[{self.nom}] possede_carte_chainage avec la carte_a_enlever \'{carte}\'")
 		
-		# si la carte ne possede pas de carte de chainage
+		# si la carte_a_enlever ne possede pas de carte_a_enlever de chainage
 		if carte.nom_carte_chainage is None:
-			logger_test.debug(f"\t[{self.nom}] la carte n a pas de carte de chainage")
+			logger_test.debug(f"\t[{self.nom}] la carte_a_enlever n a pas de carte_a_enlever de chainage")
 			return False
 		
 		#
 		for ma_carte in self.cartes:
 			if ma_carte.nom == carte.nom_carte_chainage:
-				logger_test.debug(f"\t[{self.nom}] possede la carte chainage")
+				logger_test.debug(f"\t[{self.nom}] possede la carte_a_enlever chainage")
 				return True
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas carte chainage")
+		logger_test.debug(f"\t[{self.nom}] ne possede pas carte_a_enlever chainage")
 		return False
 	
 	def production_type_ressources(self, ressource: str):
 		"""
-		Retourne la carte produisant la ressource.
+		Retourne la carte_a_enlever produisant la ressource.
 
-		:param ressource: la ressource dont on veut la carte.
-		:return: une carte si elle existe, None sinon.
+		:param ressource: la ressource dont on veut la carte_a_enlever.
+		:return: une carte_a_enlever si elle existe, None sinon.
 		"""
 		
 		logger_test.debug(f"[{self.nom}] production_type_ressources avec la ressource \'{ressource}\'")
@@ -143,10 +143,10 @@ class Joueur:
 				
 				# ressource type quantite
 				if effet_split[0] == "ressource" and effet_split[1] == ressource_split[1]:
-					logger_test.debug(f"\t[{self.nom}] possede une carte qui produit la ressource")
+					logger_test.debug(f"\t[{self.nom}] possede une carte_a_enlever qui produit la ressource")
 					return carte
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte qui produit la ressource")
+		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever qui produit la ressource")
 		return None
 	
 	def possede_carte_reduction(self, ressource: str):
@@ -154,7 +154,7 @@ class Joueur:
 		Renvoie le prix de la reduction de la ressource.
 
 		:param ressource: la ressource dont on cherche la reduction.
-		:return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
+		:return: le prix reduit si le nom_joueur possede une carte_a_enlever reduction de la ressource, 0 sinon.
 		"""
 		
 		logger_test.debug(f"[{self.nom}] possede_carte_reduction avec la ressource \'{ressource}\'")
@@ -165,18 +165,18 @@ class Joueur:
 				
 				# reduc_ressource type prixReduc
 				if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
-					logger_test.debug(f"\t[{self.nom}] possede une carte donnant une reduction")
+					logger_test.debug(f"\t[{self.nom}] possede une carte_a_enlever donnant une reduction")
 					return int(effet_split[2])
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte donnant une reduction")
+		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever donnant une reduction")
 		return 0
 	
 	def possede_cartes_couleur(self, couleur: str) -> list:
 		"""
-		Renvoie une liste de carte de la même couleur que celle en parametre.
+		Renvoie une liste de carte_a_enlever de la même couleur que celle en parametre.
 
 		:param couleur: la couleur a rechercher.
-		:return: une liste de carte.
+		:return: une liste de carte_a_enlever.
 		"""
 		
 		logger_test.debug(f"[{self.nom}] possede_cartes_couleur avec la couleur \'{couleur}\'")
@@ -184,14 +184,14 @@ class Joueur:
 		liste_cartes_couleur = []
 		for carte in self.cartes:
 			if carte.couleur == couleur:
-				logger_test.debug(f"\t[{self.nom}] la carte \'{carte.nom}\' est de la même couleur")
+				logger_test.debug(f"\t[{self.nom}] la carte_a_enlever \'{carte.nom}\' est de la même couleur")
 				liste_cartes_couleur.append(carte)
 		
 		return liste_cartes_couleur
 	
 	def compter_point_victoire(self) -> None:
 		"""
-		Ajoute les points de victoires des differents objets (Carte, Jeton, Merveille)
+		Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
 		"""
 		
 		logger_test.debug(f"[{self.nom}] compter_point_victoire()")
@@ -204,7 +204,7 @@ class Joueur:
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire":
 					
-					logger_test.debug(f"\t[{self.nom}] carte \'{carte.nom}\' donne {effet_split[1]} points de victoire")
+					logger_test.debug(f"\t[{self.nom}] carte_a_enlever \'{carte.nom}\' donne {effet_split[1]} points de victoire")
 					
 					self.points_victoire += int(effet_split[1])
 		

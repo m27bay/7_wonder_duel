@@ -6,7 +6,7 @@ import unittest
 
 from src.utils.Carte import Carte
 from src.utils.Joueur import Joueur
-from src.utils.Merveille import Merveille
+from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 
 
@@ -22,7 +22,7 @@ class TestJoeur(unittest.TestCase):
 
 	def testRessourcesManquantes(self):
 		self.joueur.cartes.append(Carte(None, None, ["ressource bois 2"], None, None, None, None))
-		carte = Carte("carte", None, None, ["ressource bois 2"], None, None, None)
+		carte = Carte("carte_a_enlever", None, None, ["ressource bois 2"], None, None, None)
 		self.assertEqual([], self.joueur.couts_manquants(carte))
 		self.joueur.cartes.clear()
 
@@ -46,17 +46,17 @@ class TestJoeur(unittest.TestCase):
 		self.joueur.monnaie = 0
 
 	def testPossedeCarteChainage(self):
-		self.joueur.cartes.append(Carte("carte", None, None, None, None, None, None))
+		self.joueur.cartes.append(Carte("carte_a_enlever", None, None, None, None, None, None))
 
-		self.assertTrue(self.joueur.possede_carte_chainage(Carte("carte2", None, None, None, "carte", None, None)))
+		self.assertTrue(self.joueur.possede_carte_chainage(Carte("carte2", None, None, None, "carte_a_enlever", None, None)))
 		self.assertFalse(self.joueur.possede_carte_chainage(Carte("carte3", None, None, None, "erreur", None, None)))
 
 		self.joueur.cartes.clear()
 
 	def testProductionTypeRessources(self):
-		self.joueur.cartes.append(Carte("carte", None, ["ressource bois 1"], None, None, None, None))
+		self.joueur.cartes.append(Carte("carte_a_enlever", None, ["ressource bois 1"], None, None, None, None))
 
-		self.assertEqual("carte", self.joueur.production_type_ressources("ressource bois 1").nom)
+		self.assertEqual("carte_a_enlever", self.joueur.production_type_ressources("ressource bois 1").nom)
 		self.assertEqual(None, self.joueur.production_type_ressources("ressource pierre 1"))
 
 		self.joueur.cartes.clear()
@@ -104,16 +104,16 @@ class TestJoeur(unittest.TestCase):
 
 	def testCompterPointVictoireAvecLesMerveilles(self):
 		self.joueur.merveilles.append(
-			Merveille("circus maximus", None,
-				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
-			)
+			CarteFille("circus maximus", None,
+			           ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			           ["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
+			           )
 		)
 		self.joueur.merveilles.append(
-			Merveille("colosse", None,
-				["attaquer 2", "point_victoire 3"],
-				["ressource argile 3", "ressource verre 1"]
-			)
+			CarteFille("colosse", None,
+			           ["attaquer 2", "point_victoire 3"],
+			           ["ressource argile 3", "ressource verre 1"]
+			           )
 		)
 		self.joueur.compter_point_victoire()
 		self.assertEqual(6, self.joueur.points_victoire)
@@ -146,11 +146,11 @@ class TestJoeur(unittest.TestCase):
 		
 	def testSelectionMerveille(self):
 		liste_merveilles = [
-			Merveille("merveille0", None, None, None),
-			Merveille("merveille1", None, None, None),
-			Merveille("merveille2", None, None, None),
-			Merveille("merveille3", None, None, None),
-			Merveille("merveille4", None, None, None)
+			CarteFille("merveille0", None, None, None),
+			CarteFille("merveille1", None, None, None),
+			CarteFille("merveille2", None, None, None),
+			CarteFille("merveille3", None, None, None),
+			CarteFille("merveille4", None, None, None)
 		]
 	
 		# entree : merveille3, merveille1

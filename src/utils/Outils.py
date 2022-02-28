@@ -7,7 +7,7 @@ from src.logger.Logger import logger_test
 
 def trouver_element_avec_nom(nom: str, liste: list):
 	"""
-	Trouver un element (carte, merveille) avec son nom dans une liste.
+	Trouver un element (carte_a_enlever, merveille) avec son nom dans une liste.
 
 	:param nom: nom de l element a chercher.
 	:param liste: liste des objets ou chercher l element.
@@ -30,7 +30,7 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 	Renvoie l element contenu dans liste_element correspondant au nom renseigne par le nom_joueur.
 
 	:param nom_joueur: le nom du nom_joueur a qui on demande l element.
-	:param type_element: le type d element de que l on cherche (uniquement pour l'affichage) (carte, merveille, ..).
+	:param type_element: le type d element de que l on cherche (uniquement pour l'affichage) (carte_a_enlever, merveille, ..).
 	:param liste_element: la liste ou l on cherche l element.
 	:return: l element choisi.
 	"""
@@ -54,7 +54,7 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 
 def afficher(liste: list) -> str:
 	"""
-	Affiche une liste de Carte, Merveille, ...
+	Affiche une liste de Carte, CarteFille, ...
 
 	:param liste: la liste a afficher.
 	:return: return l'affichage de la liste.
