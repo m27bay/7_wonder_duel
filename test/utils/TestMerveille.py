@@ -13,9 +13,9 @@ class TestMerveille(unittest.TestCase):
 		Initialise une merveille utilisee durant tous les tests.
 		"""
 		self.merveille = CarteFille("merveille", "images\\merveille.png",
-		                            ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-		                            ["ressource bois 2", "ressource verre 3"]
-		                            )
+			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			["ressource bois 2", "ressource verre 3"]
+		)
 
 	def testConstructeurMerveille(self):
 		str_merveille = "nom : merveille, image : images\\merveille.png, effets : " \
@@ -28,15 +28,15 @@ class TestMerveille(unittest.TestCase):
 		self.assertEqual(self.merveille, merveille2)
 
 		merveille3 = CarteFille("merveille", "images\\merveille.png",
-		                        ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-		                        ["ressource bois 2", "ressource verre 3"]
-		                        )
+			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			["ressource bois 2", "ressource verre 3"]
+		)
 		self.assertEqual(self.merveille, merveille3)
 
 		merveille4 = CarteFille("merveille2", "images\\merveille.png",
-		                        ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-		                        ["ressource bois 2", "ressource verre 3"]
-		                        )
+			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			["ressource bois 2", "ressource verre 3"]
+		)
 		self.assertNotEqual(self.merveille, merveille4)
 
 

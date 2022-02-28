@@ -197,7 +197,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.j1.cartes.append(
 			Carte("arene", None, ["monnaie_par_merveille 2", "point_victoire 3"],
-			      ["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3)
+				["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3)
 		)
 		
 		self.plateau.demander_action_carte(carte)
@@ -225,8 +225,8 @@ class TestPlateau(unittest.TestCase):
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
 		carte = Carte("arene ", None, ["monnaie_par_merveille 2", "point_victoire 3"],
-		              ["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
-		              "brasserie", "jaune", age=3)
+			["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
+			"brasserie", "jaune", age=3)
 		self.plateau.cartes_plateau[4][0] = carte
 		
 		self.j1.cartes.append(Carte("brasserie", None, ["monnaie 6"], None, "taverne", "jaune", age=2))
@@ -298,22 +298,24 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual([], self.j2.cartes)
 		self.assertEqual([carte], self.plateau.cartes_defaussees)
 		
-	# def testDemanderActionMerveille(self):
-	# 	# entrée oui
-	#
-	# 	self.plateau.joueur_qui_joue = self.j1
-	# 	self.j1.merveilles = [
-	# 		CarteFille("circus maximus", None,
-	# 			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-	# 			["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
-	# 		),
-	# 		CarteFille("jardin suspendus", None,
-	# 			["monnaie 6", "rejouer", "point_victoire 3"],
-	# 			["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
-	# 		)
-	# 	]
-	#
-	# 	self.plateau.demander_action_merveille()
+	def testDemanderActionMerveille(self):
+		# entrée oui, circus maximus
+
+		self.plateau.joueur_qui_joue = self.j1
+		merveille = CarteFille("circus maximus", None,
+				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
+			)
+		self.j1.merveilles = [
+			merveille,
+			CarteFille("jardin suspendus", None,
+				["monnaie 6", "rejouer", "point_victoire 3"],
+				["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
+			)
+		]
+		merveille_a_construire = self.plateau.demander_action_merveille()
+		
+		self.assertEqual(merveille_a_construire, merveille)
 	
 	def testDemanderRessourceAuChoix(self):
 		# entrée bois
@@ -332,7 +334,7 @@ class TestPlateau(unittest.TestCase):
 		self.plateau.jetons_progres_plateau.append(jeton)
 		
 		carte = Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
-		              None, "vert", age=1)
+			None, "vert", age=1)
 		self.plateau.joueur_qui_joue.cartes.append(carte)
 		self.plateau.gain_symbole_scientifique("pendule")
 		carte_custom = Carte("atelier", None, ["point_victoire 1"], ["ressource papurys 1"], None, "vert", age=1)

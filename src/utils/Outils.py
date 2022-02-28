@@ -30,16 +30,17 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 	Renvoie l element contenu dans liste_element correspondant au nom renseigne par le nom_joueur.
 
 	:param nom_joueur: le nom du nom_joueur a qui on demande l element.
-	:param type_element: le type d element de que l on cherche (uniquement pour l'affichage) (carte_a_enlever, merveille, ..).
+	:param type_element: le type d element de que l on cherche (uniquement pour l'affichage)
+		(carte_a_enlever, merveille, ..).
 	:param liste_element: la liste ou l on cherche l element.
 	:return: l element choisi.
 	"""
 	
 	logger_test.debug(f"[{nom_joueur}] demander_element_dans_une_liste choisit \'{type_element}\' "
-	             f"dans la liste : \n {afficher(liste_element)}")
+		f"dans la liste : \n{afficher(liste_element)}")
 	
 	while True:
-		print("* liste choix possibles *\n", afficher(liste_element))
+		print(f"* liste choix possibles *\n{afficher(liste_element)}")
 		nom_element = input(f"[{nom_joueur}] Choix {type_element} ?\n > ")
 		element_choisi = trouver_element_avec_nom(nom_element, liste_element)
 		if element_choisi is None:

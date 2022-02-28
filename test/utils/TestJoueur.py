@@ -105,15 +105,15 @@ class TestJoeur(unittest.TestCase):
 	def testCompterPointVictoireAvecLesMerveilles(self):
 		self.joueur.merveilles.append(
 			CarteFille("circus maximus", None,
-			           ["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-			           ["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
-			           )
+				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
+			)
 		)
 		self.joueur.merveilles.append(
 			CarteFille("colosse", None,
-			           ["attaquer 2", "point_victoire 3"],
-			           ["ressource argile 3", "ressource verre 1"]
-			           )
+				["attaquer 2", "point_victoire 3"],
+				["ressource argile 3", "ressource verre 1"]
+			)
 		)
 		self.joueur.compter_point_victoire()
 		self.assertEqual(6, self.joueur.points_victoire)
