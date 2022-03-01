@@ -17,13 +17,13 @@ class TestMerveille(unittest.TestCase):
 			["ressource bois 2", "ressource verre 3"]
 		)
 
-	def testConstructeurMerveille(self):
+	def test_constructeur_merveille(self):
 		str_merveille = "nom : merveille, image : images\\merveille.png, effets : " \
 			"[\'defausse_carte_adversaire grise\', \'attaquer 1\', \'point_victoire 3\']" \
 			", couts : [\'ressource bois 2\', \'ressource verre 3\']"
 		self.assertEqual(str(self.merveille), str_merveille)
 
-	def testCarteEgal(self):
+	def test_carte_egal(self):
 		merveille2 = CarteFille("merveille", "images\\carte_test.png", None, None)
 		self.assertEqual(self.merveille, merveille2)
 
