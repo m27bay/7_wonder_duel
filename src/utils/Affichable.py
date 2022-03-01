@@ -11,6 +11,12 @@ class Affichable:
 	"""
 	
 	def __init__(self, nom, chemin_image):
+		"""
+		Constructeur de la classe Affichable.
+		
+		:param nom: le nom de l'objet.
+		:param chemin_image: le chemin de son image.
+		"""
 		self.nom = nom
 		self.chemin_image = chemin_image
 		
