@@ -2,7 +2,7 @@
 Fonction utilisees dans le plateau
 """
 
-from src.logger.Logger import logger_test
+from src.logger.Logger import logger
 
 
 def trouver_element_avec_nom(nom: str, liste: list):
@@ -14,14 +14,14 @@ def trouver_element_avec_nom(nom: str, liste: list):
 	:return: l element si trouvee, None sinon.
 	"""
 	
-	logger_test.debug(f"trouver_element_avec_nom avec le nom \'{nom}\' dans la liste : \n {afficher(liste)}")
+	logger.debug(f"trouver_element_avec_nom avec le nom \'{nom}\' dans la liste : \n {afficher(liste)}")
 	
 	for element in liste:
 		if element.nom == nom:
-			logger_test.debug(f"\t\'{nom}\' est dans la liste")
+			logger.debug(f"\t\'{nom}\' est dans la liste")
 			return element
 	
-	logger_test.debug(f"\t\'{nom}\' n'est pas dans la liste")
+	logger.debug(f"\t\'{nom}\' n'est pas dans la liste")
 	return None
 
 
@@ -36,7 +36,7 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 	:return: l element choisi.
 	"""
 	
-	logger_test.debug(f"[{nom_joueur}] demander_element_dans_une_liste choisit \'{type_element}\' "
+	logger.debug(f"[{nom_joueur}] demander_element_dans_une_liste choisit \'{type_element}\' "
 		f"dans la liste : \n{afficher(liste_element)}")
 	
 	while True:
@@ -49,7 +49,7 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 		else:
 			break
 	
-	logger_test.debug(f"[{nom_joueur}] a choisit \'{element_choisi.nom}\'")
+	logger.debug(f"[{nom_joueur}] a choisit \'{element_choisi.nom}\'")
 	return element_choisi
 
 
