@@ -4,6 +4,7 @@ Fichier classe Plateau
 import random
 
 from src.logger.Logger import logger
+
 from src.utils.Carte import Carte
 from src.utils.Joueur import Joueur
 from src.utils.CarteFille import CarteFille
@@ -13,13 +14,13 @@ from src.utils.Outils import afficher
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
 
-from src.utils.constantes import MERVEILLES
-from src.utils.constantes import CARTES_GUILDE
-from src.utils.constantes import CARTES_AGE_I
-from src.utils.constantes import CARTES_AGE_II
-from src.utils.constantes import CARTES_AGE_III
-from src.utils.constantes import JETONS_PROGRES
-from src.utils.constantes import JETONS_MILITAIRES
+from src.utils.Constantes import MERVEILLES
+from src.utils.Constantes import CARTES_GUILDE
+from src.utils.Constantes import CARTES_AGE_I
+from src.utils.Constantes import CARTES_AGE_II
+from src.utils.Constantes import CARTES_AGE_III
+from src.utils.Constantes import JETONS_PROGRES
+from src.utils.Constantes import JETONS_MILITAIRES
 
 
 class Plateau:
@@ -390,6 +391,9 @@ class Plateau:
 		
 		logger.debug(f"[{self.joueur_qui_joue.nom}] gain_argent_banque({somme_gagnee})")
 		
+		if somme_gagnee == 0:
+			return 0
+		
 		if self.monnaie_banque == 0:
 			gain = 0
 			print("plus d'argent dans la banque")
@@ -398,12 +402,12 @@ class Plateau:
 		elif self.monnaie_banque < somme_gagnee:
 			gain = self.monnaie_banque
 			self.monnaie_banque = 0
-			logger.debug(f"\t[{self.joueur_qui_joue.nom}] plus assez d'argent dans la banque")
+			logger.debug(f"\t[{self.joueur_qui_joue.nom}] plus assez d'argent dans la banque, gain de {gain} monnaies")
 		
 		else:
 			gain = somme_gagnee
 			self.monnaie_banque -= somme_gagnee
-			logger.debug(f"\t[{self.joueur_qui_joue.nom}] il y a assez d'argent dans la banque")
+			logger.debug(f"\t[{self.joueur_qui_joue.nom}] gain de {gain} monnaies")
 		
 		return gain
 	
@@ -737,7 +741,11 @@ class Plateau:
 		
 		# On deplace le pion case par case
 		for _ in range(nbr_deplacement):
-			self.position_jeton_conflit += 1
+			
+			if self.joueur_qui_joue == self.joueur2:
+				self.position_jeton_conflit -= 1
+			else:
+				self.position_jeton_conflit += 1
 			
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] deplacement du pion conflit, nouvelle position "
 							f"{self.position_jeton_conflit}")
@@ -764,20 +772,6 @@ class Plateau:
 						self.obtenir_adversaire().monnaie -= self.gain_argent_banque(jeton.pieces)
 						jeton.est_utilise = True
 	
-	def joueur_deplace_pion_militaire(self, nbr_deplacement: int):
-		"""
-		Remplace le nombre de deplacement par son oppose si le nom_joueur
-		qui attaque est le joueur2
-
-		:param nbr_deplacement:
-		"""
-		
-		logger.debug(f"[{self.joueur_qui_joue.nom}] joueur_deplace_pion_militaire(\'{nbr_deplacement}\')")
-		
-		if self.joueur_qui_joue == self.joueur2:
-			nbr_deplacement = -nbr_deplacement
-		self.deplacer_pion_miltaire(nbr_deplacement)
-	
 	def appliquer_effets_carte(self, carte: Carte):
 		"""
 		TODO : documentation a faire
@@ -799,7 +793,7 @@ class Plateau:
 					logger.debug(f"[{self.joueur_qui_joue.nom}] bonus attaquer du jeton \'strategie\'")
 					nbr_bouclier += 1
 					
-				self.joueur_deplace_pion_militaire(nbr_bouclier)
+				self.deplacer_pion_miltaire(nbr_bouclier)
 			
 			elif effet_split[0] == "symbole_scientifique":
 				if self.gain_symbole_scientifique(effet_split[1]):
@@ -857,7 +851,7 @@ class Plateau:
 				self.appliquer_effets_carte(merveille)
 				
 			elif effet_split[0] == "attaquer":
-				self.joueur_deplace_pion_militaire(int(effet_split[1]))
+				self.deplacer_pion_miltaire(int(effet_split[1]))
 			
 			elif effet_split[0] == "defausse_carte_adversaire":
 				if len(self.obtenir_adversaire().possede_cartes_couleur(effet_split[2])) != 0:
