@@ -67,9 +67,8 @@ def trouver_ressource_avec_nom(nom_ressource: str, liste: list):
 		# decoupage
 		ressource_split = ressource.split(" ")
 		
-		if ressource_split[0] == "ressource":
-			if ressource_split[1] == nom_ressource:
-				return ressource
+		if ressource_split[0] == "ressource" and ressource_split[1] == nom_ressource:
+			return ressource
 	
 	return None
 
