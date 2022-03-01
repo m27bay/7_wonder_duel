@@ -23,7 +23,7 @@ class TestPlateau(unittest.TestCase):
 		self.j2 = Joueur("Antoine")
 		self.plateau = Plateau(self.j1, self.j2)
 		
-	def testEnleverUneCarte(self):
+	def test_enlever_une_carte(self):
 		self.plateau.joueur_qui_joue = self.j1
 		self.plateau.cartes_plateau = [
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -40,11 +40,11 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(0, self.plateau.cartes_plateau[4][0])
 		
-	def testObtenirAdversaire(self):
+	def test_obtenir_adversaire(self):
 		self.plateau.joueur_qui_joue = self.j1
 		self.assertEqual(self.j2, self.plateau.obtenir_adversaire())
 	
-	def testResteDesCartes(self):
+	def test_reste_des_cartes(self):
 		self.plateau.cartes_plateau = [
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -65,16 +65,16 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
-	def testCartePrenable(self):
-		self.plateau.preparation_cartes()
+	def test_carte_prenable(self):
+		self.plateau.__preparation_cartes()
 		
 		self.assertTrue(self.plateau.cartes_prenable(4, 0))
 		self.assertTrue(self.plateau.cartes_prenable(4, 10))
 		self.assertFalse(self.plateau.cartes_prenable(3, 1))
 		self.assertFalse(self.plateau.cartes_prenable(0, 4))
 	
-	def testListeCartesPrenable(self):
-		self.plateau.preparation_cartes()
+	def test_liste_cartes_prenable(self):
+		self.plateau.__preparation_cartes()
 		
 		liste_carte_prenable = []
 		
@@ -85,12 +85,12 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(liste_carte_prenable, self.plateau.liste_cartes_prenables())
 	
-	def testAcheterRessourceNonProduiteParAdversaire(self):
+	def test_acheter_ressource_non_produite_par_adversaire(self):
 		self.plateau.joueur_qui_joue = self.j1
 		prix = self.plateau.acheter_ressources(["ressource pierre 1"])
 		self.assertEqual(2, prix)
 	
-	def testAcheterRessourceProduiteParAdversaire(self):
+	def test_acheter_ressource_produite_par_adversaire(self):
 		# exemple du manuel
 		# https://cdn.1j1ju.com/medias/bd/ad/a7-7-wonders-duel-regles.pdf
 		# page 9
@@ -103,7 +103,7 @@ class TestPlateau(unittest.TestCase):
 		# j2 veut acheter une pierre, mais j1 en produit deux, [ 2 + (quantite_pierre_j1) ] * quantite_pierre_acheté
 		self.assertEqual(4, prix)
 	
-	def testAcheterRessourceProduiteParAdversaire2(self):
+	def test_acheter_ressource_produite_par_adversaire_2(self):
 		# exemple du manuel
 		
 		self.j1.monnaie = self.j2.monnaie = 10
@@ -114,7 +114,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(5, prix)
 	
-	def testAcheterRessourceProduiteParAdversaire3(self):
+	def test_acheter_ressource_produite_par_adversaire_3(self):
 		# exemple du manuel
 		
 		self.j1.monnaie = self.j2.monnaie = 12
@@ -125,7 +125,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(12, prix)
 	
-	def testAcheterRessourceProduiteParAdversaireAvecReduction(self):
+	def test_acheter_ressource_produite_par_adversaire_avec_reduction(self):
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j2
 		
@@ -137,7 +137,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(1, prix)
 	
-	def testDemanderActionCartePiocherCarteQuiNeCouteRien(self):
+	def test_demander_action_carte_piocher_carte_qui_ne_coute_rien(self):
 		# entrée piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
@@ -156,7 +156,7 @@ class TestPlateau(unittest.TestCase):
 		self.plateau.demander_action_carte(self.plateau.cartes_plateau[4][0])
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
-	def testDemanderActionCarteDefausserSansCarteJaune(self):
+	def test_demander_action_carte_defausser_sans_carte_jaune(self):
 		# entrée defausser
 		
 		self.j1.monnaie = 0
@@ -178,7 +178,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(2, self.plateau.joueur_qui_joue.monnaie)
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
-	def testDemanderActionCarteDefausserAvecCarteJaune(self):
+	def test_demander_action_carte_defausser_avec_carte_jaune(self):
 		# entrée defausser
 		
 		self.j1.monnaie = 0
@@ -211,7 +211,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(3, self.plateau.joueur_qui_joue.monnaie)
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
-	def testDemanderActionCartePiocherAvecCarteChainage(self):
+	def test_demander_action_carte_piocher_avec_carte_chainage(self):
 		# entrée piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
@@ -234,7 +234,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
-	def testDemanderActionCartePiocherJoueurPossedeRessourceMonnaie(self):
+	def test_demander_action_carte_piocher_joueur_possede_ressource_monnaie(self):
 		# entrée piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
@@ -254,7 +254,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 		self.assertEqual(9, self.j1.monnaie)
 	
-	def testDemanderActionCartePiocherJoueurPossedePasRessources(self):
+	def test_demander_action_carte_piocher_joueur_possede_pas_ressources(self):
 		# entrée piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
@@ -286,7 +286,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 		self.assertEqual(8, self.j1.monnaie)
 	
-	def testDefausserCarteAdversairePossedeCarteCouleur(self):
+	def test_defausser_carte_adversaire_possede_carte_couleur(self):
 		# entrée chantier
 		
 		self.plateau.joueur_qui_joue = self.j1
@@ -298,7 +298,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual([], self.j2.cartes)
 		self.assertEqual([carte], self.plateau.cartes_defaussees)
 		
-	def testDemanderActionMerveille(self):
+	def test_demander_action_merveille(self):
 		# entrée oui, circus maximus
 
 		self.plateau.joueur_qui_joue = self.j1
@@ -317,7 +317,7 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertEqual(merveille_a_construire, merveille)
 	
-	def testDemanderRessourceAuChoix(self):
+	def test_demander_ressource_au_choix(self):
 		# entrée bois
 		
 		self.plateau.joueur_qui_joue = self.j1
@@ -325,7 +325,7 @@ class TestPlateau(unittest.TestCase):
 		ressource = self.plateau.demander_ressource_au_choix(["bois", "pierre"])
 		self.assertEqual("ressource bois 1", ressource)
 	
-	def testGainSymboleScientifique(self):
+	def test_gain_symbole_scientifique(self):
 		# entrée agriculture
 		
 		self.plateau.joueur_qui_joue = self.j1
@@ -339,18 +339,18 @@ class TestPlateau(unittest.TestCase):
 		self.plateau.gain_symbole_scientifique("pendule")
 		carte_custom = Carte("atelier", None, ["point_victoire 1"], ["ressource papurys 1"], None, "vert", age=1)
 		
-		self.assertEqual([jeton], self.plateau.joueur_qui_joue.jetons)
+		self.assertEqual([jeton], self.plateau.joueur_qui_joue.jetons_progres)
 		self.assertEqual([], self.plateau.jetons_progres_plateau)
 		self.assertEqual(carte_custom, self.plateau.joueur_qui_joue.cartes[0])
 	
-	def testJoueur1AttaquePositionNeutre(self):
+	def test_joueur_1_attaque_position_neutre(self):
 		self.plateau.joueur_qui_joue = self.j1
 		
 		self.plateau.joueur_deplace_pion_militaire(1)
 		
 		self.assertEqual(10, self.plateau.position_jeton_conflit)
 	
-	def testJoueur3AttaquePositionNeutre(self):
+	def test_joueur_3_attaque_position_neutre(self):
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j1
 		
@@ -359,6 +359,17 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(12, self.plateau.position_jeton_conflit)
 		self.assertEqual(7, self.j1.points_victoire)
 		self.assertEqual(8, self.j2.monnaie)
+		
+	def test_appliquer_effets_carte_attaquer_sans_bonus_jeton_strategie(self):
+		self.plateau.joueur_qui_joue = self.j1
+		self.plateau.__preparation_monnaies_joueurs()
+		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
+		self.plateau.appliquer_effets_carte(carte)
+		
+		self.assertEqual(10, self.plateau.position_jeton_conflit)
+		self.assertEqual(7, self.plateau.joueur2.monnaie)
+		self.assertEqual(2, self.plateau.joueur1.points_victoire)
+		self.assertTrue(self.plateau.jetons_militaire[3])
 
 
 if __name__ == '__main__':
