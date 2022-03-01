@@ -2,7 +2,8 @@
 Fichier de la classe Joueur.
 """
 from src.utils.Carte import Carte
-from src.utils.Outils import logger_test, demander_element_dans_une_liste
+from src.utils.Outils import logger
+from src.utils.Outils import demander_element_dans_une_liste
 
 
 class Joueur:
@@ -21,7 +22,7 @@ class Joueur:
 		#
 		self.cartes = []  # liste des cartes construites
 		self.merveilles = []  # liste des merveilles construites
-		self.jetons = []  # liste des jetons gagnés
+		self.jetons_progres = []  # liste des jetons_progres gagnés
 		
 		#
 		self.monnaie = 0
@@ -49,7 +50,7 @@ class Joueur:
 		:return: une liste avec les ressources_manquantes manquantes.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] couts_manquants avec la carte_a_enlever [{carte}]")
+		logger.debug(f"[{self.nom}] couts_manquants avec la carte_a_enlever [{carte}]")
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -69,12 +70,12 @@ class Joueur:
 					monnaie_manquante = "monnaie " + prix_manquant
 					couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = monnaie_manquante
 					
-					logger_test.debug(f"\t[{self.nom}] manque {monnaie_manquante}")
+					logger.debug(f"\t[{self.nom}] manque {monnaie_manquante}")
 				
 				else:
 					# ce n'est pas un cout manquant
 					couts_manquants_carte.remove(cout_manquant)
-					logger_test.debug(f"\t[{self.nom}] possede argent necessaire")
+					logger.debug(f"\t[{self.nom}] possede argent necessaire")
 			
 			# cout ressource
 			else:
@@ -93,12 +94,12 @@ class Joueur:
 								ressource_manquante = effet_split[0] + " " + effet_split[1] + " " + quantite_manquante
 								couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = ressource_manquante
 								
-								logger_test.debug(f"\t[{self.nom}] manque {ressource_manquante}")
+								logger.debug(f"\t[{self.nom}] manque {ressource_manquante}")
 							
 							else:
 								# ce n'est pas un cout manquant
 								couts_manquants_carte.remove(cout_manquant)
-								logger_test.debug(f"\t[{self.nom}] possede {cout_manquant_split[1]}")
+								logger.debug(f"\t[{self.nom}] possede {cout_manquant_split[1]}")
 		
 		return couts_manquants_carte
 	
@@ -110,20 +111,20 @@ class Joueur:
 		:return: vrai/ faux.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] possede_carte_chainage avec la carte_a_enlever \'{carte}\'")
+		logger.debug(f"[{self.nom}] possede_carte_chainage avec la carte_a_enlever \'{carte}\'")
 		
 		# si la carte_a_enlever ne possede pas de carte_a_enlever de chainage
 		if carte.nom_carte_chainage is None:
-			logger_test.debug(f"\t[{self.nom}] la carte_a_enlever n a pas de carte_a_enlever de chainage")
+			logger.debug(f"\t[{self.nom}] la carte_a_enlever n a pas de carte_a_enlever de chainage")
 			return False
 		
 		#
 		for ma_carte in self.cartes:
 			if ma_carte.nom == carte.nom_carte_chainage:
-				logger_test.debug(f"\t[{self.nom}] possede la carte_a_enlever chainage")
+				logger.debug(f"\t[{self.nom}] possede la carte_a_enlever chainage")
 				return True
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas carte_a_enlever chainage")
+		logger.debug(f"\t[{self.nom}] ne possede pas carte_a_enlever chainage")
 		return False
 	
 	def production_type_ressources(self, ressource: str):
@@ -134,7 +135,7 @@ class Joueur:
 		:return: une carte_a_enlever si elle existe, None sinon.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] production_type_ressources avec la ressource \'{ressource}\'")
+		logger.debug(f"[{self.nom}] production_type_ressources avec la ressource \'{ressource}\'")
 		
 		ressource_split = ressource.split(" ")
 		for carte in self.cartes:
@@ -143,10 +144,10 @@ class Joueur:
 				
 				# ressource type quantite
 				if effet_split[0] == "ressource" and effet_split[1] == ressource_split[1]:
-					logger_test.debug(f"\t[{self.nom}] possede une carte_a_enlever qui produit la ressource")
+					logger.debug(f"\t[{self.nom}] possede une carte_a_enlever qui produit la ressource")
 					return carte
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever qui produit la ressource")
+		logger.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever qui produit la ressource")
 		return None
 	
 	def possede_carte_reduction(self, ressource: str):
@@ -157,7 +158,7 @@ class Joueur:
 		:return: le prix reduit si le nom_joueur possede une carte_a_enlever reduction de la ressource, 0 sinon.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] possede_carte_reduction avec la ressource \'{ressource}\'")
+		logger.debug(f"[{self.nom}] possede_carte_reduction avec la ressource \'{ressource}\'")
 		
 		for carte in self.cartes:
 			for effet in carte.effets:
@@ -165,10 +166,10 @@ class Joueur:
 				
 				# reduc_ressource type prixReduc
 				if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
-					logger_test.debug(f"\t[{self.nom}] possede une carte_a_enlever donnant une reduction")
+					logger.debug(f"\t[{self.nom}] possede une carte_a_enlever donnant une reduction")
 					return int(effet_split[2])
 		
-		logger_test.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever donnant une reduction")
+		logger.debug(f"\t[{self.nom}] ne possede pas de carte_a_enlever donnant une reduction")
 		return 0
 	
 	def possede_cartes_couleur(self, couleur: str) -> list:
@@ -179,22 +180,34 @@ class Joueur:
 		:return: une liste de carte_a_enlever.
 		"""
 		
-		logger_test.debug(f"[{self.nom}] possede_cartes_couleur avec la couleur \'{couleur}\'")
+		logger.debug(f"[{self.nom}] possede_cartes_couleur avec la couleur \'{couleur}\'")
 		
 		liste_cartes_couleur = []
 		for carte in self.cartes:
 			if carte.couleur == couleur:
-				logger_test.debug(f"\t[{self.nom}] la carte_a_enlever \'{carte.nom}\' est de la même couleur")
+				logger.debug(f"\t[{self.nom}] la carte_a_enlever \'{carte.nom}\' est de la même couleur")
 				liste_cartes_couleur.append(carte)
 		
 		return liste_cartes_couleur
+	
+	def possede_jeton_scientifique(self, nom_jetons_progres: str):
+		"""
+		Indique si le joueur possede ou non un jetons progres precis.
+
+		:param nom_jetons_progres: le nom du jeton que l'on cherche.
+		:return: vrai/ faux
+		"""
+		for jeton in self.jetons_progres:
+			if jeton.nom == nom_jetons_progres:
+				return True
+		return False
 	
 	def compter_point_victoire(self) -> None:
 		"""
 		Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
 		"""
 		
-		logger_test.debug(f"[{self.nom}] compter_point_victoire()")
+		logger.debug(f"[{self.nom}] compter_point_victoire()")
 		
 		# compter points victoire avec les cartes
 		for carte in self.cartes:
@@ -204,7 +217,7 @@ class Joueur:
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire":
 					
-					logger_test.debug(f"\t[{self.nom}] carte_a_enlever \'{carte.nom}\' donne {effet_split[1]} points de victoire")
+					logger.debug(f"\t[{self.nom}] carte_a_enlever \'{carte.nom}\' donne {effet_split[1]} points de victoire")
 					
 					self.points_victoire += int(effet_split[1])
 		
@@ -216,37 +229,41 @@ class Joueur:
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire":
 					
-					logger_test.debug(f"\t[{self.nom}] merveille \'{merveille.nom}\' donne "
+					logger.debug(f"\t[{self.nom}] merveille \'{merveille.nom}\' donne "
 						f"{effet_split[1]} points de victoire")
 					
 					self.points_victoire += int(effet_split[1])
 		
-		# compter points de victoire avec les jetons
-		for jeton in self.jetons:
+		# compter points de victoire avec les jetons_progres
+		for jeton in self.jetons_progres:
 			for effet in jeton.effets:
 				
 				# decoupe l effet
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire_par_jeton":
 					
-					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
+					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
 						f"{effet_split[1]} points de victoire par jeton")
 					
-					self.points_victoire += int(effet_split[1]) * len(self.jetons)
+					self.points_victoire += int(effet_split[1]) * len(self.jetons_progres)
 					
 				elif effet_split[0] == "point_victoire":
 					
-					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
+					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
 						f"{effet_split[1]} points de victoire par jeton")
 					
 					self.points_victoire += int(effet_split[1])
 				
 				elif effet_split[0] == "point_victoire_fin_partie":
 					
-					logger_test.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
+					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
 						f"{effet_split[1]} points de victoire en fin de partie")
 					
 					self.points_victoire += int(effet_split[1])
+			
+		# effet jetons progres "mathematiques"
+		if self.possede_jeton_scientifique("mathematiques"):
+			self.points_victoire += ((len(self.jetons_progres) * 3) + 3)
 	
 	def selection_merveille(self, nbr_repetition: int, liste_merveilles_alea: list) -> None:
 		"""
