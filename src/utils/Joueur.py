@@ -197,10 +197,8 @@ class Joueur:
 		:param nom_jetons_progres: le nom du jeton que l'on cherche.
 		:return: vrai/ faux
 		"""
-		for jeton in self.jetons_progres:
-			if jeton.nom == nom_jetons_progres:
-				return True
-		return False
+	
+		return any(jeton.nom == nom_jetons_progres for jeton in self.jetons_progres)
 	
 	def compter_point_victoire(self) -> None:
 		"""

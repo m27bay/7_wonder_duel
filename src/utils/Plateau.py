@@ -373,10 +373,10 @@ class Plateau:
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
 				print(f"victoire par points de \'{self.joueur1.nom}\' "
-					  f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+						f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
 				print(f"victoire par points de \'{self.joueur2.nom}\' "
-					  f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
+						f"({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 			else:
 				print(f"Egalite ({self.joueur1.points_victoire}, {self.joueur2.points_victoire})")
 	

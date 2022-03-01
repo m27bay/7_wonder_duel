@@ -66,7 +66,8 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
 	def test_carte_prenable(self):
-		self.plateau.__preparation_cartes()
+		self.plateau.joueur_qui_joue = self.j1
+		self.plateau.preparation_plateau()
 		
 		self.assertTrue(self.plateau.cartes_prenable(4, 0))
 		self.assertTrue(self.plateau.cartes_prenable(4, 10))
@@ -74,7 +75,8 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.cartes_prenable(0, 4))
 	
 	def test_liste_cartes_prenable(self):
-		self.plateau.__preparation_cartes()
+		self.plateau.joueur_qui_joue = self.j1
+		self.plateau.preparation_plateau()
 		
 		liste_carte_prenable = []
 		
@@ -362,7 +364,7 @@ class TestPlateau(unittest.TestCase):
 		
 	def test_appliquer_effets_carte_attaquer_sans_bonus_jeton_strategie(self):
 		self.plateau.joueur_qui_joue = self.j1
-		self.plateau.__preparation_monnaies_joueurs()
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 7
 		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
 		self.plateau.appliquer_effets_carte(carte)
 		
