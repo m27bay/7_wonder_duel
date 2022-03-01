@@ -13,6 +13,7 @@ from src.utils.JetonProgres import JetonProgres
 from src.utils.Outils import afficher
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
+from src.utils.Outils import demander_ressource_dans_une_liste
 
 from src.utils.Constantes import MERVEILLES
 from src.utils.Constantes import CARTES_GUILDE
@@ -517,9 +518,13 @@ class Plateau:
 				# construction de la carte gratuite via chainage
 				if not self.joueur_qui_joue.possede_carte_chainage(carte):
 					
-					if carte.couts is None:
+					# la carte ne coute rien
+					if carte.couts is None or len(carte.couts) == 0:
 						# fin action
 						break
+						
+					if carte.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
+						self.reduction_couts_ressources_carte(carte)
 					
 					# verification ressources nom_joueur
 					liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte)
@@ -616,6 +621,82 @@ class Plateau:
 	#
 	#
 	
+	def reduction_couts_ressources_carte(self, carte: Carte):
+		
+		logger.debug(f"[{self.joueur_qui_joue.nom}] reduction_couts_ressources_carte(\'{carte.nom}\')")
+		
+		# separation cout monnaie et cout ressource
+		couts_sans_monnaies = []
+		for cout in carte.couts:
+			
+			# decoupage
+			cout_split = cout.split(" ")
+			
+			if cout_split[0] == "ressource":
+				couts_sans_monnaies.append(cout)
+		
+		logger.debug(f"\t[{self.joueur_qui_joue.nom}] couts_sans_monnaies : {couts_sans_monnaies}")
+		
+		# liste des ressources choisies
+		ressources_choisies = []
+		for _ in range(2):
+			# output ressource_demandee : nom_ressource, ressource_choisie
+			nom_ressource, ressource_choisie = demander_ressource_dans_une_liste(
+				self.joueur_qui_joue.nom,
+				couts_sans_monnaies
+			)
+			
+			ressources_choisies.append(nom_ressource)
+			
+			# suppression de la ressource choisie pour le prochaine choix
+			ressource_demandee_split = ressource_choisie.split(" ")
+			if int(ressource_demandee_split[2]) > 1:
+				diff_quantite = str(int(ressource_demandee_split[2]) - 1)
+				nouv_ressource = "ressource " + nom_ressource + " " + diff_quantite
+				couts_sans_monnaies[couts_sans_monnaies.index(ressource_choisie)] = nouv_ressource
+			else:
+				couts_sans_monnaies.remove(ressource_choisie)
+		
+		logger.debug(f"\t[{self.joueur_qui_joue.nom}] ressources_choisies : {ressources_choisies}")
+		
+		# suppression ressources choisies
+		copy_couts = carte.couts.copy()
+		for cout in carte.couts:
+			
+			logger.debug(f"\t[{self.joueur_qui_joue.nom}] cout carte : {cout}")
+			
+			# decoupage
+			cout_split = cout.split(" ")
+			
+			for ressource_choisie in ressources_choisies:
+				
+				logger.debug(f"\t[{self.joueur_qui_joue.nom}] ressource_choisie : {ressource_choisie}")
+				
+				if (cout_split[0] == "ressource" and
+					cout_split[1] == ressource_choisie):
+					
+					quantite_ressource_choisie = ressources_choisies.count(ressource_choisie)
+					
+					if int(cout_split[2]) == quantite_ressource_choisie:
+						copy_couts.remove(cout)
+						
+						logger.debug(f"\t[{self.joueur_qui_joue.nom}] "
+										f"suppression total de la ressource : {cout}")
+						
+					elif int(cout_split[2]) > quantite_ressource_choisie:
+						quantite_reduction = int(cout_split[2]) - quantite_ressource_choisie
+						nouv_cout = cout_split[0] + " " + cout_split[1] + " " + str(quantite_reduction)
+						copy_couts[copy_couts.index(cout)] = nouv_cout
+						
+						logger.debug(f"\t[{self.joueur_qui_joue.nom}] "
+										f"suppression partiel de la ressource : {cout}")
+		
+		# remplassement cout
+		carte.couts = copy_couts
+		
+		logger.debug(f"\t[{self.joueur_qui_joue.nom}] "
+						f"nouveau couts de la carte : {carte.couts}")
+	
 	def defausser_carte_adversaire(self, couleur: str) -> None:
 		"""
 		Retire une carte de couleur de l'adversaire pour l'ajouter dans la liste des cartes faussees.
@@ -651,7 +732,7 @@ class Plateau:
 		
 		# le nom_joueur en choisit 1
 		jeton_choisi = demander_element_dans_une_liste(
-			self.joueur_qui_joue.nom, "jetons_progres progres", liste_jetons
+			self.joueur_qui_joue.nom, "jeton progres", liste_jetons
 		)
 		liste_jetons.remove(jeton_choisi)
 		
@@ -689,7 +770,7 @@ class Plateau:
 						and effet_ma_carte_split[1] == nom_symbole_scientifique:
 					# 2 symboles identiques => gain jeton
 					jeton_choisi = demander_element_dans_une_liste(
-						self.joueur_qui_joue.nom, "jeton", self.jetons_progres_plateau
+						self.joueur_qui_joue.nom, "jeton progres", self.jetons_progres_plateau
 					)
 					
 					logger.debug(

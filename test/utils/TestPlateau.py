@@ -140,7 +140,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(1, prix)
 	
 	def test_demander_action_carte_piocher_carte_qui_ne_coute_rien(self):
-		# entrée piocher
+		# entree piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j1
@@ -159,7 +159,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
 	def test_demander_action_carte_defausser_sans_carte_jaune(self):
-		# entrée defausser
+		# entree defausser
 		
 		self.j1.monnaie = 0
 		self.j2.monnaie = 10
@@ -181,7 +181,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
 	def test_demander_action_carte_defausser_avec_carte_jaune(self):
-		# entrée defausser
+		# entree defausser
 		
 		self.j1.monnaie = 0
 		self.j2.monnaie = 10
@@ -214,7 +214,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
 	def test_demander_action_carte_piocher_avec_carte_chainage(self):
-		# entrée piocher
+		# entree piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j1
@@ -237,7 +237,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.reste_des_cartes())
 	
 	def test_demander_action_carte_piocher_joueur_possede_ressource_monnaie(self):
-		# entrée piocher
+		# entree piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j1
@@ -257,7 +257,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(9, self.j1.monnaie)
 	
 	def test_demander_action_carte_piocher_joueur_possede_pas_ressources(self):
-		# entrée piocher
+		# entree piocher
 		
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j1
@@ -287,9 +287,23 @@ class TestPlateau(unittest.TestCase):
 		
 		self.assertFalse(self.plateau.reste_des_cartes())
 		self.assertEqual(8, self.j1.monnaie)
+		
+	def test_reduction_couts_ressources(self):
+		# entree bois, verre
+	
+		self.plateau.joueur_qui_joue = self.j1
+		carte = Carte("bibliotheque", None,
+			["symbole_scientifique plume", "point_victoire 2"],
+			["ressource pierre 1", "ressource bois 1", "ressource verre 1"],
+			"scriptorium", "vert", age=2
+		)
+		
+		self.plateau.reduction_couts_ressources_carte(carte)
+		
+		self.assertEqual(["ressource pierre 1"], carte.couts)
 	
 	def test_defausser_carte_adversaire_possede_carte_couleur(self):
-		# entrée chantier
+		# entree chantier
 		
 		self.plateau.joueur_qui_joue = self.j1
 		
@@ -301,7 +315,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual([carte], self.plateau.cartes_defaussees)
 		
 	def test_demander_action_merveille(self):
-		# entrée oui, circus maximus
+		# entree oui, circus maximus
 
 		self.plateau.joueur_qui_joue = self.j1
 		merveille = CarteFille("circus maximus", None,
@@ -320,7 +334,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(merveille_a_construire, merveille)
 	
 	def test_demander_ressource_au_choix(self):
-		# entrée bois
+		# entree bois
 		
 		self.plateau.joueur_qui_joue = self.j1
 		
@@ -328,7 +342,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual("ressource bois 1", ressource)
 	
 	def test_gain_symbole_scientifique(self):
-		# entrée agriculture
+		# entree agriculture
 		
 		self.plateau.joueur_qui_joue = self.j1
 		
@@ -504,7 +518,7 @@ class TestPlateau(unittest.TestCase):
 		self.assertEqual(5, self.plateau.joueur1.monnaie)
 		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
 		self.assertTrue(self.plateau.jetons_militaire[1].est_utilise)
-
+		
 
 if __name__ == '__main__':
 	unittest.main()
