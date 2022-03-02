@@ -25,12 +25,15 @@ class Joueur:
 		self.jetons_progres = []  # liste des jetons_progres gagnes
 		
 		#
+		self.ressources = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+		
+		#
 		self.monnaie = 0
 		self.points_victoire = 0
 		
 	def retirer_monnaie(self, monnaie: int):
 		"""
-		
+		TODO : documentation a faire
 
 		:param monnaie:
 		:return:
