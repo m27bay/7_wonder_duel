@@ -14,7 +14,7 @@ def trouver_element_avec_nom(nom_element: str, liste: list):
 	:return: l element si trouvee, None sinon.
 	"""
 	
-	logger.debug(f"trouver_element_avec_nom(\'{nom_element}\'\n{afficher(liste)})")
+	logger.debug(f"trouver_element_avec_nom(\'{nom_element}\'\n{monStrListe(liste)})")
 	
 	for element in liste:
 		if element.nom == nom_element:
@@ -36,10 +36,10 @@ def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_el
 	:return: l element choisi.
 	"""
 	
-	logger.debug(f"[{nom_joueur}] demander_element_dans_une_liste(\'{type_element}\'\n{afficher(liste_element)})")
+	logger.debug(f"[{nom_joueur}] demander_element_dans_une_liste(\'{type_element}\'\n{monStrListe(liste_element)})")
 	
 	while True:
-		print(f"* liste choix possibles *\n{afficher(liste_element)}")
+		print(f"* liste choix possibles *\n{monStrListe(liste_element)}")
 		nom_element = input(f"[{nom_joueur}] Choix {type_element} ?\n > ")
 		element_choisi = trouver_element_avec_nom(nom_element, liste_element)
 		
@@ -82,7 +82,7 @@ def demander_ressource_dans_une_liste(nom_joueur: str, liste_element: list):
 	:return: la ressource choisie.
 	"""
 	
-	logger.debug(f"[{nom_joueur}] demander_ressource_dans_une_liste(\n{afficher(liste_element)})")
+	logger.debug(f"[{nom_joueur}] demander_ressource_dans_une_liste(\n{monStrListe(liste_element)})")
 	
 	while True:
 		print(f"* liste choix possibles *\n{liste_element}")
@@ -99,7 +99,7 @@ def demander_ressource_dans_une_liste(nom_joueur: str, liste_element: list):
 	return nom_ressource, ressource_choisie
 
 
-def afficher(liste: list) -> str:
+def monStrListe(liste: list) -> str:
 	"""
 	Affiche une liste de Carte, CarteFille, ...
 
