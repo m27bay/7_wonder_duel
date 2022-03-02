@@ -23,15 +23,16 @@ class Jeu:
 		
 		logger.debug("boucle_principale")
 		_nbr_tour = 0
+		_raison_fin_de_partie = "none"
 		
 		# boucle principale
-		while True:
+		while _raison_fin_de_partie == "none":
 			
 			_nbr_tour += 1
 			logger.debug(f"\ttour numero : {_nbr_tour}")
 			
 			if not self.plateau.reste_des_cartes():
-				self.plateau.changement_age()
+				_raison_fin_de_partie, _joueur_gagnant = self.plateau.changement_age()
 				
 			else:
 				# le joueur choisit une carte
@@ -43,18 +44,22 @@ class Jeu:
 				#
 				merveille_a_construire = self.plateau.demander_action_merveille()
 				
-				sortie_effet = ""
+				# le joueur construit la merveille
 				if merveille_a_construire is not None:
-					# le joueur construit la merveille
-					sortie_effet = self.plateau.appliquer_effets_merveille(merveille_a_construire)
+					_raison_fin_de_partie, _joueur_gagnant = self.plateau.appliquer_effets_merveille(merveille_a_construire)
+					
+					# si l effet est rejouer, _raison_fin_de_partie = none, _joueur_gagnant = "rejouer"
+					if _joueur_gagnant == "rejouer":
+						continue
+				
 				else:
 					self.plateau.demander_action_carte(carte_choisie)
-					self.plateau.appliquer_effets_carte(carte_choisie)
-					self.plateau.joueur_qui_joue.cartes.append(carte_choisie)
 					
-				if sortie_effet != "rejouer":
-					self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
-	
+					_raison_fin_de_partie, _joueur_gagnant = self.plateau.appliquer_effets_carte(carte_choisie)
+					self.plateau.joueur_qui_joue.cartes.append(carte_choisie)
+				
+				self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+				
 	def lancer(self):
 		"""
 		Lance le plateau, prepare le plateau et lance la boucle principale.
