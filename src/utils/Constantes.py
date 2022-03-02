@@ -7,6 +7,15 @@ from src.utils.JetonProgres import JetonProgres
 from src.utils.JetonMilitaire import JetonMilitaire
 
 
+SYMBOLE_SCIENTIFIQUES = [
+	"sphere_armillaire",
+	"roue",
+	"cadran_solaire",
+	"pilon",
+	"pendule",
+	"plume"
+]
+
 JETONS_MILITAIRES = [
 	JetonMilitaire("5piecesJ1", None, 5, 10),
 	JetonMilitaire("2piecesJ1", None, 2, 5),
@@ -40,9 +49,11 @@ CARTES_AGE_I = [
 	Carte("verrerie", None, ["ressource verre 1"], ["monnaie 1"], None, "grise", age=1),
 	Carte("presse", None, ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1),
 	Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1),
-	Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
+	Carte("atelier", None,
+		[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
 		None, "vert", age=1),
-	Carte("apothicaire", None, ["symbole_scientifique roue", "point_victoire 1"], ["ressource verre 1"],
+	Carte("apothicaire", None,
+		[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"], ["ressource verre 1"],
 		None, "vert", age=1),
 	Carte("depot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
 	Carte("depot d argile", None, ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
@@ -50,8 +61,8 @@ CARTES_AGE_I = [
 	Carte("ecuries", None, ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
 	Carte("caserne", None, ["attaquer 1"], ["ressource argile 1"], None, "rouge", age=1),
 	Carte("palissade", None, ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
-	Carte("scriptorium", None, ["symbole_scientifique plume"], ["monnaie 2"], None, "vert", age=1),
-	Carte("officine", None, ["symbole_scientifique pilon"], ["monnaie 2"], None, "vert", age=1),
+	Carte("scriptorium", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1),
+	Carte("officine", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"], ["monnaie 2"], None, "vert", age=1),
 	Carte("theatre", None, ["point_victoire 3"], None, None, "blue", age=1),
 	Carte("autel", None, ["point_victoire 3"], None, None, "blue", age=1),
 	Carte("bains", None, ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
@@ -80,13 +91,13 @@ CARTES_AGE_II = [
 		None, "rouge", age=2),
 	Carte("place d'armes", None, ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
 		age=2),
-	Carte("bibliotheque", None, ["symbole_scientifique plume", "point_victoire 2"],
+	Carte("bibliotheque", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 2"],
 		["ressource pierre 1", "ressource bois 1", "ressource verre 1"], "scriptorium", "vert", age=2),
-	Carte("dispensaire", None, ["symbole_scientifique pilon", "point_victoire 2"],
+	Carte("dispensaire", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 2"],
 		["ressource argile 2", "ressource verre 1"], "officine", "vert", age=2),
-	Carte("ecole", None, ["symbole_scientifique roue", "point_victoire 1"],
+	Carte("ecole", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
 		["ressource papyrus 2", "ressource bois 1"], None, "vert", age=2),
-	Carte("laboratoire", None, ["symbole_scientifique pendule", "point_victoire 1"],
+	Carte("laboratoire", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"],
 		["ressource verre 2", "ressource bois 1"], None, "vert", age=2),
 	Carte("statue", None, ["point_victoire 4"], ["ressource argile 2"], "theatre", "bleu", age=2),
 	Carte("temple", None, ["point_victoire 4"], ["ressource papyrus 1", "ressource bois 1"], "autel",
@@ -100,9 +111,9 @@ CARTES_AGE_II = [
 CARTES_AGE_III = [
 	Carte("arsenal", None, ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3),
 	Carte("pretoire", None, ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
-	Carte("academie", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
+	Carte("academie", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
 		["ressource pierre 1", "ressource bois 1", "ressource verre 2"], None, "vert", age=3),
-	Carte("etude", None, ["symbole_scientifique cadran_solaire", "point_victoire 3"],
+	Carte("etude", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
 		["ressource papyrus 1", "ressource bois 2", "ressource verre 1"], None, "vert", age=3),
 	Carte("chambre de commerce", None, ["monnaie_par_carte grise 3", "point_victoire 3"],
 		["ressource papyrus 2"], None, "jaune", age=3),
@@ -124,9 +135,9 @@ CARTES_AGE_III = [
 		"champ de tir", "rouge", age=3),
 	Carte("cirque", None, ["attaquer 2"], ["ressource argile 2", "ressource pierre 2"],
 		"place d'arme", "rouge", age=3),
-	Carte("universite", None, ["symbole_scientifique sphere_armillaire", "point_victoire 2"],
+	Carte("universite", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
 		["ressource argile 1", "ressource verre 1", "ressource papyrus 1"], "ecole", "vert", age=3),
-	Carte("observatoire", None, ["symbole_scientifique sphere_armillaire", "point_victoire 2"],
+	Carte("observatoire", None, [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
 		["ressource pierre 1", "ressource papyrus 2"], "laboratoire", "vert", age=3),
 	Carte("jardin", None, ["point_victoire 6"], ["ressource argile 2", "ressource bois 2"], "statue",
 		"bleu", age=3),
@@ -217,7 +228,7 @@ MERVEILLES = [
 		["ressource pierre 1", "ressource bois 1",
 			"ressource argile 1", "ressource papyrus 2"]
 	),
-	CarteFille("temple d'artemis", None,
+	CarteFille("temple d artemis", None,
 		["monnaie 12", "rejouer"],
 		["ressource bois 1", "ressource pierre 1",
 			"ressource verre 1", "ressource papyrus 1"]
