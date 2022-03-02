@@ -298,7 +298,7 @@ class TestPlateau(unittest.TestCase):
 			"scriptorium", "vert", age=2
 		)
 		
-		self.plateau.reduction_couts_ressources_carte(carte)
+		self.plateau.reduction_couts_construction_carte(carte)
 		
 		self.assertEqual(["ressource pierre 1"], carte.couts)
 	
