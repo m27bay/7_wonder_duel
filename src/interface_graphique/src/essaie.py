@@ -1,20 +1,20 @@
 import pygame, thorpy
 import Boutton
 
-FOND_JEUX = "../ressources/image/fond-jeux.jpg"
+FOND_JEUX = "../ressources/images/fond_jeux.jpg"
 
 def tableau_image():
     tab_image = [
-        "../ressources/image/titre.jpeg",
-        "../ressources/image/play.jpg",
-        "../ressources/image/settings.jpg",
-        "../ressources/image/exit.jpg",
-        "../ressources/image/sound_ON.png",
-        "../ressources/image/sound_OFF.png",
-        "../ressources/image/jouer1.jpg",
-        "../ressources/image/retour.jpeg",
-        "../ressources/image/image_test.jpg",
-        "../ressources/image/verso_carte.jpg"
+        "../ressources/images/titre.jpeg",
+        "../ressources/images/play.jpg",
+        "../ressources/images/settings.jpg",
+        "../ressources/images/exit.jpg",
+        "../ressources/images/sound_ON.png",
+        "../ressources/images/sound_OFF.png",
+        "../ressources/images/jouer1.jpg",
+        "../ressources/images/retour.jpeg",
+        "../ressources/images/image_test.jpg",
+        "../ressources/images/verso_carte.jpg"
     ]
     
     return tab_image

@@ -1,20 +1,20 @@
 import pygame
 import Boutton
 
-FOND_JEUX = "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/fond-jeux.jpg"
+FOND_JEUX = "../ressources/images/fond_jeux.jpg"
 
 def tableau_image():
     tab_image = [
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/titre.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/play.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/settings.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/exit.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_ON.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_OFF.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/jouer1.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/retour.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/image_test.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/verso_carte.jpg"
+        "../ressources/images/titre.jpeg",
+        "../ressources/images/play.jpg",
+        "../ressources/images/settings.jpg",
+        "../ressources/images/exit.jpg",
+        "../ressources/images/sound_ON.png",
+        "../ressources/images/sound_OFF.png",
+        "../ressources/images/jouer1.jpg",
+        "../ressources/images/retour.jpeg",
+        "../ressources/images/image_test.jpg",
+        "../ressources/images/verso_carte.jpg"
 
     ]
     return tab_image
@@ -29,16 +29,16 @@ def taille_ecran():
 
 def tableau_musique():
     tab_musique = [
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/maxkomusic-medieval-fantasy.wav",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/musique_boba.wav",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/resistance.wav"
+        "../ressources/sons/maxkomusic-medieval-fantasy.wav",
+        "../ressources/sons/musique_boba.wav",
+        "../ressources/sons/resistance.wav"
 
     ]
     return tab_musique
 
 
 def popl():
-    sound1 = pygame.mixer.Sound("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/musique_boba.wav")
+    sound1 = pygame.mixer.Sound("../ressources/sons/musique_boba.wav")
     sound1.play()
 
 def musique():
@@ -51,8 +51,8 @@ def musique():
             tempo = 0
 
 def playlist():
-    sound1 = pygame.mixer.Sound("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/musique_boba.wav")
-    sound2 = pygame.mixer.Sound("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/resistance.wav")
+    sound1 = pygame.mixer.Sound("../ressources/sons/musique_boba.wav")
+    sound2 = pygame.mixer.Sound("../ressources/sons/resistance.wav")
     pygame.mixer.find_channel(True).play(sound1)
 
 pygame.init()

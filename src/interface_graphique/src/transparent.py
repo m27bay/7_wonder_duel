@@ -15,7 +15,7 @@ def lol():
     green_color = GREEN
     white_color = WHITE
     while loop:
-        background = pygame.image.load("/home/chalaud/Bureau/interface_graphique_python/ressources/image/142654.jpg")
+        background = pygame.image.load("/home/chalaud/Bureau/interface_graphique_python/ressources/images/142654.jpg")
         background.convert()
 
         # Ajout du fond dans la fenêtre
