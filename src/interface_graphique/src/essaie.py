@@ -1,22 +1,22 @@
 import pygame, thorpy
 import Boutton
 
-FOND_JEUX = "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/fond-jeux.jpg"
+FOND_JEUX = "../ressources/image/fond-jeux.jpg"
 
 def tableau_image():
     tab_image = [
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/titre.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/play.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/settings.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/exit.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_ON.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_OFF.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/jouer1.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/retour.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/image_test.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/verso_carte.jpg"
-
+        "../ressources/image/titre.jpeg",
+        "../ressources/image/play.jpg",
+        "../ressources/image/settings.jpg",
+        "../ressources/image/exit.jpg",
+        "../ressources/image/sound_ON.png",
+        "../ressources/image/sound_OFF.png",
+        "../ressources/image/jouer1.jpg",
+        "../ressources/image/retour.jpeg",
+        "../ressources/image/image_test.jpg",
+        "../ressources/image/verso_carte.jpg"
     ]
+    
     return tab_image
 
 def taille_ecran():
@@ -120,8 +120,8 @@ def affichage_age1():
             if event.type == pygame.QUIT:
                 launched = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_carte20.reactangle.collidepoint(event.pos):
-                    bouton_carte20.reactangle.move_ip(10, 10)
+                if event.button == 1 and bouton_carte20.rectangle.collidepoint(event.pos):
+                    bouton_carte20.rectangle.move_ip(10, 10)
                     bouton_carte21 = Boutton.Button(image_carte[8], image_carte[8], 15, 15, 90, 140)
                     bouton_carte21.affichage_du_bouton(window_surface)
                     pygame.display.flip()

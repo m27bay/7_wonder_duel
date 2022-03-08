@@ -1,9 +1,9 @@
 import pygame
 import Boutton
 
-FOND_ECRAN = \
-    "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/fond.jpg"
-FOND_JEUX = "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/fond-jeux.jpg"
+FOND_ECRAN = "../ressources/image/fond.jpg"
+FOND_JEUX = "../ressources/image/fond-jeux.jpg"
+
 LARGEUR_BOUTON_MENU = 50
 LONGUEUR_BOUTON_MENU = 150
 LARGEUR_TITRE = 250
@@ -30,18 +30,18 @@ def musique(path, volume):
 
 def tableau_image():
     tab_image = [
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/titre.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/play.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/settings.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/exit.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_ON.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_OFF.png",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/jouer1.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/retour.jpeg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/image_test.jpg",
-        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/verso_carte.jpg"
-
+        "../ressources/image/titre.jpeg",
+        "../ressources/image/play.jpg",
+        "../ressources/image/settings.jpg",
+        "../ressources/image/exit.jpg",
+        "../ressources/image/sound_ON.png",
+        "../ressources/image/sound_OFF.png",
+        "../ressources/image/jouer1.jpg",
+        "../ressources/image/retour.jpeg",
+        "../ressources/image/image_test.jpg",
+        "../ressources/image/verso_carte.jpg"
     ]
+    
     return tab_image
 
 
@@ -94,15 +94,15 @@ def affichage_menu_accueille():
 
     pygame.display.flip()
     status_son = 0
+    choix_menu = None
     launched = True
     while launched:
-        musique("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/"
-                "maxkomusic-medieval-fantasy.wav", 0.5)
+        musique("../ressources/son/maxkomusic-medieval-fantasy.wav", 0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_son_on.reactangle.collidepoint(event.pos) and status_son == 0:
+                if event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 0:
                     print("on off")
                     window_surface.blit(window_surface, [0, 0])
                     bouton_son_off.affichage_du_bouton(window_surface)
@@ -110,9 +110,8 @@ def affichage_menu_accueille():
                     MUTE_SOUND = 1
                     status_son = 1
                     break
-                elif event.button == 1 and bouton_son_on.reactangle.collidepoint(event.pos) and status_son == 1:
-                    musique("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/"
-                            "maxkomusic-medieval-fantasy.wav", 0.5)
+                elif event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 1:
+                    musique("../ressources/son/maxkomusic-medieval-fantasy.wav", 0.5)
                     MUTE_SOUND = 0
                     print("off on")
                     window_surface.blit(window_surface, [0, 0])
@@ -120,17 +119,17 @@ def affichage_menu_accueille():
                     pygame.mixer.unpause()
                     status_son = 0
                     break
-                elif event.button == 1 and bouton_quitter.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_quitter.rectangle.collidepoint(event.pos):
                     launched = False
-                elif event.button == 1 and bouton_jouer.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_jouer.rectangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_JOUER
                     break
-                elif event.button == 1 and bouton_options.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_options.rectangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_OPTIONS
                     break
-        if launched == False:
+        if not launched:
             break
         pygame.display.flip()
     return choix_menu
@@ -169,26 +168,27 @@ def affichage_mode_jouer():
     bouton_retour.affichage_du_bouton(window_surface)
 
     pygame.display.flip()
+    choix_menu = None
+    
     launched = True
     while launched:
         musique(
-            "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/"
-            "ressources/son/maxkomusic-medieval-fantasy.wav",
+            "../ressources/son/maxkomusic-medieval-fantasy.wav",
             0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_jvj.reactangle.collidepoint(event.pos):
+                if event.button == 1 and bouton_jvj.rectangle.collidepoint(event.pos):
                     launched = False
                     jeux = 1
                     choix_menu = JOUER
-                elif event.button == 1 and bouton_jvo.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_jvo.rectangle.collidepoint(event.pos):
                     launched = False
                     jeux = 2
                     choix_menu = JOUER
                     break
-                elif event.button == 1 and bouton_dificulter.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_dificulter.rectangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_DIFICULTER
                     break
@@ -196,7 +196,7 @@ def affichage_mode_jouer():
                     launched = False
                     choix_menu = MENU_ACCUEILLE
                     break
-        if launched == False:
+        if not launched:
             break
         pygame.display.flip()
     return choix_menu, jeux
@@ -240,21 +240,20 @@ def affichage_menu_difficulter():
     launched = True
     while launched:
         musique(
-            "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/"
-            "ressources/son/maxkomusic-medieval-fantasy.wav",
+            "../ressources/son/maxkomusic-medieval-fantasy.wav",
             0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_difficulter_facile.reactangle.collidepoint(event.pos):
+                if event.button == 1 and bouton_difficulter_facile.rectangle.collidepoint(event.pos):
                     launched = False
                     NIVEAU_DIFICULTER = 1
-                elif event.button == 1 and bouton_difficulter_moyen.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_difficulter_moyen.rectangle.collidepoint(event.pos):
                     launched = False
                     NIVEAU_DIFICULTER = 2
                     break
-                elif event.button == 1 and bouton_difficulter_difficile.reactangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_difficulter_difficile.rectangle.collidepoint(event.pos):
                     launched = False
                     NIVEAU_DIFICULTER = 3
                     break

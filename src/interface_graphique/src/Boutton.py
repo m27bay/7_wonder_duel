@@ -7,7 +7,7 @@ class Button:
         self.point_x = coordone_x
         self.point_y = coordone_y
 
-        self.reactangle = pygame.Rect(coordone_x, coordone_y, largeur, longueur)
+        self.rectangle = pygame.Rect(coordone_x, coordone_y, largeur, longueur)
 
         self.chargement_image = pygame.image.load(image)
         self.image_affiche = pygame.transform.scale(self.chargement_image, (int(largeur), int(longueur)))
@@ -23,7 +23,7 @@ class Button:
         fenetre.blit(self.nouv_image_affiche, (self.point_x, self.point_y))
 
     def detection_bouton(self, fenetre, position_sourris):
-        detection = self.reactangle.collidepoint(position_sourris)
+        detection = self.rectangle.collidepoint(position_sourris)
 
         if detection:
             self.affichage_nouveau_bouton(fenetre)
