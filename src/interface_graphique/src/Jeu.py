@@ -1,4 +1,4 @@
-from src.interface_graphique.src.m_test.Fenetre import Fenetre
+from src.interface_graphique.src.Fenetre import Fenetre
 
 if __name__ == '__main__':
 	fenetre = Fenetre("test")

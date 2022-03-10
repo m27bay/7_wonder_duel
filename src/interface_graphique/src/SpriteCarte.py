@@ -2,7 +2,7 @@ from typing import Any
 
 import pygame
 
-from src.interface_graphique.src.m_test.Constantes import IMAGE_TEST, RATION_CARTE, IMAGE_TEST_CACHEE
+from src.interface_graphique.src.Constantes import IMAGE_TEST, RATION_CARTE, IMAGE_TEST_CACHEE
 
 
 class SpriteCarte(pygame.sprite.Sprite):

@@ -1,7 +1,7 @@
 import pygame
 
-from src.interface_graphique.src.m_test.Constantes import FOND, FEN_LARGEUR, FEN_HAUTEUR
-from src.interface_graphique.src.m_test.SpriteCarte import SpriteCarte
+from src.interface_graphique.src.Constantes import FOND, FEN_LARGEUR, FEN_HAUTEUR
+from src.interface_graphique.src.SpriteCarte import SpriteCarte
 
 
 class Fenetre:
