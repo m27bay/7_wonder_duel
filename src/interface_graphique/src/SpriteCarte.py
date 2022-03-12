@@ -2,19 +2,27 @@ from typing import Any
 
 import pygame
 
-from src.interface_graphique.src.Constantes import IMAGE_TEST, RATION_CARTE, IMAGE_TEST_CACHEE
+from src.utils.Carte import Carte
 
+cheminDossierImage = "../ressources/images/cartes/"
+RATION_CARTE = 1/5
 
 class SpriteCarte(pygame.sprite.Sprite):
-	
-	def __init__(self, haut_gauche_x: int, haut_gauche_y: int, face_cachee: bool):
+	def __init__(self, carte: Carte, haut_gauche_x: int, haut_gauche_y: int):
 		pygame.sprite.Sprite.__init__(self)
 		
-		if face_cachee:
-			chemin_img = IMAGE_TEST_CACHEE
+		self.carte = carte
+		
+		self.cheminImageRecto = f"{cheminDossierImage}{carte.nom}.jpg"
+		if not carte.nom.__contains__("guilde"):
+			self.cheminImageVeso = f"{cheminDossierImage}recto age {self.carte.age}.jpg"
 		else:
-			chemin_img = IMAGE_TEST
-		self.image = pygame.image.load(chemin_img).convert()
+			self.cheminImageVeso = f"{cheminDossierImage}recto guilde.jpg"
+			
+		if not carte.est_face_cachee:
+			self.image = pygame.image.load(self.cheminImageRecto).convert()
+		else:
+			self.image = pygame.image.load(self.cheminImageVeso).convert()
 		larg, haut = self.image.get_size()
 		self.image = pygame.transform.scale(self.image, (larg*RATION_CARTE, haut*RATION_CARTE))
 		
