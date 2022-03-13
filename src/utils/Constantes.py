@@ -63,8 +63,8 @@ CARTES_AGE_I = [
 	Carte("palissade", ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
 	Carte("scriptorium", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1),
 	Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"], ["monnaie 2"], None, "vert", age=1),
-	Carte("theatre", ["point_victoire 3"], None, None, "blue", age=1),
-	Carte("autel", ["point_victoire 3"], None, None, "blue", age=1),
+	Carte("theatre", ["point_victoire 3"], None, None, "bleu", age=1),
+	Carte("autel", ["point_victoire 3"], None, None, "bleu", age=1),
 	Carte("bains", ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
 	Carte("taverne", ["monnaie 4"], None, None, "jaune", age=1)
 ]

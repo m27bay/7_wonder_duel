@@ -1,10 +1,13 @@
 import pygame
 
+from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
 from src.interface_graphique.src.SpriteCarte import SpriteCarte
 from src.utils.Carte import Carte
+from src.utils.CarteFille import CarteFille
 from src.utils.Plateau import Plateau
 
-FOND = "../ressources/images/fond_jeux.jpg"
+RATIO_IMAGE = 0.2
+RATIO_PLATEAU = 0.55
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -17,71 +20,95 @@ class Fenetre:
 		
 		pygame.display.set_caption(titre)
 		
-		self.sprites = pygame.sprite.Group()
-		self.dessiner_carte()
+		default_sprite_image = SpriteCarte(Carte("academie", None, None, None, None, 3), 0, 0, RATIO_IMAGE)
+		self.default_hauteur_sprite = default_sprite_image.rect.height
+		self.default_largeur_spirte = default_sprite_image.rect.width
 		
-		image_fond = pygame.image.load(FOND).convert()
+		self.cartes_plateau = pygame.sprite.Group()
+		
+		self.sprite_j1 = [
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group()
+		]
+		self.sprite_j2 = [
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group(),
+			pygame.sprite.Group()
+		]
+		
+		self.espace_entre_carte = self.largeur * 0.005
+		self.__dessiner_carte()
+		
+		image_fond = pygame.image.load(DOSSIER_IMAGES + "fond_jeux.jpg").convert()
 		self.image_fond = pygame.transform.scale(image_fond, (self.largeur, self.hauteur))
 		
-	def __dessiner_carte_age_I(self):
-		sprite_carte = SpriteCarte(Carte("academie", None, None, None, None, 3), 0, 0)
-		hauteur_sprite = sprite_carte.rect.height
-		largeur_spirte = sprite_carte.rect.width
+		image_plateau = pygame.image.load(DOSSIER_IMAGES + "plateau_sans_fond.png")
+		image_plateau.set_colorkey((255, 255, 255))
+		larg_plat, haut_plat = image_plateau.get_size()
+		ration_plat = haut_plat / larg_plat
+		larg_plat = RATIO_PLATEAU * self.largeur
+		haut_plat = ration_plat * larg_plat
+		self.image_plateau = pygame.transform.scale(image_plateau, (larg_plat, haut_plat))
+		self.rect_image_plateau = self.image_plateau.get_rect()
 		
-		origine_cartes = self.largeur / 2 - largeur_spirte
+	def __dessiner_carte_age_I(self):
+		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
-		haut_gauche_y = 0
+		haut_gauche_y = self.hauteur * 1 / 3
 		
 		for num_ligne, ligne_cartes in enumerate(self.plateau.cartes_plateau):
 			for num_colone, carte in enumerate(ligne_cartes):
 				
 				if carte != 0:
 					# dessin
-					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y)
-					self.sprites.add(sprite_carte)
+					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
+					self.cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
-					haut_gauche_x += largeur_spirte
+					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
 			
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - (num_ligne+1) * largeur_spirte/2
-			haut_gauche_y += hauteur_sprite/2
+			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_y += self.default_hauteur_sprite / 2
 	
 	def __dessiner_carte_age_II(self):
-		sprite_carte = SpriteCarte(Carte("academie", None, None, None, None, 3), 0, 0)
-		hauteur_sprite = sprite_carte.rect.height
-		largeur_spirte = sprite_carte.rect.width
-		
-		origine_cartes = self.largeur/2 - 3*largeur_spirte
+		origine_cartes = self.largeur / 2 - 3 * self.default_largeur_spirte - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
-		haut_gauche_y = 0
+		haut_gauche_y = self.hauteur * 1 / 3
 		
 		for num_ligne, ligne_cartes in enumerate(self.plateau.cartes_plateau):
 			for num_colone, carte in enumerate(ligne_cartes):
 				
 				if carte != 0:
 					# dessin
-					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y)
-					self.sprites.add(sprite_carte)
+					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
+					self.cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
-					haut_gauche_x += largeur_spirte
+					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
 			
 			# coords changement ligne
-			haut_gauche_x = origine_cartes + (num_ligne+1) * largeur_spirte/2
-			haut_gauche_y += hauteur_sprite/2
+			haut_gauche_x = origine_cartes + (num_ligne+1) * self.default_largeur_spirte/2 - self.espace_entre_carte
+			haut_gauche_y += self.default_hauteur_sprite/2
 			
 	def __dessiner_carte_age_III(self):
-		sprite_carte = SpriteCarte(Carte("academie", None, None, None, None, 3), 0, 0)
-		hauteur_sprite = sprite_carte.rect.height
-		largeur_spirte = sprite_carte.rect.width
-		
-		origine_cartes = self.largeur / 2 - largeur_spirte
+		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
-		haut_gauche_y = 0
+		haut_gauche_y = self.hauteur * 1 / 3
 
 		for num_ligne in range(3):
 			ligne_cartes = self.plateau.cartes_plateau[num_ligne]
@@ -90,29 +117,29 @@ class Fenetre:
 
 				if carte != 0:
 					# dessin
-					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y)
-					self.sprites.add(sprite_carte)
+					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
+					self.cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
-					haut_gauche_x += largeur_spirte
+					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
 
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - (num_ligne+1) * largeur_spirte/2
-			haut_gauche_y += hauteur_sprite/2
+			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_y += self.default_hauteur_sprite / 2
 			
 		#
-		haut_gauche_x = origine_cartes - largeur_spirte/2
+		haut_gauche_x = origine_cartes - self.default_largeur_spirte/2
 		carte = self.plateau.cartes_plateau[3][1]
-		self.sprites.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y))
+		self.cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
 		
 		#
-		haut_gauche_x = origine_cartes + largeur_spirte + largeur_spirte / 2
+		haut_gauche_x = origine_cartes + self.default_largeur_spirte + self.default_largeur_spirte / 2
 		carte = self.plateau.cartes_plateau[3][5]
-		self.sprites.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y))
-		haut_gauche_y += hauteur_sprite/2
+		self.cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
+		haut_gauche_y += self.default_hauteur_sprite/2
 		
 		#
-		haut_gauche_x = origine_cartes - largeur_spirte
+		haut_gauche_x = origine_cartes - self.default_largeur_spirte - self.espace_entre_carte
 		for num_ligne in range(4, len(self.plateau.cartes_plateau)):
 			ligne_cartes = self.plateau.cartes_plateau[num_ligne]
 			for num_colone in range(len(ligne_cartes)):
@@ -120,18 +147,18 @@ class Fenetre:
 
 				if carte != 0:
 					# dessin
-					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y)
-					self.sprites.add(sprite_carte)
+					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
+					self.cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
-					haut_gauche_x += largeur_spirte
+					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
 
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - largeur_spirte + (num_ligne-4+1) * largeur_spirte / 2
-			haut_gauche_y += hauteur_sprite/2
-		
+			haut_gauche_x = origine_cartes - self.default_largeur_spirte + \
+							(num_ligne - 4 + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_y += self.default_hauteur_sprite/2
 	
-	def dessiner_carte(self):
+	def __dessiner_carte(self):
 		if self.plateau.age == 1:
 			self.__dessiner_carte_age_I()
 		elif self.plateau.age == 2:
@@ -139,6 +166,43 @@ class Fenetre:
 		else:
 			self.__dessiner_carte_age_III()
 			
+	def __position_type_carte(self, carte: Carte):
+		if not isinstance(carte, CarteFille):
+			liste_couleur = ["marron", "grise", "bleu", "vert", "jaune", "rouge"]
+			if carte.couleur in liste_couleur:
+				return liste_couleur.index(carte.couleur)
+		else:
+			if carte.nom.__contains__("guilde"):
+				return 6
+			
+	def __piocher_carte(self, sprite_carte: SpriteCarte):
+		self.cartes_plateau.remove(sprite_carte)
+		type_carte = self.__position_type_carte(sprite_carte.carte)
+		
+		angle = 90
+		coord_x = self.rect_image_plateau.x
+		
+		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+			sprite_joueur_qui_joue = self.sprite_j1
+			angle = -angle
+			coord_x -= self.default_hauteur_sprite
+			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 3))
+		else:
+			sprite_joueur_qui_joue = self.sprite_j2
+			coord_x += + self.rect_image_plateau.width
+			decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 3)
+		
+		if type_carte == 0:
+			coord_y = self.rect_image_plateau.height + type_carte * self.default_largeur_spirte
+		else:
+			coord_y = self.rect_image_plateau.height + type_carte * (
+					self.default_largeur_spirte + self.espace_entre_carte)
+		
+		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
+		sprite_carte.pivoter(angle)
+		
+		sprite_carte.deplacer(coord_x + decalage_x, coord_y)
+		
 	def boucle_principale(self):
 		en_cours = True
 		while en_cours:
@@ -156,18 +220,41 @@ class Fenetre:
 				
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if event.button == 1:
-						for sprit in self.sprites:
+						for sprit in self.cartes_plateau:
 							clic_x, clic_y = event.pos
 							if sprit.rect.collidepoint(clic_x, clic_y):
 								if isinstance(sprit, SpriteCarte):
-									sprit.deplacer(0, 0)
+									if sprit.carte in self.plateau.liste_cartes_prenables():
+										self.__piocher_carte(sprit)
 			
 			# PARTIE Update
-			self.sprites.update()
-			
+			self.cartes_plateau.update()
+			for group_sprit in self.sprite_j1:
+				group_sprit.update()
+			for group_sprit in self.sprite_j2:
+				group_sprit.update()
+				
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
-			self.sprites.draw(self.ecran)
+			self.ecran.blit(
+				self.image_plateau,
+				(self.largeur / 2 - self.image_plateau.get_width() / 2,
+				2 * self.espace_entre_carte)
+			)
+			self.rect_image_plateau.topleft = (
+				(self.largeur / 2 - self.image_plateau.get_width() / 2,
+				2 * self.espace_entre_carte)
+			)
+			
+			self.cartes_plateau.draw(self.ecran)
+			for group_sprit in self.sprite_j1:
+				group_sprit.draw(self.ecran)
+			for group_sprit in self.sprite_j2:
+				group_sprit.draw(self.ecran)
+			
+			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
+			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topleft,
+			# 	self.rect_image_plateau.bottomleft)
 			
 			# after drawing everything, flip this display
 			pygame.display.flip()

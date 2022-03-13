@@ -330,13 +330,13 @@ class Plateau:
 		:return:
 		"""
 		
-		if ligne == 4:
+		# si la carte est sur la dernière ligne
+		if ligne == len(self.cartes_plateau) - 1:
 			return True
-		elif ligne == 0:
-			if colonne == 0:
-				return self.cartes_plateau[ligne + 1][colonne + 1] == 0
-			elif colonne == len(self.cartes_plateau[ligne]) - 1:
-				return self.cartes_plateau[ligne + 1][colonne - 1] == 0
+		elif colonne == 0:
+			return self.cartes_plateau[ligne + 1][colonne + 1] == 0
+		elif colonne == len(self.cartes_plateau[ligne]) - 1:
+			return self.cartes_plateau[ligne + 1][colonne - 1] == 0
 		else:
 			return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) and (
 						self.cartes_plateau[ligne + 1][colonne + 1] == 0)
@@ -712,7 +712,7 @@ class Plateau:
 		logger.debug(f"[{self.joueur_qui_joue.nom}] a choisit \'{symbole_scientifique}\'")
 		
 		self.joueur_qui_joue.cartes.append(
-			Carte("carte_custom", None, [symbole_scientifique], [], None, None, None)
+			Carte("carte_custom", [symbole_scientifique], [], None, None, None)
 		)
 	
 	def reduction_couts_construction_carte(self, carte: Carte):
