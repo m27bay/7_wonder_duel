@@ -1,5 +1,4 @@
 from src.interface_graphique.src.Fenetre import Fenetre
-from src.utils.Constantes import CARTES_AGE_I
 from src.utils.Joueur import Joueur
 from src.utils.Plateau import Plateau
 

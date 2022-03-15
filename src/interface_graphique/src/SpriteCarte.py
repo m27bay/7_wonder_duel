@@ -3,47 +3,71 @@ from typing import Any
 import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES_CARTES
+from src.interface_graphique.src.Element import Element
 from src.utils.Carte import Carte
 
 
 
-class SpriteCarte(pygame.sprite.Sprite):
+class SpriteCarte(Element):
 	def __init__(self, carte: Carte, haut_gauche_x: float, haut_gauche_y: float, ration_longeur_fenetre: float):
-		pygame.sprite.Sprite.__init__(self)
+		super().__init__(haut_gauche_x, haut_gauche_y)
 		
 		self.carte = carte
 		
-		self.cheminImageRecto = f"{DOSSIER_IMAGES_CARTES}{carte.nom}.jpg"
-		if not carte.nom.__contains__("guilde"):
-			self.cheminImageVeso = f"{DOSSIER_IMAGES_CARTES}recto age {self.carte.age}.jpg"
-		else:
-			self.cheminImageVeso = f"{DOSSIER_IMAGES_CARTES}recto guilde.jpg"
-			
-		if not carte.est_face_cachee:
-			self.image = pygame.image.load(self.cheminImageRecto).convert()
-		else:
-			self.image = pygame.image.load(self.cheminImageVeso).convert()
+		self.ration_longeur_fenetre = ration_longeur_fenetre
+		self.angle = 0
+		
+		self.chemin_image_recto = None
+		self.chemin_image_verso = None
+		self.image = None
+		
+		self.preparer_image()
+	
+	def modifier_taille_image(self):
 		larg, haut = self.image.get_size()
 		ration_image = haut / larg
-		larg = larg * ration_longeur_fenetre
+		
+		if self.largeur_zoom == 0:
+			larg = larg * self.ration_longeur_fenetre
+		else:
+			larg = larg * self.largeur_zoom
+		
 		haut = ration_image * larg
 		self.image = pygame.transform.scale(self.image, (larg, haut))
+	
+	def charger_image(self):
+		self.chemin_image_recto = f"{DOSSIER_IMAGES_CARTES}{self.carte.nom}.jpg"
+		if not self.carte.nom.__contains__("guilde"):
+			self.chemin_image_verso = f"{DOSSIER_IMAGES_CARTES}recto age {self.carte.age}.jpg"
+		else:
+			self.chemin_image_verso = f"{DOSSIER_IMAGES_CARTES}recto guilde.jpg"
 		
+		if not self.carte.est_face_cachee:
+			self.image = pygame.image.load(self.chemin_image_recto).convert()
+		else:
+			self.image = pygame.image.load(self.chemin_image_verso).convert()
+			
+	def deplacer_image(self):
 		self.rect = self.image.get_rect()
-		self.rect.topleft = (haut_gauche_x, haut_gauche_y)
 		
-		self.nouv_coords = None
+		if self.largeur_zoom == 0:
+			self.rect.topleft = (self.haut_gauche_x, self.haut_gauche_y)
+		else:
+			self.rect.center = self.coord_milieu_fen
+			
+	def preparer_image(self):
+		self.charger_image()
+		self.modifier_taille_image()
+		self.deplacer_image()
 		
-	def pivoter(self, angle):
-		self.image = pygame.transform.rotate(self.image, angle)
+	def pivoter(self):
+		self.image = pygame.transform.rotate(self.image, self.angle)
 		self.rect = self.image.get_rect(center=self.rect.center)
-		
-	def deplacer(self, dx: int, dy: int):
-		self.nouv_coords = (dx, dy)
 	
 	def update(self, *args: Any, **kwargs: Any) -> None:
-		if self.nouv_coords is not None:
-			self.rect.topleft = self.nouv_coords
-			self.nouv_coords = None
+		self.preparer_image()
 		
+		if self.angle != 0:
+			self.pivoter()
+			
 			

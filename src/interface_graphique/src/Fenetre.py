@@ -8,6 +8,7 @@ from src.utils.Plateau import Plateau
 
 RATIO_IMAGE = 0.2
 RATIO_PLATEAU = 0.55
+RATIO_ZOOM = 1.20
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -46,6 +47,8 @@ class Fenetre:
 			pygame.sprite.Group(),
 			pygame.sprite.Group()
 		]
+		
+		self.sprite_zoomer = None
 		
 		self.espace_entre_carte = self.largeur * 0.005
 		self.__dessiner_carte()
@@ -179,12 +182,12 @@ class Fenetre:
 		self.cartes_plateau.remove(sprite_carte)
 		type_carte = self.__position_type_carte(sprite_carte.carte)
 		
-		angle = 90
+		sprite_carte.angle = 90
 		coord_x = self.rect_image_plateau.x
 		
 		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
 			sprite_joueur_qui_joue = self.sprite_j1
-			angle = -angle
+			sprite_carte.angle = -sprite_carte.angle
 			coord_x -= self.default_hauteur_sprite
 			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 3))
 		else:
@@ -199,9 +202,11 @@ class Fenetre:
 					self.default_largeur_spirte + self.espace_entre_carte)
 		
 		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
-		sprite_carte.pivoter(angle)
+		self.plateau.enlever_carte(sprite_carte.carte)
 		
-		sprite_carte.deplacer(coord_x + decalage_x, coord_y)
+		sprite_carte.pivoter()
+		
+		sprite_carte.changer_coords(coord_x + decalage_x, coord_y)
 		
 	def boucle_principale(self):
 		en_cours = True
@@ -212,21 +217,45 @@ class Fenetre:
 				# quitter avec la croix
 				if event.type == pygame.QUIT:
 					en_cours = False
-				
+					
 				# quitter avec la touche echap
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
 						en_cours = False
-				
+					
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					if event.button == 1:
-						for sprit in self.cartes_plateau:
-							clic_x, clic_y = event.pos
-							if sprit.rect.collidepoint(clic_x, clic_y):
+					
+					for sprit in self.cartes_plateau:
+						clic_x, clic_y = event.pos
+						if sprit.rect.collidepoint(clic_x, clic_y):
+							
+							# système de zoom avec le clic droit
+							if event.button == 3:
 								if isinstance(sprit, SpriteCarte):
 									if sprit.carte in self.plateau.liste_cartes_prenables():
-										self.__piocher_carte(sprit)
-			
+										
+										if self.sprite_zoomer is None:
+											sprit.zoomer(RATIO_ZOOM, (self.largeur/2, self.hauteur/2))
+											self.sprite_zoomer = sprit
+											
+										else:
+											if sprit == self.sprite_zoomer:
+												sprit.dezoomer()
+												self.sprite_zoomer = None
+							
+							# piocher carte/ merveille ou défauffer avec clic gauche
+							elif event.button == 1:
+								if isinstance(sprit, SpriteCarte):
+									if self.sprite_zoomer is None:
+										if sprit.carte in self.plateau.liste_cartes_prenables():
+											
+											self.__piocher_carte(sprit)
+		
+											for carte in self.plateau.liste_cartes_prenables():
+												carte.est_face_cachee = False
+		
+											self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+								
 			# PARTIE Update
 			self.cartes_plateau.update()
 			for group_sprit in self.sprite_j1:
