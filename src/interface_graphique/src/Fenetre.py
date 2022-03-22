@@ -6,9 +6,9 @@ from src.utils.Carte import Carte
 from src.utils.CarteFille import CarteFille
 from src.utils.Plateau import Plateau
 
-RATIO_IMAGE = 0.2
+RATIO_IMAGE = 0.18
 RATIO_PLATEAU = 0.55
-RATIO_ZOOM = 1.20
+RATIO_ZOOM = 0.90
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -64,6 +64,11 @@ class Fenetre:
 		haut_plat = ration_plat * larg_plat
 		self.image_plateau = pygame.transform.scale(image_plateau, (larg_plat, haut_plat))
 		self.rect_image_plateau = self.image_plateau.get_rect()
+		
+		self.double_clic = False
+		
+		self.merverille_j1 = pygame.sprite.Group()
+		self.merverille_j2 = pygame.sprite.Group()
 		
 	def __dessiner_carte_age_I(self):
 		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
@@ -169,9 +174,12 @@ class Fenetre:
 		else:
 			self.__dessiner_carte_age_III()
 			
+	def __dessiner_merveille(self):
+	
+	
 	def __position_type_carte(self, carte: Carte):
 		if not isinstance(carte, CarteFille):
-			liste_couleur = ["marron", "grise", "bleu", "vert", "jaune", "rouge"]
+			liste_couleur = ["marron", "gris", "bleu", "vert", "jaune", "rouge"]
 			if carte.couleur in liste_couleur:
 				return liste_couleur.index(carte.couleur)
 		else:
@@ -183,30 +191,34 @@ class Fenetre:
 		type_carte = self.__position_type_carte(sprite_carte.carte)
 		
 		sprite_carte.angle = 90
-		coord_x = self.rect_image_plateau.x
 		
 		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
 			sprite_joueur_qui_joue = self.sprite_j1
 			sprite_carte.angle = -sprite_carte.angle
+			coord_x, _ = self.rect_image_plateau.bottomleft
+			coord_x -= 5
 			coord_x -= self.default_hauteur_sprite
-			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 3))
+			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
 		else:
 			sprite_joueur_qui_joue = self.sprite_j2
-			coord_x += + self.rect_image_plateau.width
-			decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 3)
+			coord_x, _ = self.rect_image_plateau.bottomright
+			coord_x += 5
+			decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
 		
 		if type_carte == 0:
-			coord_y = self.rect_image_plateau.height + type_carte * self.default_largeur_spirte
+			coord_y = type_carte * self.default_largeur_spirte
 		else:
-			coord_y = self.rect_image_plateau.height + type_carte * (
+			coord_y = type_carte * (
 					self.default_largeur_spirte + self.espace_entre_carte)
-		
+			
+		coord_y -= self.rect_image_plateau.height*1/4
+		coord_y += self.default_largeur_spirte
+		coord_x += decalage_x
+			
 		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
 		self.plateau.enlever_carte(sprite_carte.carte)
 		
-		sprite_carte.pivoter()
-		
-		sprite_carte.changer_coords(coord_x + decalage_x, coord_y)
+		sprite_carte.changer_coords(coord_x, coord_y)
 		
 	def boucle_principale(self):
 		en_cours = True
@@ -229,7 +241,7 @@ class Fenetre:
 						clic_x, clic_y = event.pos
 						if sprit.rect.collidepoint(clic_x, clic_y):
 							
-							# système de zoom avec le clic droit
+							# clic droit
 							if event.button == 3:
 								if isinstance(sprit, SpriteCarte):
 									if sprit.carte in self.plateau.liste_cartes_prenables():
@@ -237,6 +249,8 @@ class Fenetre:
 										if self.sprite_zoomer is None:
 											sprit.zoomer(RATIO_ZOOM, (self.largeur/2, self.hauteur/2))
 											self.sprite_zoomer = sprit
+											self.cartes_plateau.remove(self.sprite_zoomer)
+											self.cartes_plateau.add(self.sprite_zoomer)
 											
 										else:
 											if sprit == self.sprite_zoomer:
@@ -247,16 +261,22 @@ class Fenetre:
 							elif event.button == 1:
 								if isinstance(sprit, SpriteCarte):
 									if self.sprite_zoomer is None:
+										
 										if sprit.carte in self.plateau.liste_cartes_prenables():
-											
-											self.__piocher_carte(sprit)
-		
-											for carte in self.plateau.liste_cartes_prenables():
-												carte.est_face_cachee = False
-		
-											self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+												
+												self.__piocher_carte(sprit)
+												
+												for carte in self.plateau.liste_cartes_prenables():
+													carte.est_face_cachee = False
+			
+												self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
 								
 			# PARTIE Update
+			if len(self.cartes_plateau) == 0 and self.plateau.age != 3:
+				self.plateau.age += 1
+				self.plateau.preparation_cartes()
+				self.__dessiner_carte()
+				
 			self.cartes_plateau.update()
 			for group_sprit in self.sprite_j1:
 				group_sprit.update()
@@ -283,7 +303,9 @@ class Fenetre:
 			
 			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
 			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topleft,
-			# 	self.rect_image_plateau.bottomleft)
+				# self.rect_image_plateau.bottomleft)
+			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topright,
+				# self.rect_image_plateau.bottomright)
 			
 			# after drawing everything, flip this display
 			pygame.display.flip()
