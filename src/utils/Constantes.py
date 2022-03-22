@@ -46,8 +46,8 @@ CARTES_AGE_I = [
 	Carte("cavite", ["ressource argile 1"], ["monnaie 1"], None, "marron", age=1),
 	Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1),
 	Carte("mine", ["ressource pierre 1"], ["monnaie 1"], None, "marron", age=1),
-	Carte("verrerie", ["ressource verre 1"], ["monnaie 1"], None, "grise", age=1),
-	Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1),
+	Carte("verrerie", ["ressource verre 1"], ["monnaie 1"], None, "gris", age=1),
+	Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1),
 	Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1),
 	Carte("atelier",
 		[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
@@ -115,7 +115,7 @@ CARTES_AGE_III = [
 		["ressource pierre 1", "ressource bois 1", "ressource verre 2"], None, "vert", age=3),
 	Carte("etude", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
 		["ressource papyrus 1", "ressource bois 2", "ressource verre 1"], None, "vert", age=3),
-	Carte("chambre de commerce", ["monnaie_par_carte grise 3", "point_victoire 3"],
+	Carte("chambre de commerce", ["monnaie_par_carte gris 3", "point_victoire 3"],
 		["ressource papyrus 2"], None, "jaune", age=3),
 	Carte("port", ["monnaie_par_carte marron 2", "point_victoire 3"],
 		["ressource verre 1", "ressource bois 1", "ressource papyrus 1"], None, "jaune", age=3),
@@ -188,7 +188,7 @@ CARTES_GUILDE = [
 # constructeur : CarteFille(nom, chemin_image, effets)
 MERVEILLES = [
 	CarteFille("circus maximus",
-		["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+		["defausse_carte_adversaire gris", "attaquer 1", "point_victoire 3"],
 		["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
 	),
 	CarteFille("colosse",
