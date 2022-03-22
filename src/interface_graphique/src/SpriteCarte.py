@@ -62,7 +62,7 @@ class SpriteCarte(Element):
 		
 	def pivoter(self):
 		self.image = pygame.transform.rotate(self.image, self.angle)
-		self.rect = self.image.get_rect(center=self.rect.center)
+		self.rect = self.image.get_rect(topleft=self.rect.bottomleft)
 	
 	def update(self, *args: Any, **kwargs: Any) -> None:
 		self.preparer_image()
