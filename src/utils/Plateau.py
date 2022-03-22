@@ -84,12 +84,12 @@ class Plateau:
 		Prepare le plateau, les cartes, les jetons_progres, la monnaie des joueurs, les merveilles des joueurs.
 		"""
 		logger.debug("preparation_plateau")
-		self.__preparation_cartes()
+		self.preparation_cartes()
 		self.__preparation_jetons_progres()
 		self.__preparation_monnaies_joueurs()
 		self.__preparation_merveilles()
 	
-	def __preparation_cartes(self) -> None:
+	def preparation_cartes(self) -> None:
 		"""
 		Methode privee.
 		
@@ -97,7 +97,7 @@ class Plateau:
 		une structure precise.
 		"""
 		
-		logger.debug(f"__preparation_cartes age {self.age}")
+		logger.debug(f"preparation_cartes age {self.age}")
 		
 		# preparation de la structure des cartes en fonction de l age.
 		if self.age == 1:
@@ -368,7 +368,7 @@ class Plateau:
 		else:
 			# changement d'age
 			self.age += 1
-			self.__preparation_cartes()
+			self.preparation_cartes()
 			
 			return "none", "none"
 	
