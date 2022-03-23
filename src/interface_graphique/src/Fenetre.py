@@ -10,9 +10,11 @@ from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
 
+
+RATION_FEN = 0
 RATIO_IMAGE = 0.16
 RATIO_MERVEILLE = 0.10
-RATIO_JETONS_PROGRES = 0.10
+RATIO_JETONS_PROGRES = 0.15
 
 RATIO_PLATEAU = 0.50
 RATION_BANQUE = 0.05
@@ -247,14 +249,17 @@ class Fenetre:
 			
 	def __dessiner_jetons_scientifiques(self):
 		coord_x, coord_y = self.rect_image_plateau.topleft
-		coord_x += self.rect_image_plateau.width / 2
-		coord_x += self.default_largeur_jetons_progres
+		coord_x += 1 / 4 * self.rect_image_plateau.width
 		
-		# compteur = 0
-		# for jeton in self.plateau.jetons_progres_plateau:
-		sprite_jetons_progres = SpriteJetonsProgres(self.plateau.jetons_progres_plateau[1], coord_x, coord_y, RATIO_JETONS_PROGRES)
-		self.jetons_progres_plateau.add(sprite_jetons_progres)
-			#compteur += 1
+		coord_y += self.espace_entre_carte
+		
+		for jeton in self.plateau.jetons_progres_plateau:
+			sprite_jetons_progres = SpriteJetonsProgres(
+				jeton, coord_x, coord_y, RATIO_JETONS_PROGRES
+			)
+			self.jetons_progres_plateau.add(sprite_jetons_progres)
+			
+			coord_x += 1 / 50 * self.rect_image_plateau.width + self.default_largeur_jetons_progres
 	
 	def __position_type_carte(self, carte: Carte):
 		if not isinstance(carte, CarteFille):
@@ -393,6 +398,11 @@ class Fenetre:
 				self.rect_image_plateau.bottomright)
 			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.bottomright,
 				self.rect_image_plateau.bottomleft)
+			
+			x, y = self.rect_image_plateau.topleft
+			x += 1 / 4 * self.rect_image_plateau.width
+			_, y2 = self.rect_image_plateau.bottomleft
+			pygame.draw.line(self.ecran, (255, 0, 0), (x, y), (x, y2))
 			
 			# after drawing everything, flip this display
 			pygame.display.flip()
