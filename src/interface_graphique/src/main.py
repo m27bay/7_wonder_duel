@@ -1,9 +1,8 @@
 import pygame
 import Boutton
 
-FOND_ECRAN = "../ressources/image/fond.jpg"
-FOND_JEUX = "../ressources/image/fond-jeux.jpg"
-
+FOND_ECRAN = "fond.jpg"
+FOND_JEUX = "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/fond-jeux.jpg"
 LARGEUR_BOUTON_MENU = 50
 LONGUEUR_BOUTON_MENU = 150
 LARGEUR_TITRE = 250
@@ -16,9 +15,6 @@ MENU_OPTIONS = 2
 MENU_DIFICULTER = 3
 JOUER = 5
 
-jeux = 0
-
-NIVEAU_DIFICULTER = -1
 blank_color = (255, 255, 255)
 
 
@@ -30,18 +26,19 @@ def musique(path, volume):
 
 def tableau_image():
     tab_image = [
-        "../ressources/image/titre.jpeg",
-        "../ressources/image/play.jpg",
-        "../ressources/image/settings.jpg",
-        "../ressources/image/exit.jpg",
-        "../ressources/image/sound_ON.png",
-        "../ressources/image/sound_OFF.png",
-        "../ressources/image/jouer1.jpg",
-        "../ressources/image/retour.jpeg",
-        "../ressources/image/image_test.jpg",
-        "../ressources/image/verso_carte.jpg"
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/titre.jpeg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/play.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/settings.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/exit.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_ON.png",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/sound_OFF.png",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/jouer1.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/retour.jpeg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/image_test.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/verso_carte.jpg",
+        "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/image/Retour_brown_arrowgold_write.png"
+
     ]
-    
     return tab_image
 
 
@@ -94,15 +91,15 @@ def affichage_menu_accueille():
 
     pygame.display.flip()
     status_son = 0
-    choix_menu = None
     launched = True
     while launched:
-        musique("../ressources/son/maxkomusic-medieval-fantasy.wav", 0.5)
+        musique("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/"
+                "maxkomusic-medieval-fantasy.wav", 0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 0:
+                if event.button == 1 and bouton_son_on.reactangle.collidepoint(event.pos) and status_son == 0:
                     print("on off")
                     window_surface.blit(window_surface, [0, 0])
                     bouton_son_off.affichage_du_bouton(window_surface)
@@ -110,8 +107,9 @@ def affichage_menu_accueille():
                     MUTE_SOUND = 1
                     status_son = 1
                     break
-                elif event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 1:
-                    musique("../ressources/son/maxkomusic-medieval-fantasy.wav", 0.5)
+                elif event.button == 1 and bouton_son_on.reactangle.collidepoint(event.pos) and status_son == 1:
+                    musique("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/"
+                            "maxkomusic-medieval-fantasy.wav", 0.5)
                     MUTE_SOUND = 0
                     print("off on")
                     window_surface.blit(window_surface, [0, 0])
@@ -119,17 +117,17 @@ def affichage_menu_accueille():
                     pygame.mixer.unpause()
                     status_son = 0
                     break
-                elif event.button == 1 and bouton_quitter.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_quitter.reactangle.collidepoint(event.pos):
                     launched = False
-                elif event.button == 1 and bouton_jouer.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_jouer.reactangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_JOUER
                     break
-                elif event.button == 1 and bouton_options.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_options.reactangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_OPTIONS
                     break
-        if not launched:
+        if launched == False:
             break
         pygame.display.flip()
     return choix_menu
@@ -140,6 +138,7 @@ def affichage_menu_accueille():
 
 def affichage_mode_jouer():
 
+    jeux = 0
     taille = taille_ecran()
     window_surface = pygame.display.set_mode(taille)
     backgroud = pygame.image.load(FOND_ECRAN)
@@ -163,40 +162,36 @@ def affichage_mode_jouer():
                                        110, LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
     bouton_dificulter.affichage_du_bouton(window_surface)
 
-    bouton_retour = Boutton.Button(image_mode_jouer[7], image_mode_jouer[7],
-                                   (taille[0]/12), (taille[1] - (taille[1]/6)), 75, 75)
+    bouton_retour = Boutton.Button(image_mode_jouer[10], image_mode_jouer[10],
+                                   (taille[0]/12), (taille[1] - (taille[1]/6)), 90, 90)
     bouton_retour.affichage_du_bouton(window_surface)
 
     pygame.display.flip()
-    choix_menu = None
-    
     launched = True
     while launched:
-        musique(
-            "../ressources/son/maxkomusic-medieval-fantasy.wav",
-            0.5)
+        #musique("/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/ressources/son/maxkomusic-medieval-fantasy.wav",0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_jvj.rectangle.collidepoint(event.pos):
+                if event.button == 1 and bouton_jvj.reactangle.collidepoint(event.pos):
                     launched = False
                     jeux = 1
                     choix_menu = JOUER
-                elif event.button == 1 and bouton_jvo.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_jvo.reactangle.collidepoint(event.pos):
                     launched = False
                     jeux = 2
                     choix_menu = JOUER
                     break
-                elif event.button == 1 and bouton_dificulter.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_dificulter.reactangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_DIFICULTER
                     break
-                elif event.button == 1 and bouton_retour.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_retour.reactangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_ACCUEILLE
                     break
-        if not launched:
+        if launched == False:
             break
         pygame.display.flip()
     return choix_menu, jeux
@@ -206,6 +201,7 @@ def affichage_mode_jouer():
 
 
 def affichage_menu_difficulter():
+    niveau_diff = 0
     taille = taille_ecran()
     window_surface = pygame.display.set_mode(taille)
     backgroud = pygame.image.load(FOND_ECRAN)
@@ -240,31 +236,32 @@ def affichage_menu_difficulter():
     launched = True
     while launched:
         musique(
-            "../ressources/son/maxkomusic-medieval-fantasy.wav",
+            "/home/chalaud/Bureau/git/projet_perso/interface_graphique_python/"
+            "ressources/son/maxkomusic-medieval-fantasy.wav",
             0.5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 launched = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and bouton_difficulter_facile.rectangle.collidepoint(event.pos):
+                if event.button == 1 and bouton_difficulter_facile.reactangle.collidepoint(event.pos):
                     launched = False
-                    NIVEAU_DIFICULTER = 1
-                elif event.button == 1 and bouton_difficulter_moyen.rectangle.collidepoint(event.pos):
+                    niveau_diff = 1
+                elif event.button == 1 and bouton_difficulter_moyen.reactangle.collidepoint(event.pos):
                     launched = False
-                    NIVEAU_DIFICULTER = 2
+                    niveau_diff = 2
                     break
-                elif event.button == 1 and bouton_difficulter_difficile.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_difficulter_difficile.reactangle.collidepoint(event.pos):
                     launched = False
-                    NIVEAU_DIFICULTER = 3
+                    niveau_diff = 3
                     break
-                elif event.button == 1 and bouton_retour.rectangle.collidepoint(event.pos):
+                elif event.button == 1 and bouton_retour.reactangle.collidepoint(event.pos):
                     launched = False
                     choix_menu = MENU_JOUER
                     break
         if launched == False:
             break
         pygame.display.flip()
-    return choix_menu, NIVEAU_DIFICULTER
+    return choix_menu, niveau_diff
 
 
 '#MENU DE L AGE I'
@@ -306,4 +303,28 @@ def age_2():
                 launched = False
 
 
-age_2()
+def affichage_enssemble():
+    pygame.init()
+
+    running = True
+
+    quel_menu = MENU_ACCUEILLE
+
+    niveau_difficulter = -1
+    mode_de_jeux = 0
+
+    while running:
+        if quel_menu == MENU_ACCUEILLE:
+            quel_menu = affichage_menu_accueille()
+        elif quel_menu == MENU_JOUER:
+            quel_menu, mode_de_jeux = affichage_mode_jouer()
+        elif quel_menu == MENU_DIFICULTER:
+            quel_menu, niveau_difficulter = affichage_menu_difficulter()
+        else:
+            break
+
+
+'#affichage_mode_jouer()'
+if __name__ == '__main__':
+    affichage_enssemble()
+
