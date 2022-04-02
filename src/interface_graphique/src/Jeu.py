@@ -18,5 +18,5 @@ if __name__ == '__main__':
 	# ]
 	plateau.joueur_qui_joue = plateau.joueur1
 	
-	fenetre = Fenetre("test", plateau)
+	fenetre = Fenetre("7 wonder Duel", plateau)
 	fenetre.boucle_principale()
