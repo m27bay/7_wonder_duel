@@ -3,7 +3,6 @@ Fichier de la classe JetonMilitaire.
 """
 
 
-
 class JetonMilitaire:
 	"""
 	Classe representant un jeton militaire.
@@ -14,4 +13,8 @@ class JetonMilitaire:
 		self.est_utilise = False
 		self.pieces = pieces
 		self.points_victoire = points_victoire
+		
+	def __str__(self):
+		return f"JetonMilitaire({self.nom}, {self.pieces}, {self.points_victoire}), " \
+			f"est_utilise : {self.est_utilise}"
 		
