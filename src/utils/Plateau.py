@@ -10,7 +10,7 @@ from src.utils.Joueur import Joueur
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 
-from src.utils.Outils import monStrListe
+from src.utils.Outils import mon_str_liste
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
 from src.utils.Outils import demander_ressource_dans_une_liste
@@ -57,39 +57,36 @@ class Plateau:
 		self.position_jeton_conflit = 9
 		self.jetons_militaire = JETONS_MILITAIRES
 		
-		# liste des jetons progres, constructeur : JetonProgres(nom, effets)
-		self.jetons_progres = JETONS_PROGRES
-		
-		# jeton choisi et place sur le plateau
-		self.jetons_progres_plateau = []
-		
-		# pour stocker les cartes defaussees
-		self.cartes_defaussees = []
-		
 		# listes des cartes
 		self.cartes_age_I = CARTES_AGE_I
 		self.cartes_age_II = CARTES_AGE_II
 		self.cartes_age_III = CARTES_AGE_III
-		
 		self.cartes_guilde = CARTES_GUILDE
 		
-		# carte_a_enlever sur le plateau de plateau
 		self.cartes_plateau = []
 		
-		# liste des merveilles
+		self.cartes_defaussees = []
+		
 		self.merveilles = MERVEILLES
+		
+		self.jetons_progres = JETONS_PROGRES
+		self.jetons_progres_plateau = []
+		
+	def __eq__(self, other):
+		if isinstance(other, Plateau):
+			return self.joueur1 == other.joueur1 and self.joueur2 == other.joueur2
 	
 	def preparation_plateau(self) -> None:
 		"""
 		Prepare le plateau, les cartes, les jetons_progres, la monnaie des joueurs, les merveilles des joueurs.
 		"""
 		logger.debug("preparation_plateau")
-		self.preparation_cartes()
+		self.__preparation_cartes()
 		self.__preparation_jetons_progres()
 		self.__preparation_monnaies_joueurs()
 		self.__preparation_merveilles()
 	
-	def preparation_cartes(self) -> None:
+	def __preparation_cartes(self) -> None:
 		"""
 		Methode privee.
 		
@@ -97,7 +94,7 @@ class Plateau:
 		une structure precise.
 		"""
 		
-		logger.debug(f"preparation_cartes age {self.age}")
+		logger.debug(f"__preparation_cartes age {self.age}")
 		
 		# preparation de la structure des cartes en fonction de l age.
 		if self.age == 1:
@@ -361,16 +358,17 @@ class Plateau:
 		
 		"""
 		
-		if self.age == 3:
-			# fin de la partie
-			return self.fin_de_partie("cartes_vide")
-			
-		else:
-			# changement d'age
-			self.age += 1
-			self.preparation_cartes()
-			
-			return "none", "none"
+		if len(self.cartes_plateau) == 0:
+			if self.age == 3:
+				# fin de la partie
+				return self.fin_de_partie("cartes_vide")
+				
+			else:
+				# changement d'age
+				self.age += 1
+				self.__preparation_cartes()
+				
+				return "none", "none"
 	
 	def fin_de_partie(self, raison_fin: str):
 		"""
@@ -507,6 +505,12 @@ class Plateau:
 					prix_commerce += (2 * int(ressource_manquante_split[2]))
 		
 		return prix_commerce
+	
+	def jouer_coup_carte(self, carte_prenable):
+		_raison_fin_de_partie, _joueur_gagnant = self.appliquer_effets_carte(carte_prenable)
+		self.enlever_carte(carte_prenable)
+		self.joueur_qui_joue = self.obtenir_adversaire()
+		return _raison_fin_de_partie, _joueur_gagnant
 		
 	#
 	#
@@ -805,7 +809,7 @@ class Plateau:
 		
 		adversaire = self.obtenir_adversaire()
 		while True:
-			print("\n * liste choix possibles *\n", monStrListe(adversaire.cartes))
+			print("\n * liste choix possibles *\n", mon_str_liste(adversaire.cartes))
 			type_element = input(f"[{self.joueur_qui_joue.nom}] Choix d'une carte {couleur}?\n > ")
 			element_choisi = trouver_element_avec_nom(type_element, adversaire.cartes)
 			if element_choisi is None or element_choisi.couleur != couleur:
@@ -952,6 +956,9 @@ class Plateau:
 						self.obtenir_adversaire().monnaie -= jeton.pieces
 						self.monnaie_banque += jeton.pieces
 						jeton.est_utilise = True
+					
+					else:
+						logger.debug(f"\t[{self.joueur_qui_joue.nom}] jeton {numero_jeton} deja utilise.")
 		
 		return "none", "none"
 	
@@ -1077,7 +1084,7 @@ class Plateau:
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] gain de 6 monnaies")
-			self.joueur_qui_joue -= 6
+			self.joueur_qui_joue.monnaie -= 6
 			self.monnaie_banque += 6
 		
 		elif jeton.nom == "philosophie":
