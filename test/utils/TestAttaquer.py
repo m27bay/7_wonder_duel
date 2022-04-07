@@ -11,13 +11,9 @@ class TestAttaquerJoueur1(unittest.TestCase):
 		self.j1 = Joueur("j1")
 		self.j2 = Joueur("j2")
 		self.plateau = Plateau(self.j1, self.j2)
-		self.j1.monnaie = self.j2.monnaie = 7
+		self.plateau.preparation_plateau()
 		self.plateau.joueur_qui_joue = self.j1
 		
-	def tearDown(self) -> None:
-		for jeton in self.plateau.jetons_militaire:
-			jeton.est_utilise = False
-	
 	def test_attaque1_position_jeton_militaire_neutre(self):
 		self.plateau.deplacer_pion_miltaire(1)
 		
@@ -66,24 +62,24 @@ class TestAttaquerJoueur1(unittest.TestCase):
 		self.assertEqual(2, self.plateau.joueur1.points_victoire)
 		self.assertEqual(7, self.plateau.joueur2.monnaie)
 		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-	
+
 	def test_appliquer_effets_carte_attaquer1_avec_bonus_jeton_strategie(self):
 		carte = Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1)
 		self.plateau.joueur1.jetons_progres.append(JetonProgres("strategie", ["bonus_attaque"]))
-	
+
 		self.plateau.appliquer_effets_carte(carte)
-	
+
 		self.assertEqual(11, self.plateau.position_jeton_conflit)
 		self.assertEqual(2, self.plateau.joueur1.points_victoire)
 		self.assertEqual(7, self.plateau.joueur2.monnaie)
 		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-	
+
 	def test_joueur1_appliquer_effets_carte_attaquer2_avec_bonus_jeton_strategie(self):
 		carte = Carte("muraille", ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2)
 		self.plateau.joueur1.jetons_progres.append(JetonProgres("strategie", ["bonus_attaque"]))
-	
+
 		self.plateau.appliquer_effets_carte(carte)
-	
+
 		self.assertEqual(12, self.plateau.position_jeton_conflit)
 		self.assertEqual(7, self.plateau.joueur1.points_victoire)
 		self.assertEqual(5, self.plateau.joueur2.monnaie)
@@ -96,12 +92,8 @@ class TestAttaquerJoueur2(unittest.TestCase):
 		self.j1 = Joueur("j1")
 		self.j2 = Joueur("j2")
 		self.plateau = Plateau(self.j1, self.j2)
-		self.j1.monnaie = self.j2.monnaie = 7
+		self.plateau.preparation_plateau()
 		self.plateau.joueur_qui_joue = self.j2
-		
-	def tearDown(self) -> None:
-		for jeton in self.plateau.jetons_militaire:
-			jeton.est_utilise = False
 	
 	def test_attaque1_position_jeton_militaire_neutre(self):
 		self.plateau.deplacer_pion_miltaire(1)

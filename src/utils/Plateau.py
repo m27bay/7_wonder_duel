@@ -55,21 +55,25 @@ class Plateau:
 		# 0 : victoire militaire joueur2
 		# 18: victoire militaire joueur1
 		self.position_jeton_conflit = 9
-		self.jetons_militaire = JETONS_MILITAIRES
+		self.jetons_militaire = JETONS_MILITAIRES.copy()
+		
+		# technique de bourrin mais ça marche
+		for jeton in self.jetons_militaire:
+			jeton.est_utilise = False
 		
 		# listes des cartes
-		self.cartes_age_I = CARTES_AGE_I
-		self.cartes_age_II = CARTES_AGE_II
-		self.cartes_age_III = CARTES_AGE_III
-		self.cartes_guilde = CARTES_GUILDE
+		self.cartes_age_I = CARTES_AGE_I.copy()
+		self.cartes_age_II = CARTES_AGE_II.copy()
+		self.cartes_age_III = CARTES_AGE_III.copy()
+		self.cartes_guilde = CARTES_GUILDE.copy()
 		
 		self.cartes_plateau = []
 		
 		self.cartes_defaussees = []
 		
-		self.merveilles = MERVEILLES
+		self.merveilles = MERVEILLES.copy()
 		
-		self.jetons_progres = JETONS_PROGRES
+		self.jetons_progres = JETONS_PROGRES.copy()
 		self.jetons_progres_plateau = []
 		
 	def __eq__(self, other):
