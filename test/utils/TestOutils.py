@@ -19,19 +19,19 @@ class TestOutils(unittest.TestCase):
 		Initialise deux listes utilisees pour la suite des tests.
 		"""
 		self.liste_cartes = [
-			Carte("carte0", None, None, None, None, None, None),
-			Carte("carte1", None, None, None, None, None, None),
-			Carte("carte2", None, None, None, None, None, None),
-			Carte("carte3", None, None, None, None, None, None),
-			Carte("carte4", None, None, None, None, None, None)
+			Carte("carte0", None, None, None, None, None),
+			Carte("carte1", None, None, None, None, None),
+			Carte("carte2", None, None, None, None, None),
+			Carte("carte3", None, None, None, None, None),
+			Carte("carte4", None, None, None, None, None)
 		]
 
 		self.liste_merveilles = [
-			CarteFille("merveille0", None, None, None),
-			CarteFille("merveille1", None, None, None),
-			CarteFille("merveille2", None, None, None),
-			CarteFille("merveille3", None, None, None),
-			CarteFille("merveille4", None, None, None)
+			CarteFille("merveille0", None, None),
+			CarteFille("merveille1", None, None),
+			CarteFille("merveille2", None, None),
+			CarteFille("merveille3", None, None),
+			CarteFille("merveille4", None, None)
 		]
 
 	def test_trouver_carte_avec_nom(self):

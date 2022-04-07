@@ -33,7 +33,7 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
 		carte = Carte(
-			"carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2
+			"carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2
 		)
 		self.plateau.cartes_plateau[4][0] = carte
 		self.plateau.enlever_carte(carte)
@@ -75,17 +75,17 @@ class TestPlateau(unittest.TestCase):
 		self.assertFalse(self.plateau.cartes_prenable(0, 4))
 	
 	def test_liste_cartes_prenable(self):
-		self.plateau.joueur_qui_joue = self.j1
-		self.plateau.preparation_plateau()
+		plateau = Plateau(Joueur("j1"), Joueur("j2"))
+		plateau.preparation_plateau()
 		
 		liste_carte_prenable = []
 		
-		for num_ligne, ligne_carte in enumerate(self.plateau.cartes_plateau):
+		for num_ligne, ligne_carte in enumerate(plateau.cartes_plateau):
 			for _, carte in enumerate(ligne_carte):
 				if carte != 0 and num_ligne == 4:
 					liste_carte_prenable.append(carte)
 		
-		self.assertEqual(liste_carte_prenable, self.plateau.liste_cartes_prenables())
+		self.assertEqual(liste_carte_prenable, plateau.liste_cartes_prenables())
 	
 	def test_acheter_ressource_non_produite_par_adversaire(self):
 		self.plateau.joueur_qui_joue = self.j1
@@ -100,7 +100,7 @@ class TestPlateau(unittest.TestCase):
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j2
 		
-		self.j1.cartes.append(Carte("carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
+		self.j1.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
 		prix = self.plateau.acheter_ressources(["ressource pierre 1"])
 		# j2 veut acheter une pierre, mais j1 en produit deux, [ 2 + (quantite_pierre_j1) ] * quantite_pierre_acheté
 		self.assertEqual(4, prix)
@@ -111,7 +111,7 @@ class TestPlateau(unittest.TestCase):
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j2
 		
-		self.j1.cartes.append(Carte("bassin argileux", None, ["ressource argile 1"], None, None, "marron", age=1))
+		self.j1.cartes.append(Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1))
 		prix = self.plateau.acheter_ressources(["ressource argile 1", "ressource papyrus 1"])
 		
 		self.assertEqual(5, prix)
@@ -122,7 +122,7 @@ class TestPlateau(unittest.TestCase):
 		self.j1.monnaie = self.j2.monnaie = 12
 		self.plateau.joueur_qui_joue = self.j2
 		
-		self.j1.cartes.append(Carte("carte_a_enlever custom", None, ["ressource pierre 2"], None, None, None, None))
+		self.j1.cartes.append(Carte("carte custom", ["ressource pierre 2"], None, None, None, None))
 		prix = self.plateau.acheter_ressources(["ressource pierre 3"])
 		
 		self.assertEqual(12, prix)
@@ -131,9 +131,9 @@ class TestPlateau(unittest.TestCase):
 		self.j1.monnaie = self.j2.monnaie = 10
 		self.plateau.joueur_qui_joue = self.j2
 		
-		self.j1.cartes.append(Carte("carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
+		self.j1.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
 		self.j2.cartes.append(
-			Carte("depot de pierre", None, ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
+			Carte("depot de pierre", ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
 		)
 		prix = self.plateau.acheter_ressources(["ressource pierre 1"])
 		
@@ -152,7 +152,7 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-		self.plateau.cartes_plateau[4][0] = Carte("presse", None,
+		self.plateau.cartes_plateau[4][0] = Carte("presse",
 				["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1)
 		
 		self.plateau.demander_action_carte(self.plateau.cartes_plateau[4][0])
@@ -172,7 +172,7 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-		carte = Carte("carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
+		carte = Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
 		self.plateau.cartes_plateau[4][0] = carte
 		
 		self.plateau.demander_action_carte(carte)
@@ -194,11 +194,11 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-		carte = Carte("carriere", None, ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
+		carte = Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
 		self.plateau.cartes_plateau[4][0] = carte
 		
 		self.j1.cartes.append(
-			Carte("arene", None, ["monnaie_par_merveille 2", "point_victoire 3"],
+			Carte("arene", ["monnaie_par_merveille 2", "point_victoire 3"],
 				["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3)
 		)
 		
@@ -208,10 +208,9 @@ class TestPlateau(unittest.TestCase):
 		try:
 			self.plateau.cartes_defaussees.index(carte)
 		except ValueError:
-			self.fail("la carte_a_enlever n'a pas ete ajoute a la fausse.")
+			self.fail("la carte n'a pas ete ajoute a la fausse.")
 		
-		self.assertEqual(3, self.plateau.joueur_qui_joue.monnaie)
-		self.assertFalse(self.plateau.reste_des_cartes())
+		self.assertEqual(4, self.plateau.joueur_qui_joue.monnaie)
 	
 	def test_demander_action_carte_piocher_avec_carte_chainage(self):
 		# entree piocher
@@ -226,12 +225,12 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-		carte = Carte("arene ", None, ["monnaie_par_merveille 2", "point_victoire 3"],
+		carte = Carte("arene ", ["monnaie_par_merveille 2", "point_victoire 3"],
 			["ressource argile 1", "ressource pierre 1", "ressource bois 1"],
 			"brasserie", "jaune", age=3)
 		self.plateau.cartes_plateau[4][0] = carte
 		
-		self.j1.cartes.append(Carte("brasserie", None, ["monnaie 6"], None, "taverne", "jaune", age=2))
+		self.j1.cartes.append(Carte("brasserie", ["monnaie 6"], None, "taverne", "jaune", age=2))
 		self.plateau.demander_action_carte(carte)
 		
 		self.assertFalse(self.plateau.reste_des_cartes())
@@ -249,7 +248,7 @@ class TestPlateau(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		]
-		carte = Carte("presse", None, ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1)
+		carte = Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "grise", age=1)
 		self.plateau.cartes_plateau[4][0] = carte
 		self.plateau.demander_action_carte(carte)
 		
@@ -271,13 +270,13 @@ class TestPlateau(unittest.TestCase):
 		]
 		self.plateau.joueur_qui_joue.cartes.append(
 			Carte(
-				"presse", None, ["ressource papyrus 1"], ["monnaie 1"], None,
+				"presse", ["ressource papyrus 1"], ["monnaie 1"], None,
 				"grise", age=1
 			)
 		)
 		
 		carte2 = Carte(
-			"apothicaire", None,
+			"apothicaire",
 			["symbole_scientifique roue", "point_victoire 1"],
 			["ressource verre 1"],
 			None, "vert", age=1
@@ -292,7 +291,7 @@ class TestPlateau(unittest.TestCase):
 		# entree bois, verre
 	
 		self.plateau.joueur_qui_joue = self.j1
-		carte = Carte("bibliotheque", None,
+		carte = Carte("bibliotheque",
 			["symbole_scientifique plume", "point_victoire 2"],
 			["ressource pierre 1", "ressource bois 1", "ressource verre 1"],
 			"scriptorium", "vert", age=2
@@ -307,31 +306,49 @@ class TestPlateau(unittest.TestCase):
 		
 		self.plateau.joueur_qui_joue = self.j1
 		
-		carte = Carte("chantier", None, ["ressource bois 1"], None, None, "marron", age=1)
+		carte = Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1)
 		self.j2.cartes.append(carte)
 		self.plateau.defausser_carte_adversaire("marron")
 		
 		self.assertEqual([], self.j2.cartes)
 		self.assertEqual([carte], self.plateau.cartes_defaussees)
 		
-	def test_demander_action_merveille(self):
+	def test_demander_action_merveille_sans_ressources_pour_construire(self):
 		# entree oui, circus maximus
 
 		self.plateau.joueur_qui_joue = self.j1
-		merveille = CarteFille("circus maximus", None,
+		merveille = CarteFille("circus maximus",
 				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
 				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
 			)
 		self.j1.merveilles = [
 			merveille,
-			CarteFille("jardin suspendus", None,
+			CarteFille("jardin suspendus",
 				["monnaie 6", "rejouer", "point_victoire 3"],
 				["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
 			)
 		]
 		merveille_a_construire = self.plateau.demander_action_merveille()
 		
-		self.assertEqual(merveille_a_construire, merveille)
+		self.assertEqual(merveille_a_construire, None)
+		
+	def test_demander_action_merveille_avec_ressources_pour_construire(self):
+		# entree oui, circus maximus
+		
+		self.plateau.joueur_qui_joue = self.j1
+		merveille = CarteFille("circus maximus",
+			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			["ressource pierre 2", "ressource bois 1", "ressource verre 1"])
+		self.j1.merveilles = [merveille,
+			CarteFille("jardin suspendus", ["monnaie 6", "rejouer", "point_victoire 3"],
+				["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"])]
+		
+		self.j1.cartes = [Carte("carte custom",
+			["ressource pierre 2", "ressource bois 1", "ressource verre 1"],
+			None, None, None, None)]
+		merveille_a_construire = self.plateau.demander_action_merveille()
+		
+		self.assertEqual(merveille_a_construire, None)
 	
 	def test_demander_ressource_au_choix(self):
 		# entree bois
@@ -346,178 +363,18 @@ class TestPlateau(unittest.TestCase):
 		
 		self.plateau.joueur_qui_joue = self.j1
 		
-		jeton = JetonProgres("agriculture", None, ["monnaie 6", "point_victoire 4"])
+		jeton = JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"])
 		self.plateau.jetons_progres_plateau.append(jeton)
 		
-		carte = Carte("atelier", None, ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
+		carte = Carte("atelier", ["symbole_scientifique pendule", "point_victoire 1"], ["ressource papurys 1"],
 			None, "vert", age=1)
 		self.plateau.joueur_qui_joue.cartes.append(carte)
 		self.plateau.gain_symbole_scientifique("pendule")
-		carte_custom = Carte("atelier", None, ["point_victoire 1"], ["ressource papurys 1"], None, "vert", age=1)
+		carte_custom = Carte("atelier", ["point_victoire 1"], ["ressource papurys 1"], None, "vert", age=1)
 		
 		self.assertEqual([jeton], self.plateau.joueur_qui_joue.jetons_progres)
 		self.assertEqual([], self.plateau.jetons_progres_plateau)
 		self.assertEqual(carte_custom, self.plateau.joueur_qui_joue.cartes[0])
-	
-	def test_joueur1_attaque1_position_jeton_militaire_neutre(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j1
-		
-		self.plateau.deplacer_pion_miltaire(1)
-		
-		# position_neutre (=9) + deplacement (=1) deplacement position car c'est j1 qui attaque
-		# = 9 + 1
-		# = 10
-		self.assertEqual(10, self.plateau.position_jeton_conflit)
-		
-		# points_victoire_depart + points_victoire_premier_jeton (=2)
-		# = 0 + 2
-		# = 2
-		self.assertEqual(2, self.j1.points_victoire)
-		
-		# monnaie_depart - monnaie_premier_jeton (=0)
-		# = 7 - 0
-		# = 7
-		self.assertEqual(7, self.j2.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-	
-	def test_joueur2_attaque1_position_jeton_militaire_neutre(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j2
-		
-		self.plateau.deplacer_pion_miltaire(1)
-		
-		# position_neutre (=9) + deplacement (=1) deplacement negatif car c'est j2 qui attaque
-		# = 9 - 1
-		# = 8
-		self.assertEqual(8, self.plateau.position_jeton_conflit)
-		
-		# raisonnement identique qu'au dessus
-		self.assertEqual(2, self.j2.points_victoire)
-		self.assertEqual(7, self.j1.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
-	
-	def test_joueur1_attaque3_position_jeton_militaire_neutre(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j1
-		
-		self.plateau.deplacer_pion_miltaire(3)
-		
-		# position_neutre (=9) + deplacement (=3) deplacement position car c'est j1 qui attaque
-		# = 9 + 3
-		# = 12
-		self.assertEqual(12, self.plateau.position_jeton_conflit)
-		
-		# points_victoire_depart + points_victoire_premier_jeton (=2) + points_victoire_deuxieme_jeton (=5)
-		# = 0 + 2 + 5
-		# = 7
-		self.assertEqual(7, self.j1.points_victoire)
-		
-		# monnaie_depart - monnaie_premier_jeton (=0) - monnaie_deuxieme_jeton (=2)
-		# = 7 - 0 - 2
-		# = 5
-		self.assertEqual(5, self.j2.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-		self.assertTrue(self.plateau.jetons_militaire[4].est_utilise)
-		
-	def test_joueur2_attaque3_position_jeton_militaire_neutre(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j2
-		
-		self.plateau.deplacer_pion_miltaire(3)
-		
-		# position_neutre (=9) + deplacement (=3) deplacement negatif car c'est j2 qui attaque
-		# = 9 - 3
-		# = 6
-		self.assertEqual(6, self.plateau.position_jeton_conflit)
-		
-		# raisonnement identique qu'au dessus
-		self.assertEqual(7, self.j2.points_victoire)
-		self.assertEqual(5, self.j1.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
-		self.assertTrue(self.plateau.jetons_militaire[1].est_utilise)
-		
-	def test_joueur1_appliquer_effets_carte_attaquer1_sans_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j1
-		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(10, self.plateau.position_jeton_conflit)
-		self.assertEqual(2, self.plateau.joueur1.points_victoire)
-		self.assertEqual(7, self.plateau.joueur2.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-	
-	def test_joueur2_appliquer_effets_carte_attaquer1_sans_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j2
-		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(8, self.plateau.position_jeton_conflit)
-		self.assertEqual(2, self.plateau.joueur2.points_victoire)
-		self.assertEqual(7, self.plateau.joueur1.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
-	
-	def test_joueur1_appliquer_effets_carte_attaquer1_avec_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j1
-		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
-		self.plateau.joueur1.jetons_progres.append(
-			JetonProgres("strategie", None, ["bonus_attaque"])
-		)
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(11, self.plateau.position_jeton_conflit)
-		self.assertEqual(2, self.plateau.joueur1.points_victoire)
-		self.assertEqual(7, self.plateau.joueur2.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-	
-	def test_joueur2_appliquer_effets_carte_attaquer1_avec_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j2
-		carte = Carte("tour de garde", None, ["attaquer 1"], None, None, "rouge", age=1)
-		self.plateau.joueur2.jetons_progres.append(
-			JetonProgres("strategie", None, ["bonus_attaque"])
-		)
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(7, self.plateau.position_jeton_conflit)
-		self.assertEqual(2, self.plateau.joueur2.points_victoire)
-		self.assertEqual(7, self.plateau.joueur1.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
-	
-	def test_joueur1_appliquer_effets_carte_attaquer2_avec_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j1
-		carte = Carte("muraille", None, ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2)
-		self.plateau.joueur1.jetons_progres.append(JetonProgres("strategie", None, ["bonus_attaque"]))
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(12, self.plateau.position_jeton_conflit)
-		self.assertEqual(7, self.plateau.joueur1.points_victoire)
-		self.assertEqual(5, self.plateau.joueur2.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[3].est_utilise)
-		self.assertTrue(self.plateau.jetons_militaire[4].est_utilise)
-	
-	def test_joueur2_appliquer_effets_carte_attaquer2_avec_bonus_jeton_strategie(self):
-		self.j1.monnaie = self.j2.monnaie = 7
-		self.plateau.joueur_qui_joue = self.j2
-		carte = Carte("muraille", None, ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2)
-		self.plateau.joueur2.jetons_progres.append(JetonProgres("strategie", None, ["bonus_attaque"]))
-		
-		self.plateau.appliquer_effets_carte(carte)
-		
-		self.assertEqual(6, self.plateau.position_jeton_conflit)
-		self.assertEqual(7, self.plateau.joueur2.points_victoire)
-		self.assertEqual(5, self.plateau.joueur1.monnaie)
-		self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
-		self.assertTrue(self.plateau.jetons_militaire[1].est_utilise)
 		
 
 if __name__ == '__main__':
