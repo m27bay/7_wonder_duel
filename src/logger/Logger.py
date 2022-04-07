@@ -4,13 +4,11 @@ Logger utilisé dans le projet
 
 import logging
 
-
-mode = "run"
-# mode = "test"
+# mode = "run"
+mode = "test"
 
 chemin_logger = ""
 if mode == "run":
-	# chemin_logger = "../logger/logger.log"
 	chemin_logger = "../../logger/logger.log"
 elif mode == "test":
 	chemin_logger = "../../src/logger/logger_test.log"
