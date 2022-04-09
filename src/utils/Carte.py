@@ -1,27 +1,26 @@
 """
 Fichier de la classe.
 """
-from src.utils.Affichable import Affichable
 
 
-class Carte(Affichable):
+class Carte:
 	"""
 	Classe representant une carte.
 	"""
 	
-	def __init__(self, nom, chemin_image, effets, couts, nom_carte_chainage, couleur, age):
+	def __init__(self, nom, effets, couts, nom_carte_chainage, couleur, age):
 		"""
 		Constructeur de la classe Carte.
 
 		:param nom: nom de la carte.
-		:param chemin_image: chemin pour afficher la carte.
 		:param effets: liste d effets que donne la carte respectant un pattern precis.
 		:param couts: liste de couts pour construire la carte respactant un pattern precis.
 		:param nom_carte_chainage: nom de la carte permettant de construire gratuitement la carte.
 		:param couleur: couleur de la carte.
 		:param age: age de la carte (entre 1 et 3).
 		"""
-		super().__init__(nom, chemin_image)
+		
+		self.nom = nom
 		self.effets = effets
 		self.couts = couts
 		self.nom_carte_chainage = nom_carte_chainage
@@ -61,7 +60,6 @@ class Carte(Affichable):
 		:return: chaine avec les attributs de la classe.
 		"""
 		return f"nom : {self.nom}, " \
-			f"image : {self.chemin_image}, " \
 			f"effets : {str(self.effets)}, " \
 			f"couts : {str(self.couts)}, " \
 			f"cout chainage : {self.nom_carte_chainage}, " \
