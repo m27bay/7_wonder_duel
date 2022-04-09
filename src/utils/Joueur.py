@@ -31,6 +31,18 @@ class Joueur:
 		self.monnaie = 0
 		self.points_victoire = 0
 		
+	def __eq__(self, other):
+		if isinstance(other, Joueur):
+			return self.nom == other.nom \
+				and self.cartes == other.cartes \
+				and self.merveilles == other.merveilles \
+				and self.jetons_progres == other.jetons_progres \
+				and self.ressources == other.ressources \
+				and self.monnaie == other.monnaie \
+				and self.points_victoire == other.points_victoire
+		else:
+			return False
+		
 	def retirer_monnaie(self, monnaie: int):
 		"""
 		TODO : documentation a faire
@@ -208,6 +220,7 @@ class Joueur:
 		Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
 		"""
 		
+		self.points_victoire = 0
 		logger.debug(f"[{self.nom}] compter_point_victoire()")
 		
 		# compter points victoire avec les cartes
@@ -251,7 +264,7 @@ class Joueur:
 				elif effet_split[0] == "point_victoire":
 					
 					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-						f"{effet_split[1]} points de victoire par jeton")
+						f"{effet_split[1]} points de victoire")
 					
 					self.points_victoire += int(effet_split[1])
 				
@@ -261,10 +274,6 @@ class Joueur:
 						f"{effet_split[1]} points de victoire en fin de partie")
 					
 					self.points_victoire += int(effet_split[1])
-			
-		# effet jetons progres "mathematiques"
-		if self.possede_jeton_scientifique("mathematiques"):
-			self.points_victoire += ((len(self.jetons_progres) * 3) + 3)
 	
 	def selection_merveille(self, nbr_repetition: int, liste_merveilles_alea: list) -> None:
 		"""

@@ -6,11 +6,12 @@ import random
 from src.logger.Logger import logger
 
 from src.utils.Carte import Carte
+from src.utils.JetonMilitaire import JetonMilitaire
 from src.utils.Joueur import Joueur
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 
-from src.utils.Outils import monStrListe
+from src.utils.Outils import mon_str_liste
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
 from src.utils.Outils import demander_ressource_dans_une_liste
@@ -21,7 +22,6 @@ from src.utils.Constantes import CARTES_AGE_I
 from src.utils.Constantes import CARTES_AGE_II
 from src.utils.Constantes import CARTES_AGE_III
 from src.utils.Constantes import JETONS_PROGRES
-from src.utils.Constantes import JETONS_MILITAIRES
 from src.utils.Constantes import SYMBOLE_SCIENTIFIQUES
 
 
@@ -55,29 +55,33 @@ class Plateau:
 		# 0 : victoire militaire joueur2
 		# 18: victoire militaire joueur1
 		self.position_jeton_conflit = 9
-		self.jetons_militaire = JETONS_MILITAIRES
-		
-		# liste des jetons progres, constructeur : JetonProgres(nom, effets)
-		self.jetons_progres = JETONS_PROGRES
-		
-		# jeton choisi et place sur le plateau
-		self.jetons_progres_plateau = []
-		
-		# pour stocker les cartes defaussees
-		self.cartes_defaussees = []
+		self.jetons_militaire = [
+			JetonMilitaire("5piecesJ1", 5, 10),
+			JetonMilitaire("2piecesJ1", 2, 5),
+			JetonMilitaire("0piecesJ1", 0, 2),
+			JetonMilitaire("0piecesJ2", 0, 2),
+			JetonMilitaire("2piecesJ2", 2, 5),
+			JetonMilitaire("5piecesJ2", 5, 10)
+		]
 		
 		# listes des cartes
-		self.cartes_age_I = CARTES_AGE_I
-		self.cartes_age_II = CARTES_AGE_II
-		self.cartes_age_III = CARTES_AGE_III
+		self.cartes_age_I = CARTES_AGE_I.copy()
+		self.cartes_age_II = CARTES_AGE_II.copy()
+		self.cartes_age_III = CARTES_AGE_III.copy()
+		self.cartes_guilde = CARTES_GUILDE.copy()
 		
-		self.cartes_guilde = CARTES_GUILDE
-		
-		# carte_a_enlever sur le plateau de plateau
 		self.cartes_plateau = []
 		
-		# liste des merveilles
-		self.merveilles = MERVEILLES
+		self.cartes_defaussees = []
+		
+		self.merveilles = MERVEILLES.copy()
+		
+		self.jetons_progres = JETONS_PROGRES.copy()
+		self.jetons_progres_plateau = []
+		
+	def __eq__(self, other):
+		if isinstance(other, Plateau):
+			return self.joueur1 == other.joueur1 and self.joueur2 == other.joueur2
 	
 	def preparation_plateau(self) -> None:
 		"""
@@ -330,13 +334,13 @@ class Plateau:
 		:return:
 		"""
 		
-		if ligne == 4:
+		# si la carte est sur la dernière ligne
+		if ligne == len(self.cartes_plateau) - 1:
 			return True
-		elif ligne == 0:
-			if colonne == 0:
-				return self.cartes_plateau[ligne + 1][colonne + 1] == 0
-			elif colonne == len(self.cartes_plateau[ligne]) - 1:
-				return self.cartes_plateau[ligne + 1][colonne - 1] == 0
+		elif colonne == 0:
+			return self.cartes_plateau[ligne + 1][colonne + 1] == 0
+		elif colonne == len(self.cartes_plateau[ligne]) - 1:
+			return self.cartes_plateau[ligne + 1][colonne - 1] == 0
 		else:
 			return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) and (
 						self.cartes_plateau[ligne + 1][colonne + 1] == 0)
@@ -361,16 +365,17 @@ class Plateau:
 		
 		"""
 		
-		if self.age == 3:
-			# fin de la partie
-			return self.fin_de_partie("cartes_vide")
-			
-		else:
-			# changement d'age
-			self.age += 1
-			self.__preparation_cartes()
-			
-			return "none", "none"
+		if len(self.cartes_plateau) == 0:
+			if self.age == 3:
+				# fin de la partie
+				return self.fin_de_partie("cartes_vide")
+				
+			else:
+				# changement d'age
+				self.age += 1
+				self.__preparation_cartes()
+				
+				return "none", "none"
 	
 	def fin_de_partie(self, raison_fin: str):
 		"""
@@ -507,6 +512,12 @@ class Plateau:
 					prix_commerce += (2 * int(ressource_manquante_split[2]))
 		
 		return prix_commerce
+	
+	def jouer_coup_carte(self, carte_prenable):
+		_raison_fin_de_partie, _joueur_gagnant = self.appliquer_effets_carte(carte_prenable)
+		self.enlever_carte(carte_prenable)
+		self.joueur_qui_joue = self.obtenir_adversaire()
+		return _raison_fin_de_partie, _joueur_gagnant
 		
 	#
 	#
@@ -712,7 +723,7 @@ class Plateau:
 		logger.debug(f"[{self.joueur_qui_joue.nom}] a choisit \'{symbole_scientifique}\'")
 		
 		self.joueur_qui_joue.cartes.append(
-			Carte("carte_custom", None, [symbole_scientifique], [], None, None, None)
+			Carte("carte_custom", [symbole_scientifique], [], None, None, None)
 		)
 	
 	def reduction_couts_construction_carte(self, carte: Carte):
@@ -805,7 +816,7 @@ class Plateau:
 		
 		adversaire = self.obtenir_adversaire()
 		while True:
-			print("\n * liste choix possibles *\n", monStrListe(adversaire.cartes))
+			print("\n * liste choix possibles *\n", mon_str_liste(adversaire.cartes))
 			type_element = input(f"[{self.joueur_qui_joue.nom}] Choix d'une carte {couleur}?\n > ")
 			element_choisi = trouver_element_avec_nom(type_element, adversaire.cartes)
 			if element_choisi is None or element_choisi.couleur != couleur:
@@ -952,6 +963,9 @@ class Plateau:
 						self.obtenir_adversaire().monnaie -= jeton.pieces
 						self.monnaie_banque += jeton.pieces
 						jeton.est_utilise = True
+					
+					else:
+						logger.debug(f"\t[{self.joueur_qui_joue.nom}] jeton {numero_jeton} deja utilise.")
 		
 		return "none", "none"
 	
@@ -1077,7 +1091,7 @@ class Plateau:
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] gain de 6 monnaies")
-			self.joueur_qui_joue -= 6
+			self.joueur_qui_joue.monnaie -= 6
 			self.monnaie_banque += 6
 		
 		elif jeton.nom == "philosophie":
