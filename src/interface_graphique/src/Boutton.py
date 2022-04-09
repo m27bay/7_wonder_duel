@@ -9,7 +9,7 @@ class Button:
 
         self.rectangle = pygame.Rect(coordone_x, coordone_y, largeur, longueur)
 
-        self.chargement_image = pygame.image.load(image)
+        self.chargement_image = pygame.image.load(image).convert_alpha()
         self.image_affiche = pygame.transform.scale(self.chargement_image, (int(largeur), int(longueur)))
 
         self.nouv_chargement_image = pygame.image.load(nouv_image)
