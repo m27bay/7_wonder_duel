@@ -4,7 +4,6 @@ Ensembles des constantes utilisees dans le jeu.
 from src.utils.Carte import Carte
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
-from src.utils.JetonMilitaire import JetonMilitaire
 
 
 SYMBOLE_SCIENTIFIQUES = [
@@ -14,15 +13,6 @@ SYMBOLE_SCIENTIFIQUES = [
 	"pilon",
 	"pendule",
 	"plume"
-]
-
-JETONS_MILITAIRES = [
-	JetonMilitaire("5piecesJ1", 5, 10),
-	JetonMilitaire("2piecesJ1", 2, 5),
-	JetonMilitaire("0piecesJ1", 0, 2),
-	JetonMilitaire("0piecesJ2", 0, 2),
-	JetonMilitaire("2piecesJ2", 2, 5),
-	JetonMilitaire("5piecesJ2", 5, 10)
 ]
 
 JETONS_PROGRES = [

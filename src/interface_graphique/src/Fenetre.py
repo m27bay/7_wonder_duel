@@ -401,84 +401,80 @@ class Fenetre:
 					if event.key == pygame.K_ESCAPE:
 						en_cours = False
 				
-				if self.plateau.joueur_qui_joue == self.plateau.joueur1:
-					if event.type == pygame.MOUSEBUTTONDOWN:
-						
-						clic_x, clic_y = event.pos
-						for sprit in self.cartes_plateau:
-							if sprit.rect.collidepoint(clic_x, clic_y):
-								
-								# clic droit
-								if event.button == 1:
-									if isinstance(sprit, SpriteCarte):
-										if sprit.carte in self.plateau.liste_cartes_prenables():
-											
-											if self.sprite_carte_zoomer is None:
-												sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-												self.sprite_carte_zoomer = sprit
-												self.cartes_plateau.remove(self.sprite_carte_zoomer)
-												self.cartes_plateau.add(self.sprite_carte_zoomer)
-											
-											else:
-												if sprit == self.sprite_carte_zoomer:
-													sprit.dezoomer()
-													self.sprite_carte_zoomer = None
-						
-						bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-						bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
-						if (clic_x < bottomleft_x and clic_y > bottomleft_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur1)\
-							or (clic_x > bottomright_x and clic_y > bottomright_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					
+					clic_x, clic_y = event.pos
+					for sprit in self.cartes_plateau:
+						if sprit.rect.collidepoint(clic_x, clic_y):
 							
-							if self.sprite_carte_zoomer is not None:
-								if self.sprite_carte_zoomer.carte in self.plateau.liste_cartes_prenables():
-									
-									self.sprite_carte_zoomer.dezoomer()
-									self.__piocher_carte(self.sprite_carte_zoomer)
-									self.sprite_carte_zoomer = None
-									
-									for carte in self.plateau.liste_cartes_prenables():
-										carte.est_face_cachee = False
-									
-									self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
-									
-							# else:
-							
-						if self.rect_image_banque.collidepoint(clic_x, clic_y):
-							if self.sprite_carte_zoomer is not None:
-								self.sprite_carte_zoomer.dezoomer()
-								
-								self.cartes_plateau.remove(self.sprite_carte_zoomer)
-								
-								self.plateau.cartes_defaussees.append(self.sprite_carte_zoomer.carte)
-								
-								self.sprite_carte_zoomer = None
-								self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
-								
-								# gain de une piece par carte jaune
-								for carte_joueur in self.plateau.joueur_qui_joue.cartes:
-									if carte_joueur.couleur == "jaune":
-										self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
+							# clic droit
+							if event.button == 1:
+								if isinstance(sprit, SpriteCarte):
+									if sprit.carte in self.plateau.liste_cartes_prenables():
 										
-						for jeton in self.jetons_progres_plateau:
-							if jeton.rect.collidepoint(clic_x, clic_y):
-	
-								if event.button == 1:
-									if isinstance(jeton, SpriteJetonsProgres):
-										if self.sprite_jeton_zoomer is None:
-											jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-											self.sprite_carte_zoomer = jeton
-											self.jetons_progres_plateau.remove(self.sprite_carte_zoomer)
-											self.jetons_progres_plateau.add(self.sprite_carte_zoomer)
+										if self.sprite_carte_zoomer is None:
+											sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+											self.sprite_carte_zoomer = sprit
+											self.cartes_plateau.remove(self.sprite_carte_zoomer)
+											self.cartes_plateau.add(self.sprite_carte_zoomer)
 										
 										else:
-											if jeton == self.sprite_carte_zoomer:
-												jeton.dezoomer()
+											if sprit == self.sprite_carte_zoomer:
+												sprit.dezoomer()
 												self.sprite_carte_zoomer = None
-				
-				else:
-					print("choix IA")
+					
+					bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+					bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+					if (clic_x < bottomleft_x and clic_y > bottomleft_y
+						and self.plateau.joueur_qui_joue == self.plateau.joueur1)\
+						or (clic_x > bottomright_x and clic_y > bottomright_y
+						and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+						
+						if self.sprite_carte_zoomer is not None:
+							if self.sprite_carte_zoomer.carte in self.plateau.liste_cartes_prenables():
+								
+								self.sprite_carte_zoomer.dezoomer()
+								self.__piocher_carte(self.sprite_carte_zoomer)
+								self.sprite_carte_zoomer = None
+								
+								for carte in self.plateau.liste_cartes_prenables():
+									carte.est_face_cachee = False
+								
+								self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+								
+						# else:
+						
+					if self.rect_image_banque.collidepoint(clic_x, clic_y):
+						if self.sprite_carte_zoomer is not None:
+							self.sprite_carte_zoomer.dezoomer()
+							
+							self.cartes_plateau.remove(self.sprite_carte_zoomer)
+							
+							self.plateau.cartes_defaussees.append(self.sprite_carte_zoomer.carte)
+							
+							self.sprite_carte_zoomer = None
+							self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
+							
+							# gain de une piece par carte jaune
+							for carte_joueur in self.plateau.joueur_qui_joue.cartes:
+								if carte_joueur.couleur == "jaune":
+									self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
+									
+					for jeton in self.jetons_progres_plateau:
+						if jeton.rect.collidepoint(clic_x, clic_y):
+
+							if event.button == 1:
+								if isinstance(jeton, SpriteJetonsProgres):
+									if self.sprite_jeton_zoomer is None:
+										jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+										self.sprite_carte_zoomer = jeton
+										self.jetons_progres_plateau.remove(self.sprite_carte_zoomer)
+										self.jetons_progres_plateau.add(self.sprite_carte_zoomer)
+									
+									else:
+										if jeton == self.sprite_carte_zoomer:
+											jeton.dezoomer()
+											self.sprite_carte_zoomer = None
 					
 			# PARTIE Update
 			ret, ret2 = self.plateau.changement_age()

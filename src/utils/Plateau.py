@@ -6,6 +6,7 @@ import random
 from src.logger.Logger import logger
 
 from src.utils.Carte import Carte
+from src.utils.JetonMilitaire import JetonMilitaire
 from src.utils.Joueur import Joueur
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
@@ -21,7 +22,6 @@ from src.utils.Constantes import CARTES_AGE_I
 from src.utils.Constantes import CARTES_AGE_II
 from src.utils.Constantes import CARTES_AGE_III
 from src.utils.Constantes import JETONS_PROGRES
-from src.utils.Constantes import JETONS_MILITAIRES
 from src.utils.Constantes import SYMBOLE_SCIENTIFIQUES
 
 
@@ -55,11 +55,14 @@ class Plateau:
 		# 0 : victoire militaire joueur2
 		# 18: victoire militaire joueur1
 		self.position_jeton_conflit = 9
-		self.jetons_militaire = JETONS_MILITAIRES.copy()
-		
-		# technique de bourrin mais ça marche
-		for jeton in self.jetons_militaire:
-			jeton.est_utilise = False
+		self.jetons_militaire = [
+			JetonMilitaire("5piecesJ1", 5, 10),
+			JetonMilitaire("2piecesJ1", 2, 5),
+			JetonMilitaire("0piecesJ1", 0, 2),
+			JetonMilitaire("0piecesJ2", 0, 2),
+			JetonMilitaire("2piecesJ2", 2, 5),
+			JetonMilitaire("5piecesJ2", 5, 10)
+		]
 		
 		# listes des cartes
 		self.cartes_age_I = CARTES_AGE_I.copy()
