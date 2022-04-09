@@ -30,6 +30,7 @@ class Joueur:
 		#
 		self.monnaie = 0
 		self.points_victoire = 0
+		self.nombre_symb_scientifique = 0
 		
 	def __eq__(self, other):
 		if isinstance(other, Joueur):

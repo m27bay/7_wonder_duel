@@ -27,7 +27,7 @@ from src.utils.Constantes import SYMBOLE_SCIENTIFIQUES
 
 class Plateau:
 	"""
-	Classe pPlateau de plateau
+	Classe Plateau
 	"""
 	
 	def __init__(self, joueur1: Joueur, joueur2: Joueur, choix_auto_merveilles: bool = True):
@@ -514,10 +514,8 @@ class Plateau:
 		return prix_commerce
 	
 	def jouer_coup_carte(self, carte_prenable):
-		_raison_fin_de_partie, _joueur_gagnant = self.appliquer_effets_carte(carte_prenable)
+		self.appliquer_effets_carte(carte_prenable)
 		self.enlever_carte(carte_prenable)
-		self.joueur_qui_joue = self.obtenir_adversaire()
-		return _raison_fin_de_partie, _joueur_gagnant
 		
 	#
 	#
