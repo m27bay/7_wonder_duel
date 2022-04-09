@@ -12,7 +12,7 @@ class Button:
         self.chargement_image = pygame.image.load(image).convert_alpha()
         self.image_affiche = pygame.transform.scale(self.chargement_image, (int(largeur), int(longueur)))
 
-        self.nouv_chargement_image = pygame.image.load(nouv_image)
+        self.nouv_chargement_image = pygame.image.load(nouv_image).convert_alpha()
         self.nouv_image_affiche = pygame.transform.scale(self.nouv_chargement_image, (int(largeur), int(longueur)))
 
     def affichage_du_bouton(self, fenetre):
