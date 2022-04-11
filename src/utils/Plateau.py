@@ -7,22 +7,23 @@ from src.logger.Logger import logger
 
 from src.utils.Carte import Carte
 from src.utils.JetonMilitaire import JetonMilitaire
-from src.utils.Joueur import Joueur
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
+from src.utils.Joueur import Joueur
 
-from src.utils.Outils import mon_str_liste
+from src.utils.Outils import mon_str_liste, mon_str_liste2D
 from src.utils.Outils import trouver_element_avec_nom
 from src.utils.Outils import demander_element_dans_une_liste
 from src.utils.Outils import demander_ressource_dans_une_liste
 
-from src.utils.Constantes import MERVEILLES
-from src.utils.Constantes import CARTES_GUILDE
-from src.utils.Constantes import CARTES_AGE_I
-from src.utils.Constantes import CARTES_AGE_II
-from src.utils.Constantes import CARTES_AGE_III
-from src.utils.Constantes import JETONS_PROGRES
-from src.utils.Constantes import SYMBOLE_SCIENTIFIQUES
+SYMBOLE_SCIENTIFIQUES = [
+	"sphere_armillaire",
+	"roue",
+	"cadran_solaire",
+	"pilon",
+	"pendule",
+	"plume"
+]
 
 
 class Plateau:
@@ -30,7 +31,7 @@ class Plateau:
 	Classe Plateau
 	"""
 	
-	def __init__(self, joueur1: Joueur, joueur2: Joueur, choix_auto_merveilles: bool = True):
+	def __init__(self, joueur1, joueur2, choix_auto_merveilles: bool = True):
 		"""
 		Constructeur de la classe plateau.
 
@@ -40,48 +41,328 @@ class Plateau:
 			des merveilles est automatique ou non.
 		"""
 		
-		self.joueur1 = joueur1
-		self.joueur2 = joueur2
+		if isinstance(joueur1, Joueur) and isinstance(joueur2, Joueur):
+			self.joueur1 = joueur1
+			self.joueur2 = joueur2
+			self.joueur_qui_joue = None
+			
+			#
+			self.choix_auto_merveilles = choix_auto_merveilles
+			
+			self.monnaie_banque = 86  # 14 de valeur 1, 10 de valeur 3, 7 de valeur 6
+			self.age = 1
+			
+			# 9 : neutre
+			# 0 : victoire militaire joueur2
+			# 18: victoire militaire joueur1
+			self.position_jeton_conflit = 9
+			self.jetons_militaire = [
+				JetonMilitaire("5piecesJ1", 5, 10),
+				JetonMilitaire("2piecesJ1", 2, 5),
+				JetonMilitaire("0piecesJ1", 0, 2),
+				JetonMilitaire("0piecesJ2", 0, 2),
+				JetonMilitaire("2piecesJ2", 2, 5),
+				JetonMilitaire("5piecesJ2", 5, 10)]
+			
+			# listes des cartes
+			# constructeur : Carte(nom, chemin_image, effets, couts, nom_carte_chainage, couleur, age)
+			self.cartes_age_I = [
+				Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1),
+				Carte("exploitation", ["ressource bois 1"], ["monnaie 1"], None, "marron", age=1),
+				Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1),
+				Carte("cavite", ["ressource argile 1"], ["monnaie 1"], None, "marron", age=1),
+				Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1),
+				Carte("mine", ["ressource pierre 1"], ["monnaie 1"], None, "marron", age=1),
+				Carte("verrerie", ["ressource verre 1"], ["monnaie 1"], None, "gris", age=1),
+				Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1),
+				Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1),
+				Carte("atelier",
+					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+					None, "vert", age=1),
+				Carte("apothicaire",
+					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"], ["ressource verre 1"],
+					None, "vert", age=1),
+				Carte("depot de pierre", ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
+				Carte("depot d argile", ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
+				Carte("depot de bois", ["reduc_ressource bois 1"], ["monnaie 3"], None, "jaune", age=1),
+				Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
+				Carte("caserne", ["attaquer 1"], ["ressource argile 1"], None, "rouge", age=1),
+				Carte("palissade", ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
+				Carte("scriptorium", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1),
+				Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"], ["monnaie 2"], None, "vert", age=1),
+				Carte("theatre", ["point_victoire 3"], None, None, "bleu", age=1),
+				Carte("autel", ["point_victoire 3"], None, None, "bleu", age=1),
+				Carte("bains", ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
+				Carte("taverne", ["monnaie 4"], None, None, "jaune", age=1)
+			]
+			
+			self.cartes_age_II = [
+				Carte("scierie", ["ressource bois 2"], ["monnaie 2"], None, "marron", age=2),
+				Carte("briqueterie", ["ressource argile 2"], ["monnaie 2"], None, "marron", age=2),
+				Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2),
+				Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2),
+				Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2),
+				Carte("muraille", ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2),
+				Carte("forum", ["ressource_au_choix verre papyrus"], ["monnaie 3", "ressource argile 1"],
+					None, "jaune", age=2),
+				Carte("caravanserail", ["ressource_au_choix bois argile pierre"],
+					["monnaie 2", "ressource verre 1", "ressource papyrus 1"], None, "jaune", age=2),
+				Carte("douane", ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
+					None, "jaune", age=2),
+				Carte("tribunal", ["point_victoire 5"], ["ressource bois 2", "ressource verre 1"], None,
+					"bleu", age=2),
+				Carte("haras", ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2),
+				Carte("baraquements", ["attaquer 1"], ["monnaie 3"], "caserne", "rouge", age=2),
+				Carte("champs de tir", ["attaquer 2"],
+					["ressource pierre 1", "ressource bois 1", "ressource papyrus 1"],
+					None, "rouge", age=2),
+				Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
+					age=2),
+				Carte("bibliotheque", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 2"],
+					["ressource pierre 1", "ressource bois 1", "ressource verre 1"], "scriptorium", "vert", age=2),
+				Carte("dispensaire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 2"],
+					["ressource argile 2", "ressource verre 1"], "officine", "vert", age=2),
+				Carte("ecole", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+					["ressource papyrus 2", "ressource bois 1"], None, "vert", age=2),
+				Carte("laboratoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"],
+					["ressource verre 2", "ressource bois 1"], None, "vert", age=2),
+				Carte("statue", ["point_victoire 4"], ["ressource argile 2"], "theatre", "bleu", age=2),
+				Carte("temple", ["point_victoire 4"], ["ressource papyrus 1", "ressource bois 1"], "autel",
+					"bleu", age=2),
+				Carte("aqueduc", ["point_victoire 5"], ["ressource pierre 3"], "bains", "bleu", age=2),
+				Carte("rostres", ["point_victoire 4"], ["ressource pierre 1", "ressource bois 1"],
+					None, "bleu", age=2),
+				Carte("brasserie", ["monnaie 6"], None, "taverne", "jaune", age=2)
+			]
+			
+			self.cartes_age_III = [
+				Carte("arsenal", ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3),
+				Carte("pretoire", ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
+				Carte("academie", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
+					["ressource pierre 1", "ressource bois 1", "ressource verre 2"], None, "vert", age=3),
+				Carte("etude", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
+					["ressource papyrus 1", "ressource bois 2", "ressource verre 1"], None, "vert", age=3),
+				Carte("chambre de commerce", ["monnaie_par_carte gris 3", "point_victoire 3"],
+					["ressource papyrus 2"], None, "jaune", age=3),
+				Carte("port", ["monnaie_par_carte marron 2", "point_victoire 3"],
+					["ressource verre 1", "ressource bois 1", "ressource papyrus 1"], None, "jaune", age=3),
+				Carte("armurerie", ["monnaie_par_carte rouge 1", "point_victoire 3"],
+					["ressource pierre 2", "ressource verre 1"], None, "jaune", age=3),
+				Carte("palace", ["point_victoire 7"],
+					["ressource argile 1", "ressource pierre 1", "ressource bois 1", "ressource verre 2"],
+					None, "bleu", age=3),
+				Carte("hotel de ville", ["point_victoire 7"], ["ressource pierre 3", "ressource bois 2"],
+					None, "bleu", age=3),
+				Carte("obelisque", ["point_victoire 5"], ["ressource pierre 2", "ressource verre 1"],
+					None, "bleu", age=3),
+				Carte("fortifications", ["attaquer 2"],
+					["ressource pierre 2", "ressource argile 1", "ressource papyrus 1"],
+					"palissade", "rouge", age=3),
+				Carte("atelier de siege", ["attaquer 2"], ["ressource bois 3", "ressource verre 1"],
+					"champ de tir", "rouge", age=3),
+				Carte("cirque", ["attaquer 2"], ["ressource argile 2", "ressource pierre 2"],
+					"place d arme", "rouge", age=3),
+				Carte("universite", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
+					["ressource argile 1", "ressource verre 1", "ressource papyrus 1"], "ecole", "vert", age=3),
+				Carte("observatoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
+					["ressource pierre 1", "ressource papyrus 2"], "laboratoire", "vert", age=3),
+				Carte("jardins", ["point_victoire 6"], ["ressource argile 2", "ressource bois 2"], "statue",
+					"bleu", age=3),
+				Carte("pantheon", ["point_victoire 6"],
+					["ressource argile 1", "ressource bois 1", "ressource papyrus 2"],
+					"temple", "bleu", age=3),
+				Carte("senat", ["point_victoire 5"],
+					["ressource argile 2", "ressource pierre 1", "ressource papyrus 2"],
+					"rostres", "bleu", age=3),
+				Carte("phare", ["monnaie_par_carte jaune 1", "point_victoire 3"],
+					["ressource argile 2", "ressource verre 1"], "taverne", "jaune", age=3),
+				Carte("arene", ["monnaie_par_merveille 2", "point_victoire 3"],
+					["ressource argile 1", "ressource pierre 1", "ressource bois 1"], "brasserie", "jaune", age=3),
+			]
+			
+			self.cartes_guilde = [
+				CarteFille("guilde des commercants",
+					["effet_guild_commercants 1"],
+					["ressource argile 1", "ressource bois 1", "ressource verre 1", "ressource papyrus 1"]
+				),
+				CarteFille("guilde des armateurs",
+					["effet_guild_armateurs 1"],
+					["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
+				),
+				CarteFille("guilde des batisseurs",
+					["effet_guild_batisseurs 1"],
+					["ressource pierre 2", "ressource argile 1", "ressource bois 1",
+						"ressource papyrus 1", "ressource verre 1"]
+				),
+				CarteFille("guilde des magistrats",
+					["effet_guild_magistrats 1"],
+					["ressource bois 2", "ressource argile 1", "ressource papyrus 1"]
+				),
+				CarteFille("guilde des scientifiques",
+					["effet_guild_scientifiques 1"],
+					["ressource argile 2", "ressource bois 2"]
+				),
+				CarteFille("guilde des usuriers",
+					["effet_guild_usuriers 1"],
+					["ressource pierre 2", "ressource bois 2"]
+				),
+				CarteFille("guilde des tacticiens",
+					["effet_guild_tacticiens 1"],
+					["ressource pierre 2", "ressource argile 1", "ressource papyrus 1"]
+				)
+			]
+			
+			self.cartes_plateau = []
+			self.cartes_defaussees = []
+			
+			# constructeur : CarteFille(nom, chemin_image, effets)
+			self.merveilles = [
+				CarteFille("circus maximus",
+					["defausse_carte_adversaire gris", "attaquer 1", "point_victoire 3"],
+					["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
+				),
+				CarteFille("colosse",
+					["attaquer 2", "point_victoire 3"],
+					["ressource argile 3", "ressource verre 1"]
+				),
+				CarteFille("grand phare",
+					["ressource_au_choix bois argile pierre", "point_victoire 4"],
+					["ressource bois 1", "ressource pierre 1", "ressource papyrus 2"]
+				),
+				CarteFille("jardin suspendus",
+					["monnaie 6", "rejouer", "point_victoire 3"],
+					["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
+				),
+				CarteFille("grande bibliotheque",
+					["jeton_progres_aleatoire", "point_victoire 4"],
+					["ressource bois 3", "ressource verre 1", "ressource papyrus 1"]
+				),
+				CarteFille("mausolee",
+					["construction_fausse_gratuite", "point_victoire 2"],
+					["ressource argile 2", "ressource verre 2", "ressource papyrus 1"]
+				),
+				CarteFille("piree",
+					["ressource_au_choix papyrus verre", "rejouer", "point_victoire 2"],
+					["ressource bois 2", "ressource pierre 1", "ressource argile 1"]
+				),
+				CarteFille("pyramides",
+					["point_victoire 9"],
+					["ressource pierre 3", "ressource papyrus 1"]
+				),
+				CarteFille("sphinx",
+					["rejouer", "point_victoire 6"],
+					["ressource pierre 1", "ressource argile 1", "ressource verre 2"]
+				),
+				CarteFille("statue de zeus",
+					["defausse_carte_adversaire marron", "attaquer 1", "point_victoire 3"],
+					["ressource pierre 1", "ressource bois 1",
+						"ressource argile 1", "ressource papyrus 2"]
+				),
+				CarteFille("temple d artemis",
+					["monnaie 12", "rejouer"],
+					["ressource bois 1", "ressource pierre 1",
+						"ressource verre 1", "ressource papyrus 1"]
+				),
+				CarteFille("via appia",
+					["monnaie 3", "adversaire_perd_monnaie 3", "rejouer", "point_victoire 3"],
+					["ressource pierre 2", "ressource argile 2", "ressource papyrus 1"]
+				)
+			]
+			
+			self.jetons_progres = [
+				JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"]),
+				JetonProgres("architecture", ["reduc_merveille"]),
+				JetonProgres("economie", ["gain_monnaie_adversaire"]),
+				JetonProgres("loi", ["symbole_scientifique"]),
+				JetonProgres("maconnerie", ["reduc_carte bleu"]),
+				JetonProgres("philosophie", ["point_victoire_fin_partie 7"]),
+				JetonProgres("mathematiques", ["point_victoire_par_jeton 3", "point_victoire 3"]),
+				JetonProgres("strategie", ["bonus_attaque"]),
+				JetonProgres("theologie", ["rejouer"]),
+				JetonProgres("urbanisme", ["monnaie 6", "bonus_monnaie_chainage 4"]),
+			]
+			
+			self.jetons_progres_plateau = []
+		else:
+			self.constructeur_vide()
+		
+	def constructeur_vide(self):
+		self.joueur1 = None
+		self.joueur2 = None
 		self.joueur_qui_joue = None
+		self.choix_auto_merveilles = None
+		self.monnaie_banque = None
+		self.age = None
+		self.position_jeton_conflit = None
+		self.jetons_militaire = None
+		self.cartes_age_I = None
+		self.cartes_age_II = None
+		self.cartes_age_III = None
+		self.cartes_guilde = None
+		self.cartes_plateau = None
+		self.cartes_defaussees = None
+		self.merveilles = None
+		self.jetons_progres = None
+		self.jetons_progres_plateau = None
 		
-		#
-		self.choix_auto_merveilles = choix_auto_merveilles
+		return self
 		
-		# TODO : Changer en dicionnaire ? [valeur, quantite] ?
-		self.monnaie_banque = 86  # 14 de valeur 1, 10 de valeur 3, 7 de valeur 6
-		self.age = 1
+	def constructeur_par_copie(self):
+		plateau = Plateau(None, None)
 		
-		# 9 : neutre
-		# 0 : victoire militaire joueur2
-		# 18: victoire militaire joueur1
-		self.position_jeton_conflit = 9
-		self.jetons_militaire = [
-			JetonMilitaire("5piecesJ1", 5, 10),
-			JetonMilitaire("2piecesJ1", 2, 5),
-			JetonMilitaire("0piecesJ1", 0, 2),
-			JetonMilitaire("0piecesJ2", 0, 2),
-			JetonMilitaire("2piecesJ2", 2, 5),
-			JetonMilitaire("5piecesJ2", 5, 10)
-		]
+		plateau.joueur1 = self.joueur1.constructeur_par_copie()
+		plateau.joueur2 = self.joueur2.constructeur_par_copie()
 		
-		# listes des cartes
-		self.cartes_age_I = CARTES_AGE_I.copy()
-		self.cartes_age_II = CARTES_AGE_II.copy()
-		self.cartes_age_III = CARTES_AGE_III.copy()
-		self.cartes_guilde = CARTES_GUILDE.copy()
+		if self.joueur_qui_joue == self.joueur1:
+			plateau.joueur_qui_joue = plateau.joueur1
+		elif self.joueur_qui_joue == self.joueur2:
+			plateau.joueur_qui_joue = plateau.joueur2
 		
-		self.cartes_plateau = []
+		plateau.choix_auto_merveilles = self.choix_auto_merveilles
+		plateau.monnaie_banque = self.monnaie_banque
+		plateau.age = self.age
+		plateau.position_jeton_conflit = self.position_jeton_conflit
+		plateau.jetons_militaire = self.jetons_militaire
+		plateau.cartes_age_I = self.cartes_age_I
+		plateau.cartes_age_II = self.cartes_age_II
+		plateau.cartes_age_III = self.cartes_age_III
+		plateau.cartes_guilde = self.cartes_guilde
+		plateau.cartes_plateau = self.cartes_plateau
+		plateau.cartes_defaussees = self.cartes_defaussees
+		plateau.merveilles = self.merveilles
+		plateau.jetons_progres = self.jetons_progres
+		plateau.jetons_progres_plateau = self.jetons_progres_plateau
 		
-		self.cartes_defaussees = []
-		
-		self.merveilles = MERVEILLES.copy()
-		
-		self.jetons_progres = JETONS_PROGRES.copy()
-		self.jetons_progres_plateau = []
+		return plateau
 		
 	def __eq__(self, other):
 		if isinstance(other, Plateau):
-			return self.joueur1 == other.joueur1 and self.joueur2 == other.joueur2
+			return self.joueur1 == other.joueur1 \
+				and self.joueur2 == other.joueur2 \
+				and self.joueur_qui_joue == other.joueur_qui_joue \
+				and self.choix_auto_merveilles == other.choix_auto_merveilles \
+				and self.monnaie_banque == other.monnaie_banque \
+				and self.age == other.age \
+				and self.position_jeton_conflit == other.position_jeton_conflit \
+				and self.jetons_militaire == other.jetons_militaire \
+				and self.cartes_age_I == other.cartes_age_I \
+				and self.cartes_age_II == other.cartes_age_II \
+				and self.cartes_age_III == other.cartes_age_III \
+				and self.cartes_guilde == other.cartes_guilde \
+				and self.cartes_plateau == other.cartes_plateau \
+				and self.cartes_defaussees == other.cartes_defaussees \
+				and self.merveilles == other.merveilles \
+				and self.jetons_progres == other.jetons_progres \
+				and self.jetons_progres_plateau == other.jetons_progres_plateau
+		else:
+			return False
+		
+	def __str__(self):
+		return f"cartes_plateau : {mon_str_liste2D(self.cartes_plateau)}" \
+			f"j1 : {str(self.joueur1)}\n" \
+			f"j2 : {str(self.joueur2)}\n" \
+			f"joueur_qui_joue : {self.joueur_qui_joue.nom}\n" \
+			f"position_jeton_conflit : {self.position_jeton_conflit}\n"
 	
 	def preparation_plateau(self) -> None:
 		"""
@@ -92,6 +373,7 @@ class Plateau:
 		self.__preparation_jetons_progres()
 		self.__preparation_monnaies_joueurs()
 		self.__preparation_merveilles()
+		self.joueur_qui_joue = self.joueur1
 	
 	def __preparation_cartes(self) -> None:
 		"""
@@ -279,8 +561,7 @@ class Plateau:
 	# Partie outils
 	#
 	#
-	
-	def obtenir_adversaire(self):
+	def adversaire(self):
 		"""
 		Renvoie le nom_joueur adverse, le nom_joueur qui n'est pas stocke dans l attribut joueur_qui_joue.
 
@@ -398,7 +679,7 @@ class Plateau:
 		
 		elif raison_fin == "cartes_vide":
 			self.joueur_qui_joue.compter_point_victoire()
-			self.obtenir_adversaire().compter_point_victoire()
+			self.adversaire().compter_point_victoire()
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
 				print(f"victoire par points de \'{self.joueur1.nom}\' "
@@ -454,7 +735,7 @@ class Plateau:
 		prix_commerce = 0
 		
 		# Verification si le nom_joueur adverse produit les ressources manquantes
-		adversaire = self.obtenir_adversaire()
+		adversaire = self.adversaire()
 		carte_liste_ressource_adversaire = []
 		for ressource_manquante in ressources_manquantes:
 			carte_production = adversaire.production_type_ressources(ressource_manquante)
@@ -514,15 +795,122 @@ class Plateau:
 		return prix_commerce
 	
 	def jouer_coup_carte(self, carte_prenable):
-		self.appliquer_effets_carte(carte_prenable)
 		self.enlever_carte(carte_prenable)
+		self.appliquer_effets_carte(carte_prenable)
+		self.joueur_qui_joue.cartes.append(carte_prenable)
+	
+	def piocher(self, carte_prenable):
+		# construction de la carte gratuite via chainage
+		if not self.joueur_qui_joue.possede_carte_chainage(carte_prenable):
+			
+			# la carte ne coute rien
+			if carte_prenable.couts is None or len(carte_prenable.couts) == 0:
+				# fin action
+				return "break"
+			
+			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
+				self.reduction_couts_construction_carte(carte_prenable)
+			
+			# verification ressources nom_joueur
+			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
+			
+			# le nom_joueur possede toutes les ressouces
+			if len(liste_ressource_necessaire) == 0:
+				
+				# on retire uniquement la monnaie
+				for cout in carte_prenable.couts:
+					# monnaie x
+					cout_split = cout.split(" ")
+					if cout_split[0] == "monnaie":
+						self.joueur_qui_joue.monnaie -= int(cout_split[1])
+				
+				# fin action
+				return "break"
+			
+			else:
+				# manque des ressouces
+				for ressource_manquante in liste_ressource_necessaire:
+					ressource_manquante_split = ressource_manquante.split(" ")
+					
+					# manque monnaie
+					if ressource_manquante_split[0] == "monnaie":
+						print("Vous n'avez pas assez de monnaie pour construire la carte. "
+							"Vous devez defausser la carte")
+						return "continue"
+				
+				# manque des ressources autre que monnaie
+				prix = self.acheter_ressources(liste_ressource_necessaire)
+				if prix > self.joueur_qui_joue.monnaie:
+					print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
+						"Vous devez defausser la carte")
+					return "continue"
+				else:
+					if self.adversaire().possede_jeton_scientifique("economie"):
+						self.adversaire().monnaie += prix
+					else:
+						self.monnaie_banque += prix
+					self.joueur_qui_joue.monnaie -= prix
+					
+					# fin action
+					return "break"
+		
+		else:  # le nom_joueur possde la carte chainage, construction gratuite
+			# application effet jeton "urbanisme"
+			if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
+				self.joueur_qui_joue.monnaie += self.gain_argent_banque(4)
+			return "break"
+		
+	def defausser(self, carte_prenable):
+		self.cartes_defaussees.append(carte_prenable)
+		self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
+		
+		# gain de une piece par carte jaune
+		for carte_joueur in self.joueur_qui_joue.cartes:
+			if carte_joueur.couleur == "jaune":
+				self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
+				
+	
+	def construire_merveille(self, merveille_a_construire):
+		# verification ressources nom_joueur
+		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
+		
+		# le joueur possede toutes les ressouces
+		if len(liste_ressource_necessaire) == 0:
+			
+			# on retire uniquement la monnaie
+			for cout in merveille_a_construire.couts:
+				# monnaie x
+				cout_split = cout.split(" ")
+				if cout_split[0] == "monnaie":
+					self.joueur_qui_joue.monnaie -= int(cout_split[1])
+					self.monnaie_banque += int(cout_split[1])
+			
+			# fin action
+			return "break"
+		
+		else:
+			# manque des ressouces
+			for ressource_manquante in liste_ressource_necessaire:
+				ressource_manquante_split = ressource_manquante.split(" ")
+				
+				# manque monnaie
+				if ressource_manquante_split[0] == "monnaie":
+					print("Vous n'avez pas assez de monnaie pour construire la merveille")
+					return "break"
+			
+			# manque des ressources autre que monnaie
+			prix = self.acheter_ressources(liste_ressource_necessaire)
+			if prix > self.joueur_qui_joue.monnaie:
+				print("Impossible de faire le commerce, vous n'avez pas assez de monnaie")
+				return "break"
+			else:
+				return merveille_a_construire
 		
 	#
 	#
 	# Partie interaction utilisateur
 	#
 	#
-	
 	def demander_action_carte(self, carte: Carte):
 		"""
 		Demande a l'utilisateur l action qu'il souhaite faire avec la carte (defausser, ou piocher).
@@ -536,79 +924,17 @@ class Plateau:
 			
 			# defausser
 			if action == "defausser":
-				self.cartes_defaussees.append(carte)
-				self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
-				
-				# gain de une piece par carte jaune
-				for carte_joueur in self.joueur_qui_joue.cartes:
-					if carte_joueur.couleur == "jaune":
-						self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
-				
+				self.defausser(carte)
 				# fin action
 				break
 			
 			# piocher
 			elif action == "piocher":
-				
-				# construction de la carte gratuite via chainage
-				if not self.joueur_qui_joue.possede_carte_chainage(carte):
-					
-					# la carte ne coute rien
-					if carte.couts is None or len(carte.couts) == 0:
-						# fin action
-						break
-						
-					if carte.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-						self.reduction_couts_construction_carte(carte)
-					
-					# verification ressources nom_joueur
-					liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte)
-					
-					# le nom_joueur possede toutes les ressouces
-					if len(liste_ressource_necessaire) == 0:
-						
-						# on retire uniquement la monnaie
-						for cout in carte.couts:
-							# monnaie x
-							cout_split = cout.split(" ")
-							if cout_split[0] == "monnaie":
-								self.joueur_qui_joue.monnaie -= int(cout_split[1])
-						
-						# fin action
-						break
-					
-					else:
-						# manque des ressouces
-						for ressource_manquante in liste_ressource_necessaire:
-							ressource_manquante_split = ressource_manquante.split(" ")
-							
-							# manque monnaie
-							if ressource_manquante_split[0] == "monnaie":
-								print("Vous n'avez pas assez de monnaie pour construire la carte. "
-										"Vous devez defausser la carte")
-								continue
-						
-						# manque des ressources autre que monnaie
-						prix = self.acheter_ressources(liste_ressource_necessaire)
-						if prix > self.joueur_qui_joue.monnaie:
-							print("Impossible de faire le commerce, vous n'avez pas assez de monnaie. "
-									"Vous devez defausser la carte")
-							continue
-						else:
-							if self.obtenir_adversaire().possede_jeton_scientifique("economie"):
-								self.obtenir_adversaire().monnaie += prix
-							else:
-								self.monnaie_banque += prix
-							self.joueur_qui_joue.monnaie -= prix
-						
-							# fin action
-							break
-				
-				else:  # le nom_joueur possde la carte chainage, construction gratuite
-					# application effet jeton "urbanisme"
-					if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
-						self.joueur_qui_joue.monnaie += self.gain_argent_banque(4)
+				ret = self.piocher(carte)
+				if ret == "break":
 					break
+				elif ret == "continue":
+					continue
 			else:
 				print("action carte inconnue.")
 				continue
@@ -625,45 +951,14 @@ class Plateau:
 		while True:
 			action = input(str_action)
 			if action == "oui":
-				merveille_a_construire = demander_element_dans_une_liste(
-					self.joueur_qui_joue.nom, "merveille",
-					self.joueur_qui_joue.merveilles
-				)
+				merveille_a_construire = demander_element_dans_une_liste(self.joueur_qui_joue.nom, "merveille",
+					self.joueur_qui_joue.merveilles)
+				self.construire_merveille(merveille_a_construire)
 				
-				# verification ressources nom_joueur
-				liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
-				
-				# le joueur possede toutes les ressouces
-				if len(liste_ressource_necessaire) == 0:
-					
-					# on retire uniquement la monnaie
-					for cout in merveille_a_construire.couts:
-						# monnaie x
-						cout_split = cout.split(" ")
-						if cout_split[0] == "monnaie":
-							self.joueur_qui_joue.monnaie -= int(cout_split[1])
-							self.monnaie_banque += int(cout_split[1])
-					
-					# fin action
+				if merveille_a_construire == "break":
 					break
-				
 				else:
-					# manque des ressouces
-					for ressource_manquante in liste_ressource_necessaire:
-						ressource_manquante_split = ressource_manquante.split(" ")
-						
-						# manque monnaie
-						if ressource_manquante_split[0] == "monnaie":
-							print("Vous n'avez pas assez de monnaie pour construire la merveille")
-							break
-					
-					# manque des ressources autre que monnaie
-					prix = self.acheter_ressources(liste_ressource_necessaire)
-					if prix > self.joueur_qui_joue.monnaie:
-						print("Impossible de faire le commerce, vous n'avez pas assez de monnaie")
-						break
-					else:
-						return merveille_a_construire
+					return merveille_a_construire
 						
 			elif action == "non":
 				break
@@ -812,7 +1107,7 @@ class Plateau:
 		:param couleur: la couleur de la carte a defausser.
 		"""
 		
-		adversaire = self.obtenir_adversaire()
+		adversaire = self.adversaire()
 		while True:
 			print("\n * liste choix possibles *\n", mon_str_liste(adversaire.cartes))
 			type_element = input(f"[{self.joueur_qui_joue.nom}] Choix d'une carte {couleur}?\n > ")
@@ -868,6 +1163,9 @@ class Plateau:
 		"""
 		
 		logger.debug(f"[{self.joueur_qui_joue.nom}] gain_symbole_scientifique(\'{nom_symbole_scientifique}\')")
+		
+		self.joueur_qui_joue.symb_scientifique[nom_symbole_scientifique] += 1
+		self.joueur_qui_joue.compter_symb_scientifique()
 		
 		for ma_carte in self.joueur_qui_joue.cartes:
 			for effet_ma_carte in ma_carte.effets:
@@ -958,7 +1256,7 @@ class Plateau:
 										f"{jeton.pieces} monnaies")
 						
 						self.joueur_qui_joue.points_victoire += jeton.points_victoire
-						self.obtenir_adversaire().monnaie -= jeton.pieces
+						self.adversaire().monnaie -= jeton.pieces
 						self.monnaie_banque += jeton.pieces
 						jeton.est_utilise = True
 					
@@ -1058,7 +1356,7 @@ class Plateau:
 				return self.deplacer_pion_miltaire(int(effet_split[1]))
 			
 			elif effet_split[0] == "defausse_carte_adversaire":
-				if len(self.obtenir_adversaire().possede_cartes_couleur(effet_split[2])) != 0:
+				if len(self.adversaire().possede_cartes_couleur(effet_split[2])) != 0:
 					self.defausser_carte_adversaire(effet_split[1])
 				else:
 					print("Le nom_joueur adverse ne possede aucune carte de cette couleur.")
@@ -1073,7 +1371,7 @@ class Plateau:
 				self.construction_carte_defausser()
 			
 			elif effet_split[0] == "adversaire_perd_monnaie":
-				self.obtenir_adversaire().monnaie -= int(effet_split[1])
+				self.adversaire().monnaie -= int(effet_split[1])
 				self.monnaie_banque += int(effet_split[1])
 		
 		return "none", "none"
