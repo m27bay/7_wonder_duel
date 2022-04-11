@@ -18,6 +18,12 @@ class JetonProgres:
 		"""
 		self.nom = nom
 		self.effets = effets
+		
+	def __eq__(self, other):
+		if isinstance(other, JetonProgres):
+			return self.nom == other.nom
+		else:
+			return False
 	
 	def __str__(self):
 		"""
