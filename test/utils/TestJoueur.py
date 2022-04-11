@@ -26,6 +26,11 @@ class TestJoueur(unittest.TestCase):
 			{"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0})
 		self.assertEqual(self.joueur.monnaie, 0)
 		self.assertEqual(self.joueur.points_victoire, 0)
+		
+	def test_constructeur_par_copie(self):
+		joueur_copie = self.joueur.constructeur_par_copie()
+		
+		self.assertEqual(joueur_copie, self.joueur)
 	
 	def test_eq(self):
 		joueur2 = Joueur("j2")
