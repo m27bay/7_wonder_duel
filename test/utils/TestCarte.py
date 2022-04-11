@@ -21,6 +21,13 @@ class TestCarte(unittest.TestCase):
 		self.assertEqual(self.carte.nom_carte_chainage, None)
 		self.assertEqual(self.carte.couleur, "marron")
 		self.assertEqual(self.carte.age, 1)
+		
+	def test_affichage_carte(self):
+		carte = Carte("arsenal", ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3)
+		str_carte = "nom : arsenal, effets : [\'attaquer 3\'], couts : [\'ressource argile 3\', \'ressource bois 2\']"\
+			", cout chainage : None, couleur : rouge, age : 3, face cachee : False"
+		
+		self.assertEqual(str(carte), str_carte)
 	
 	def test_cacher_carte(self):
 		carte = Carte("carte", ["ressource bois 2"], ["monnaie 4"], None, "marron", 1)
