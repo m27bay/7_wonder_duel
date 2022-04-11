@@ -104,14 +104,25 @@ def mon_str_liste(liste: list) -> str:
 	Affiche une liste de Carte, CarteFille, ...
 
 	:param liste: la liste a afficher.
-	:return: return l'affichage de la liste.
+	:return: l'affichage de la liste.
 	"""
 	if liste is None:
-		return "None"
+		return "None\n"
 	if len(liste) == 0:
-		return "vide"
+		return "vide\n"
 	
 	affichage = ""
 	for elem in liste:
 		affichage += str(elem) + "\n"
+	return affichage
+	
+def mon_str_liste2D(liste: list) -> str:
+	if liste is None:
+		return "None\n"
+	if len(liste) == 0:
+		return "vide\n"
+	
+	affichage = ""
+	for elem in liste:
+		affichage += mon_str_liste(elem) + "\n"
 	return affichage
