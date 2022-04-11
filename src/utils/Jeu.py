@@ -58,7 +58,7 @@ class Jeu:
 					_raison_fin_de_partie, _joueur_gagnant = self.plateau.appliquer_effets_carte(carte_choisie)
 					self.plateau.joueur_qui_joue.cartes.append(carte_choisie)
 				
-				self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+				self.plateau.joueur_qui_joue = self.plateau.adversaire()
 				
 	def lancer(self):
 		"""

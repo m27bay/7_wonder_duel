@@ -440,7 +440,7 @@ class Fenetre:
 								for carte in self.plateau.liste_cartes_prenables():
 									carte.est_face_cachee = False
 								
-								self.plateau.joueur_qui_joue = self.plateau.obtenir_adversaire()
+								self.plateau.joueur_qui_joue = self.plateau.adversaire()
 								
 						# else:
 						
