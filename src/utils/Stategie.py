@@ -1,5 +1,6 @@
 import math
 
+from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau
 
 
@@ -74,26 +75,32 @@ eval_carte = {
 
 
 def partie_fini(partie: Plateau):
-	return (partie.age == 3 and len(partie.cartes_plateau) == 0) \
-		or (partie.joueur1.nombre_symb_scientifique == 6 or partie.joueur2.nombre_symb_scientifique == 6) \
+	return (len(partie.cartes_plateau) == 0) \
+		or (partie.joueur1.symb_scientifique == 6 or partie.joueur2.symb_scientifique == 6) \
 		or (partie.position_jeton_conflit == 18 or partie.position_jeton_conflit == 0)
 	
 	
 def fonction_evaluation(partie):
 	evaluation = 0
 	for carte in partie.joueur2.cartes:
-		evaluation += eval_carte[carte.nom]
+		if carte.est_face_cachee:
+			evaluation += 10
+		else:
+			evaluation += eval_carte[carte.nom]
 	
 	for carte in partie.joueur1.cartes:
-		evaluation -= eval_carte[carte.nom]
+		if carte.est_face_cachee:
+			evaluation += 10
+		else:
+			evaluation -= eval_carte[carte.nom]
 		
-	evaluation -= 2*(9 - partie.position_jeton_conflit)
+	evaluation -= 2*(partie.position_jeton_conflit - 9)
 	
 	evaluation += partie.joueur2.monnaie
 	evaluation -= partie.joueur1.monnaie
 	
-	evaluation += 2*partie.joueur2.nombre_symb_scientifique
-	evaluation -= 2*partie.joueur1.nombre_symb_scientifique
+	evaluation += 2*partie.joueur2.nbr_symb_scientifique_diff
+	evaluation -= 2*partie.joueur1.nbr_symb_scientifique_diff
 	
 	evaluation += partie.joueur2.points_victoire
 	evaluation -= partie.joueur1.points_victoire
@@ -101,25 +108,48 @@ def fonction_evaluation(partie):
 	return evaluation
 
 
-def minimax(partie, profondeur, coup_joueur):
+def minimax(partie, profondeur, coup_bot):
 	if profondeur == 0 or partie_fini(partie):
 		return fonction_evaluation(partie)
 	
-	if coup_joueur:
-		maxEval = -math.inf
+	carte_a_prendre = None
+	
+	if coup_bot:
+		partie.joueur_qui_joue = partie.joueur2
+		max_eval = -math.inf
+		print(f"liste carte coup_bot : {mon_str_liste(partie.liste_cartes_prenables())}")
 		for carte in partie.liste_cartes_prenables():
-			copie_partie = partie
-			copie_partie.jouer_coup_carte(carte)
-			eval = minimax(copie_partie, profondeur - 1, False)
-			maxEval = max(maxEval, eval)
-		return maxEval
+			
+			copie_partie = partie.constructeur_par_copie()
+			
+			copie_partie.piocher(carte)
+			copie_partie.enlever_carte(carte)
+			copie_partie.appliquer_effets_carte(carte)
+			copie_partie.joueur_qui_joue.cartes.append(carte)
+			
+			evaluation = minimax(copie_partie, profondeur - 1, False)
+			if evaluation > max_eval:
+				max_eval = evaluation
+				carte_a_prendre = carte
+		
+		return max_eval, carte_a_prendre
 	
 	else:
-		minEval = math.inf
+		partie.joueur_qui_joue = partie.joueur1
+		min_eval = math.inf
 		for carte in partie.liste_cartes_prenables():
-			copie_partie = partie
-			copie_partie.jouer_coup_carte(carte)
-			eval = minimax(copie_partie, profondeur - 1, True)
-			minEval = min(minEval, eval)
-		return minEval
+			
+			copie_partie = partie.constructeur_par_copie()
+			
+			copie_partie.piocher(carte)
+			copie_partie.enlever_carte(carte)
+			copie_partie.appliquer_effets_carte(carte)
+			copie_partie.joueur_qui_joue.cartes.append(carte)
+			
+			evaluation = minimax(copie_partie, profondeur - 1, True)
+			if evaluation > min_eval:
+				min_eval = evaluation
+				carte_a_prendre = carte
+				
+		return min_eval, carte_a_prendre
 		
