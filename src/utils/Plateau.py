@@ -610,6 +610,9 @@ class Plateau:
 		
 		if not carte_trouvee:
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] la carte n'est pas sur le plateau")
+			
+		for carte in self.liste_cartes_prenables():
+			carte.devoiler()
 	
 	def reste_des_cartes(self) -> bool:
 		"""
@@ -785,13 +788,14 @@ class Plateau:
 		
 		return prix_commerce
 	
-	def piocher(self, carte_prenable):
+	def piocher(self, carte_prenable: Carte):
 		# construction de la carte gratuite via chainage
 		if not self.joueur_qui_joue.possede_carte_chainage(carte_prenable):
 			
 			# la carte ne coute rien
 			if carte_prenable.couts is None or len(carte_prenable.couts) == 0:
 				# fin action
+				self.enlever_carte(carte_prenable)
 				return 1
 			
 			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
@@ -812,6 +816,7 @@ class Plateau:
 						self.joueur_qui_joue.monnaie -= int(cout_split[1])
 				
 				# fin action
+				self.enlever_carte(carte_prenable)
 				return 1
 			
 			else:
@@ -839,16 +844,18 @@ class Plateau:
 					self.joueur_qui_joue.monnaie -= prix
 					
 					# fin action
+					self.enlever_carte(carte_prenable)
 					return 1
 		
 		else:  # le nom_joueur possde la carte chainage, construction gratuite
 			# application effet jeton "urbanisme"
 			if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
 				self.joueur_qui_joue.monnaie += self.gain_argent_banque(4)
+				
+			self.enlever_carte(carte_prenable)
 			return 1
 		
-	def defausser(self, carte_prenable):
-		self.cartes_defaussees.append(carte_prenable)
+	def defausser(self, carte_prenable: Carte):
 		self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
 		
 		# gain de une piece par carte jaune
@@ -856,7 +863,10 @@ class Plateau:
 			if carte_joueur.couleur == "jaune":
 				self.joueur_qui_joue.monnaie += self.gain_argent_banque(2)
 				
-	def construire_merveille(self, merveille_a_construire):
+		self.enlever_carte(carte_prenable)
+		self.cartes_defaussees.append(carte_prenable)
+		
+	def construire_merveille(self, merveille_a_construire: CarteFille):
 		# verification ressources nom_joueur
 		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
 		
