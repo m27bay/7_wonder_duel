@@ -8,7 +8,7 @@ from src.utils.Carte import Carte
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
-
+from src.utils.Stategie import minimax
 
 RATIO_IMAGE = 0.13
 RATIO_MERVEILLE = 0.08
@@ -16,7 +16,7 @@ RATIO_JETONS_PROGRES = 0.12
 
 RATIO_PLATEAU = 0.50
 RATIO_BANQUE = 0.05
-RATIO_ZOOM_CARTE = 0.80
+RATIO_ZOOM_CARTE = 0.70
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
 RATIO_MONNAIES_6 = 0.16
 RATIO_MONNAIES_3 = 0.18
@@ -45,7 +45,7 @@ class Fenetre:
 		self.default_hauteur_jetons_progres = default_sprite_jetons_progres.rect.height
 		self.default_largeur_jetons_progres = default_sprite_jetons_progres.rect.width
 		
-		self.cartes_plateau = pygame.sprite.Group()
+		self.sprite_cartes_plateau = pygame.sprite.Group()
 		
 		self.sprite_j1 = [
 			pygame.sprite.Group(),
@@ -101,8 +101,6 @@ class Fenetre:
 			self.hauteur - 2 * self.espace_entre_carte - self.image_banque.get_height())
 		)
 		
-		self.double_clic = False
-		
 		self.merverille_j1 = pygame.sprite.Group()
 		self.merverille_j2 = pygame.sprite.Group()
 		self.__dessiner_merveille()
@@ -125,7 +123,7 @@ class Fenetre:
 				if carte != 0:
 					# dessin
 					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
-					self.cartes_plateau.add(sprite_carte)
+					self.sprite_cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
 					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
@@ -147,7 +145,7 @@ class Fenetre:
 				if carte != 0:
 					# dessin
 					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
-					self.cartes_plateau.add(sprite_carte)
+					self.sprite_cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
 					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
@@ -171,7 +169,7 @@ class Fenetre:
 				if carte != 0:
 					# dessin
 					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
-					self.cartes_plateau.add(sprite_carte)
+					self.sprite_cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
 					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
@@ -183,12 +181,12 @@ class Fenetre:
 		#
 		haut_gauche_x = origine_cartes - self.default_largeur_spirte/2
 		carte = self.plateau.cartes_plateau[3][1]
-		self.cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
+		self.sprite_cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
 		
 		#
 		haut_gauche_x = origine_cartes + self.default_largeur_spirte + self.default_largeur_spirte / 2
 		carte = self.plateau.cartes_plateau[3][5]
-		self.cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
+		self.sprite_cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
 		haut_gauche_y += self.default_hauteur_sprite/2
 		
 		#
@@ -201,7 +199,7 @@ class Fenetre:
 				if carte != 0:
 					# dessin
 					sprite_carte = SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE)
-					self.cartes_plateau.add(sprite_carte)
+					self.sprite_cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
 					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
@@ -353,38 +351,41 @@ class Fenetre:
 				return 6
 			
 	def __piocher_carte(self, sprite_carte: SpriteCarte):
-		self.cartes_plateau.remove(sprite_carte)
-		type_carte = self.__position_type_carte(sprite_carte.carte)
+		ret = self.plateau.piocher(sprite_carte.carte)
 		
-		sprite_carte.angle = 90
+		if ret == -1:
+			self.plateau.defausser(sprite_carte.carte)
 		
-		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
-			sprite_joueur_qui_joue = self.sprite_j1
-			sprite_carte.angle = -sprite_carte.angle
-			coord_x, _ = self.rect_image_plateau.bottomleft
-			coord_x -= self.espace_entre_carte
-			coord_x -= self.default_hauteur_sprite
-			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
 		else:
-			sprite_joueur_qui_joue = self.sprite_j2
-			coord_x, _ = self.rect_image_plateau.bottomright
-			coord_x += self.espace_entre_carte
-			decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
-		
-		if type_carte == 0:
-			coord_y = type_carte * self.default_largeur_spirte
-		else:
-			coord_y = type_carte * (
-					self.default_largeur_spirte + self.espace_entre_carte)
+			type_carte = self.__position_type_carte(sprite_carte.carte)
 			
-		coord_y -= self.rect_image_plateau.height*1/4
-		coord_y += self.default_largeur_spirte
-		coord_x += decalage_x
+			sprite_carte.angle = 90
 			
-		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
-		self.plateau.enlever_carte(sprite_carte.carte)
-		
-		sprite_carte.changer_coords(coord_x, coord_y)
+			if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+				sprite_joueur_qui_joue = self.sprite_j1
+				sprite_carte.angle = -sprite_carte.angle
+				coord_x, _ = self.rect_image_plateau.bottomleft
+				coord_x -= self.espace_entre_carte
+				coord_x -= self.default_hauteur_sprite
+				decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
+			else:
+				sprite_joueur_qui_joue = self.sprite_j2
+				coord_x, _ = self.rect_image_plateau.bottomright
+				coord_x += self.espace_entre_carte
+				decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
+			
+			if type_carte == 0:
+				coord_y = type_carte * self.default_largeur_spirte
+			else:
+				coord_y = type_carte * (
+						self.default_largeur_spirte + self.espace_entre_carte)
+			
+			coord_y -= self.rect_image_plateau.height*1/4
+			coord_y += self.default_largeur_spirte
+			coord_x += decalage_x
+			
+			sprite_joueur_qui_joue[type_carte].add(sprite_carte)
+			sprite_carte.changer_coords(coord_x, coord_y)
 		
 	def boucle_principale(self):
 		en_cours = True
@@ -401,84 +402,101 @@ class Fenetre:
 					if event.key == pygame.K_ESCAPE:
 						en_cours = False
 				
-				if event.type == pygame.MOUSEBUTTONDOWN:
+				if self.plateau.joueur_qui_joue == self.plateau.joueur1:
 					
-					clic_x, clic_y = event.pos
-					for sprit in self.cartes_plateau:
-						if sprit.rect.collidepoint(clic_x, clic_y):
-							
-							# clic droit
-							if event.button == 1:
-								if isinstance(sprit, SpriteCarte):
-									if sprit.carte in self.plateau.liste_cartes_prenables():
-										
-										if self.sprite_carte_zoomer is None:
-											sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-											self.sprite_carte_zoomer = sprit
-											self.cartes_plateau.remove(self.sprite_carte_zoomer)
-											self.cartes_plateau.add(self.sprite_carte_zoomer)
-										
-										else:
-											if sprit == self.sprite_carte_zoomer:
-												sprit.dezoomer()
-												self.sprite_carte_zoomer = None
-					
-					bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-					bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
-					if (clic_x < bottomleft_x and clic_y > bottomleft_y
-						and self.plateau.joueur_qui_joue == self.plateau.joueur1)\
-						or (clic_x > bottomright_x and clic_y > bottomright_y
-						and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+					if event.type == pygame.MOUSEBUTTONDOWN:
 						
-						if self.sprite_carte_zoomer is not None:
-							if self.sprite_carte_zoomer.carte in self.plateau.liste_cartes_prenables():
+						clic_x, clic_y = event.pos
+						for sprit in self.sprite_cartes_plateau:
+							
+							if sprit.rect.collidepoint(clic_x, clic_y):
 								
+								# clic droit
+								if event.button == 1:
+									
+									if isinstance(sprit, SpriteCarte):
+										
+										if sprit.carte in self.plateau.liste_cartes_prenables():
+											
+											if self.sprite_carte_zoomer is None:
+												
+												sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+												self.sprite_carte_zoomer = sprit
+												self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
+												self.sprite_cartes_plateau.add(self.sprite_carte_zoomer)
+											
+											else:
+												if sprit == self.sprite_carte_zoomer:
+													
+													sprit.dezoomer()
+													self.sprite_carte_zoomer = None
+						
+						bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+						bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+						
+						if (clic_x < bottomleft_x and clic_y > bottomleft_y
+							and self.plateau.joueur_qui_joue == self.plateau.joueur1)\
+							or (clic_x > bottomright_x and clic_y > bottomright_y
+							and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+							
+							if self.sprite_carte_zoomer is not None:
+								
+								if self.sprite_carte_zoomer.carte in self.plateau.liste_cartes_prenables():
+									
+									self.sprite_carte_zoomer.dezoomer()
+									self.__piocher_carte(self.sprite_carte_zoomer)
+									self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
+									self.sprite_carte_zoomer = None
+									self.plateau.joueur_qui_joue = self.plateau.adversaire()
+							
+						if self.rect_image_banque.collidepoint(clic_x, clic_y):
+							
+							if self.sprite_carte_zoomer is not None:
+							
 								self.sprite_carte_zoomer.dezoomer()
-								self.__piocher_carte(self.sprite_carte_zoomer)
+								self.plateau.defausser(self.sprite_carte_zoomer.carte)
+								self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
+								self.plateau.joueur_qui_joue = self.plateau.adversaire()
 								self.sprite_carte_zoomer = None
 								
-								for carte in self.plateau.liste_cartes_prenables():
-									carte.est_face_cachee = False
+						for jeton in self.jetons_progres_plateau:
+							
+							if self.sprite_carte_zoomer is None:
 								
-								self.plateau.joueur_qui_joue = self.plateau.adversaire()
-								
-						# else:
-						
-					if self.rect_image_banque.collidepoint(clic_x, clic_y):
-						if self.sprite_carte_zoomer is not None:
-							self.sprite_carte_zoomer.dezoomer()
-							
-							self.cartes_plateau.remove(self.sprite_carte_zoomer)
-							
-							self.plateau.cartes_defaussees.append(self.sprite_carte_zoomer.carte)
-							
-							self.sprite_carte_zoomer = None
-							self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
-							
-							# gain de une piece par carte jaune
-							for carte_joueur in self.plateau.joueur_qui_joue.cartes:
-								if carte_joueur.couleur == "jaune":
-									self.plateau.joueur_qui_joue.monnaie += self.plateau.gain_argent_banque(2)
-									
-					for jeton in self.jetons_progres_plateau:
-						if jeton.rect.collidepoint(clic_x, clic_y):
-
-							if event.button == 1:
-								if isinstance(jeton, SpriteJetonsProgres):
-									if self.sprite_jeton_zoomer is None:
-										jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-										self.sprite_carte_zoomer = jeton
-										self.jetons_progres_plateau.remove(self.sprite_carte_zoomer)
-										self.jetons_progres_plateau.add(self.sprite_carte_zoomer)
-									
-									else:
-										if jeton == self.sprite_carte_zoomer:
-											jeton.dezoomer()
-											self.sprite_carte_zoomer = None
+								if jeton.rect.collidepoint(clic_x, clic_y):
+		
+									if event.button == 1:
+										
+										if isinstance(jeton, SpriteJetonsProgres):
+											
+											if self.sprite_jeton_zoomer is None:
+												
+												jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+												self.sprite_jeton_zoomer = jeton
+												self.jetons_progres_plateau.remove(self.sprite_jeton_zoomer)
+												self.jetons_progres_plateau.add(self.sprite_jeton_zoomer)
+											
+											else:
+												if jeton == self.sprite_jeton_zoomer:
+													
+													jeton.dezoomer()
+													self.sprite_jeton_zoomer = None
+				
+				else:
+					nbr_noeuds = 0
+					_, carte_a_prendre, _ = minimax(self.plateau, 2, True, nbr_noeuds)
+					print("à prendre :", carte_a_prendre.nom)
+					
+					for sprite_carte in self.sprite_cartes_plateau:
+						if isinstance(sprite_carte, SpriteCarte):
+							if sprite_carte.carte == carte_a_prendre:
+								self.__piocher_carte(sprite_carte)
+								self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
+					
+					self.plateau.joueur_qui_joue = self.plateau.adversaire()
 					
 			# PARTIE Update
-			ret, ret2 = self.plateau.changement_age()
-			if ret == "none" and ret2 == "none":
+			if self.plateau.changement_age() == 1:
 				self.__dessiner_carte()
 			
 			for group_sprit in self.sprite_j1:
@@ -488,12 +506,14 @@ class Fenetre:
 				
 			self.merverille_j1.update()
 			self.merverille_j2.update()
-			self.jetons_progres_plateau.update()
 			
-			self.cartes_plateau.update()
-			
-			if self.sprite_jeton_zoomer is not None:
-				self.sprite_jeton_zoomer.update()
+			if self.sprite_carte_zoomer is not None:
+				self.jetons_progres_plateau.update()
+				self.sprite_cartes_plateau.update()
+				
+			else:
+				self.sprite_cartes_plateau.update()
+				self.jetons_progres_plateau.update()
 			
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
@@ -514,12 +534,14 @@ class Fenetre:
 				
 			self.merverille_j1.draw(self.ecran)
 			self.merverille_j2.draw(self.ecran)
-			self.jetons_progres_plateau.draw(self.ecran)
 			
-			self.cartes_plateau.draw(self.ecran)
-			
-			if self.sprite_jeton_zoomer is not None:
-				self.sprite_jeton_zoomer.draw(self.ecran)
+			if self.sprite_carte_zoomer is not None:
+				self.jetons_progres_plateau.draw(self.ecran)
+				self.sprite_cartes_plateau.draw(self.ecran)
+				
+			else:
+				self.sprite_cartes_plateau.draw(self.ecran)
+				self.jetons_progres_plateau.draw(self.ecran)
 			
 			# OUTIL DEBUG #
 			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
