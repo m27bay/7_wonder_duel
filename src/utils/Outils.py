@@ -25,34 +25,6 @@ def trouver_element_avec_nom(nom_element: str, liste: list):
 	return None
 
 
-def demander_element_dans_une_liste(nom_joueur: str, type_element: str, liste_element: list):
-	"""
-	Renvoie l element contenu dans liste_element correspondant au nom donne par le nom_joueur.
-
-	:param nom_joueur: le nom du nom_joueur a qui on demande l element.
-	:param type_element: le type d element de que l on cherche (uniquement pour l'affichage)
-		(carte, merveille, jeton progres).
-	:param liste_element: la liste ou l on cherche l element.
-	:return: l element choisi.
-	"""
-	
-	logger.debug(f"[{nom_joueur}] demander_element_dans_une_liste(\'{type_element}\'\n{mon_str_liste(liste_element)})")
-	
-	while True:
-		print(f"* liste choix possibles *\n{mon_str_liste(liste_element)}")
-		nom_element = input(f"[{nom_joueur}] Choix {type_element} ?\n > ")
-		element_choisi = trouver_element_avec_nom(nom_element, liste_element)
-		
-		if element_choisi is None:
-			print(f" * ERREUR * Aucun element ne repond au nom \'{nom_element}\', veuillez recommencer")
-			continue
-		else:
-			break
-	
-	logger.debug(f"[{nom_joueur}] a choisit \'{element_choisi.nom}\'")
-	return element_choisi
-
-
 def trouver_ressource_avec_nom(nom_ressource: str, liste: list):
 	"""
 	Trouver une ressource avec son nom dans une liste.
@@ -73,45 +45,30 @@ def trouver_ressource_avec_nom(nom_ressource: str, liste: list):
 	return None
 
 
-def demander_ressource_dans_une_liste(nom_joueur: str, liste_element: list):
-	"""
-	Renvoie l element contenu dans liste_element correspondant au nom donne par le nom_joueur.
-
-	:param nom_joueur: le nom du nom_joueur a qui on demande l element.
-	:param liste_element: la liste ou l on cherche la ressource.
-	:return: la ressource choisie.
-	"""
-	
-	logger.debug(f"[{nom_joueur}] demander_ressource_dans_une_liste(\n{mon_str_liste(liste_element)})")
-	
-	while True:
-		print(f"* liste choix possibles *\n{liste_element}")
-		nom_ressource = input(f"[{nom_joueur}] Choix ressource ?\n > ")
-		ressource_choisie = trouver_ressource_avec_nom(nom_ressource, liste_element)
-		
-		if ressource_choisie is None:
-			print(f" * ERREUR * Aucune ressource ne repond au nom \'{nom_ressource}\', veuillez recommencer")
-			continue
-		else:
-			break
-	
-	logger.debug(f"[{nom_joueur}] a choisit \'{ressource_choisie}\'")
-	return nom_ressource, ressource_choisie
-
-
 def mon_str_liste(liste: list) -> str:
 	"""
 	Affiche une liste de Carte, CarteFille, ...
 
 	:param liste: la liste a afficher.
-	:return: return l'affichage de la liste.
+	:return: l'affichage de la liste.
 	"""
 	if liste is None:
-		return "None"
+		return "None\n"
 	if len(liste) == 0:
-		return "vide"
+		return "vide\n"
 	
 	affichage = ""
 	for elem in liste:
 		affichage += str(elem) + "\n"
+	return affichage
+	
+def mon_str_liste2D(liste: list) -> str:
+	if liste is None:
+		return "None\n"
+	if len(liste) == 0:
+		return "vide\n"
+	
+	affichage = ""
+	for elem in liste:
+		affichage += mon_str_liste(elem) + "\n"
 	return affichage

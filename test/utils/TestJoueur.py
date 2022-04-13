@@ -26,6 +26,27 @@ class TestJoueur(unittest.TestCase):
 			{"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0})
 		self.assertEqual(self.joueur.monnaie, 0)
 		self.assertEqual(self.joueur.points_victoire, 0)
+		
+	def test_constructeur_par_copie(self):
+		joueur_copie = self.joueur.constructeur_par_copie()
+		
+		self.assertEqual(joueur_copie, self.joueur)
+		
+	def test_constructeur_par_copie_symb_scientifique(self):
+		joueur = Joueur("test")
+		joueur.symb_scientifique["pilon"] = 1
+		
+		copie = joueur.constructeur_par_copie()
+		
+		symb_scientifique_copie = {
+			"sphere_armillaire": 0,
+			"roue": 0,
+			"cadran_solaire": 0,
+			"pilon": 1,
+			"pendule": 0,
+			"plume": 0
+		}
+		self.assertEqual(copie.symb_scientifique, symb_scientifique_copie)
 	
 	def test_eq(self):
 		joueur2 = Joueur("j2")
@@ -173,20 +194,20 @@ class TestJoueur(unittest.TestCase):
 		self.joueur.compter_point_victoire()
 		self.assertEqual(4+3*2+3, self.joueur.points_victoire)
 	
-	def test_selection_merveille(self):
-		liste_merveilles = [
-			CarteFille("merveille0", None, None),
-			CarteFille("merveille1", None, None),
-			CarteFille("merveille2", None, None),
-			CarteFille("merveille3", None, None),
-			CarteFille("merveille4", None, None)
-		]
-		
-		# entree : merveille3, merveille1
-		joueur = Joueur("joueur2")
-		# copy de la liste car on supprime les merveilles une fois choisie.
-		joueur.selection_merveille(2, liste_merveilles.copy())
-		self.assertEqual([liste_merveilles[3], liste_merveilles[1]], joueur.merveilles)
+	# def test_selection_merveille(self):
+	# 	liste_merveilles = [
+	# 		CarteFille("merveille0", None, None),
+	# 		CarteFille("merveille1", None, None),
+	# 		CarteFille("merveille2", None, None),
+	# 		CarteFille("merveille3", None, None),
+	# 		CarteFille("merveille4", None, None)
+	# 	]
+	#
+	# 	# entree : merveille3, merveille1
+	# 	joueur = Joueur("joueur2")
+	# 	# copy de la liste car on supprime les merveilles une fois choisie.
+	# 	joueur.selection_merveille(2, liste_merveilles.copy())
+	# 	self.assertEqual([liste_merveilles[3], liste_merveilles[1]], joueur.merveilles)
 
 
 if __name__ == '__main__':

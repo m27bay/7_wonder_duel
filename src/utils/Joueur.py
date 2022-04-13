@@ -2,8 +2,7 @@
 Fichier de la classe Joueur.
 """
 from src.utils.Carte import Carte
-from src.utils.Outils import logger
-from src.utils.Outils import demander_element_dans_une_liste
+from src.utils.Outils import logger, mon_str_liste
 
 
 class Joueur:
@@ -25,11 +24,26 @@ class Joueur:
 		self.jetons_progres = []  # liste des jetons_progres gagnes
 		
 		#
-		self.ressources = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+		self.ressources = {
+			"bois": 0,
+			"pierre": 0,
+			"argile": 0,
+			"verre": 0,
+			"papyrus": 0
+		}
 		
 		#
 		self.monnaie = 0
 		self.points_victoire = 0
+		self.symb_scientifique = {
+			"sphere_armillaire": 0,
+			"roue": 0,
+			"cadran_solaire": 0,
+			"pilon": 0,
+			"pendule": 0,
+			"plume": 0
+		}
+		self.nbr_symb_scientifique_diff = 0
 		
 	def __eq__(self, other):
 		if isinstance(other, Joueur):
@@ -39,9 +53,69 @@ class Joueur:
 				and self.jetons_progres == other.jetons_progres \
 				and self.ressources == other.ressources \
 				and self.monnaie == other.monnaie \
-				and self.points_victoire == other.points_victoire
+				and self.points_victoire == other.points_victoire \
+				and self.symb_scientifique == other.symb_scientifique \
+				and self.nbr_symb_scientifique_diff == other.nbr_symb_scientifique_diff
 		else:
 			return False
+		
+	def __str__(self):
+		return f"nom : {self.nom}\n" \
+			f"cartes : {mon_str_liste(self.cartes)}" \
+			f"merveilles : {mon_str_liste(self.merveilles)}" \
+			f"jetons_progres : {mon_str_liste(self.jetons_progres)}" \
+			f"monnaie : {self.monnaie}\n" \
+			f"points_victoire : {self.points_victoire}\n" \
+			f"nbr_symb_scientifique_diff : {self.nbr_symb_scientifique_diff}\n"
+		
+	def constructeur_par_copie(self):
+		joueur = Joueur(self.nom)
+		
+		joueur.cartes = []
+		for carte in self.cartes:
+			joueur.cartes.append(carte.constructeur_par_copie())
+			
+		joueur.merveilles = []
+		for merveille in self.merveilles:
+			joueur.merveilles.append(merveille.constructeur_par_copie())
+		
+		joueur.jetons_progres = []
+		for jeton in self.jetons_progres:
+			joueur.jetons_progres.append(jeton.constructeur_par_copie())
+			
+		joueur.ressources = {
+			"bois": 0,
+			"pierre": 0,
+			"argile": 0,
+			"verre": 0,
+			"papyrus": 0
+		}
+		for ressource, qte in self.ressources.items():
+			joueur.ressources[ressource] = qte
+		
+		joueur.monnaie = self.monnaie
+		joueur.points_victoire = self.points_victoire
+		
+		joueur.symb_scientifique = {
+			"sphere_armillaire": 0,
+			"roue": 0,
+			"cadran_solaire": 0,
+			"pilon": 0,
+			"pendule": 0,
+			"plume": 0
+		}
+		for symb, qte in self.symb_scientifique.items():
+			joueur.symb_scientifique[symb] = qte
+			
+		joueur.compter_symb_scientifique()
+		
+		return joueur
+	
+	def compter_symb_scientifique(self):
+		self.nbr_symb_scientifique_diff = 0
+		for nom_symb_scientifique, qte in self.symb_scientifique.items():
+			if qte != 0:
+				self.nbr_symb_scientifique_diff += 1
 		
 	def retirer_monnaie(self, monnaie: int):
 		"""
@@ -275,21 +349,21 @@ class Joueur:
 					
 					self.points_victoire += int(effet_split[1])
 	
-	def selection_merveille(self, nbr_repetition: int, liste_merveilles_alea: list) -> None:
-		"""
-		Selection d'un ou des merveilles pour le nom_joueur parmis une liste de merveille.
-
-		:param nbr_repetition: nombre de merveille a choisir.
-		:param liste_merveilles_alea: une liste de merveille ou choisir la/les merveille(s).
-		"""
-		if len(liste_merveilles_alea) == 1:
-			print(f"\nAttribution de la derniere merveille ({liste_merveilles_alea[0].nom})"
-				f" au [{self.nom}]")
-			self.merveilles.append(liste_merveilles_alea[0])
-			liste_merveilles_alea.remove(liste_merveilles_alea[0])
-		else:
-			for _ in range(nbr_repetition):
-				merveille_choisie = demander_element_dans_une_liste(self.nom, "merveille", liste_merveilles_alea)
-				self.merveilles.append(merveille_choisie)
-				liste_merveilles_alea.remove(merveille_choisie)
+	# def selection_merveille(self, nbr_repetition: int, liste_merveilles_alea: list) -> None:
+	# 	"""
+	# 	Selection d'un ou des merveilles pour le nom_joueur parmis une liste de merveille.
+	#
+	# 	:param nbr_repetition: nombre de merveille a choisir.
+	# 	:param liste_merveilles_alea: une liste de merveille ou choisir la/les merveille(s).
+	# 	"""
+	# 	if len(liste_merveilles_alea) == 1:
+	# 		print(f"\nAttribution de la derniere merveille ({liste_merveilles_alea[0].nom})"
+	# 			f" au [{self.nom}]")
+	# 		self.merveilles.append(liste_merveilles_alea[0])
+	# 		liste_merveilles_alea.remove(liste_merveilles_alea[0])
+	# 	else:
+	# 		for _ in range(nbr_repetition):
+	# 			merveille_choisie = demander_element_dans_une_liste(self.nom, "merveille", liste_merveilles_alea)
+	# 			self.merveilles.append(merveille_choisie)
+	# 			liste_merveilles_alea.remove(merveille_choisie)
 					
