@@ -30,4 +30,17 @@ class CarteFille(Carte):
 		return f"nom : {self.nom}, " \
 			f"effets : {str(self.effets)}, " \
 			f"couts : {str(self.couts)}"
+	
+	def constructeur_par_copie(self):
+		carte_fille = CarteFille(None, None, None)
 		
+		carte_fille.nom = self.nom
+		
+		if self.effets is not None:
+			carte_fille.effets = self.effets.copy()
+			
+		if self.couts is not None:
+			carte_fille.couts = self.couts.copy()
+		
+		return carte_fille
+	
