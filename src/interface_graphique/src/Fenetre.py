@@ -2,6 +2,7 @@ import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
 from src.interface_graphique.src.SpriteCarte import SpriteCarte
+from src.interface_graphique.src.SpriteJetonsMilitaire import SpriteJetonsMilitaire
 from src.interface_graphique.src.SpriteJetonsProgres import SpriteJetonsProgres
 from src.interface_graphique.src.SpriteMerveille import SpriteMerveille
 from src.utils.Carte import Carte
@@ -13,14 +14,16 @@ from src.utils.Stategie import minimax
 RATIO_IMAGE = 0.13
 RATIO_MERVEILLE = 0.08
 RATIO_JETONS_PROGRES = 0.12
+RATIO_JETONS_MILITAIRE2 = 0.16
+RATIO_JETONS_MILITAIRE5 = 0.15
+RATIO_MONNAIES_6 = 0.16
+RATIO_MONNAIES_3 = 0.18
+RATIO_MONNAIES_1 = 0.16
 
 RATIO_PLATEAU = 0.50
 RATIO_BANQUE = 0.05
 RATIO_ZOOM_CARTE = 0.70
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
-RATIO_MONNAIES_6 = 0.16
-RATIO_MONNAIES_3 = 0.18
-RATIO_MONNAIES_1 = 0.16
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -109,6 +112,20 @@ class Fenetre:
 		self.__dessiner_jetons_scientifiques()
 		self.__dessiner_carte()
 		
+		top_x = self.largeur / 2
+		top_x -= 11
+		_, top_y = self.rect_image_plateau.bottomleft
+		top_y /= 2
+		top_y -= 5
+		top = (top_x, top_y)
+		
+		larg = 23
+		long = 45
+		
+		self.rect_jeton_conflit = pygame.Rect(top, (larg, long))
+		
+		self.sprite_jetons_militaire = pygame.sprite.Group()
+		self.__dessiner_jetons_militaire()
 		
 	def __dessiner_carte_age_I(self):
 		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
@@ -340,6 +357,54 @@ class Fenetre:
 		
 		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
 		self.ecran.blit(image_monnaies, (coord_x, coord_y))
+		
+	def __deplacer_jeton_attaque(self):
+		if self.plateau.position_jeton_conflit > 9:
+			nbr_deplacement = 9 - self.plateau.position_jeton_conflit
+			top_x, top_y, larg, long = self.rect_jeton_conflit
+			top_x += nbr_deplacement * (8 + nbr_deplacement - 1)
+		
+		elif self.plateau.position_jeton_conflit < 9:
+			nbr_deplacement = self.plateau.position_jeton_conflit - 9
+			top_x, top_y, larg, long = self.rect_jeton_conflit
+			top_x -= nbr_deplacement * (8 + nbr_deplacement)
+			
+	def __dessiner_jetons_militaire(self):
+		top_x = self.largeur / 2
+		top_x += 85
+		_, top_y = self.rect_image_plateau.bottomleft
+		top_y /= 2
+		top_y += 47
+		self.sprite_jetons_militaire.add(
+			SpriteJetonsMilitaire(
+				self.plateau.jetons_militaire[4], top_x, top_y, RATIO_JETONS_MILITAIRE2
+			)
+		)
+		
+		top_x -= 2*85
+		top_x -= 65
+		self.sprite_jetons_militaire.add(
+			SpriteJetonsMilitaire(
+				self.plateau.jetons_militaire[1], top_x, top_y, RATIO_JETONS_MILITAIRE2
+			)
+		)
+		
+		top_x = self.largeur / 2
+		top_x += 85 + 80
+		self.sprite_jetons_militaire.add(
+			SpriteJetonsMilitaire(
+				self.plateau.jetons_militaire[5], top_x, top_y, RATIO_JETONS_MILITAIRE5
+			)
+		)
+		
+		top_x = self.largeur / 2
+		top_x -= 2 * 85
+		top_x -= 70
+		self.sprite_jetons_militaire.add(
+			SpriteJetonsMilitaire(
+				self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5
+			)
+		)
 	
 	def __position_type_carte(self, carte: Carte):
 		if not isinstance(carte, CarteFille):
@@ -515,6 +580,8 @@ class Fenetre:
 				self.sprite_cartes_plateau.update()
 				self.jetons_progres_plateau.update()
 			
+			self.sprite_jetons_militaire.update()
+			
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
 			self.ecran.blit(
@@ -543,6 +610,10 @@ class Fenetre:
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.jetons_progres_plateau.draw(self.ecran)
 			
+			pygame.draw.ellipse(self.ecran, (255, 0, 0), self.rect_jeton_conflit, 50)
+			
+			self.sprite_jetons_militaire.draw(self.ecran)
+			
 			# OUTIL DEBUG #
 			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
 			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topleft,
@@ -552,10 +623,60 @@ class Fenetre:
 			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.bottomright,
 				self.rect_image_plateau.bottomleft)
 			
-			x, y = self.rect_image_plateau.topleft
-			x += 1 / 4 * self.rect_image_plateau.width
-			_, y2 = self.rect_image_plateau.bottomleft
-			pygame.draw.line(self.ecran, (255, 0, 0), (x, y), (x, y2))
+			# x, y = self.rect_image_plateau.topleft
+			# x += 1 / 4 * self.rect_image_plateau.width
+			# _, y2 = self.rect_image_plateau.bottomleft
+			# pygame.draw.line(self.ecran, (255, 0, 0), (x, y), (x, y2))
+			#
+			# jeton conflit
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_y /= 2
+			# bottomleft_y -= 5
+			# bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+			# bottomright_y = bottomleft_y
+			# pygame.draw.line(self.ecran, (255, 0, 0), (bottomleft_x, bottomleft_y), (bottomright_x, bottomright_y))
+			#
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_y /= 2
+			# bottomleft_y += 40
+			# bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+			# bottomright_y = bottomleft_y
+			# pygame.draw.line(self.ecran, (255, 0, 0), (bottomleft_x, bottomleft_y), (bottomright_x, bottomright_y))
+			
+			# topleft_x = self.largeur / 2
+			# topleft_x -= 11
+			# topleft_y = 0
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_x = topleft_x
+			# pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
+			#
+			# topleft_x = self.largeur / 2
+			# topleft_x += 11
+			# topleft_y = 0
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_x = topleft_x
+			# pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
+			#
+			# topleft_x = self.largeur / 2
+			# topleft_x += 19
+			# topleft_y = 0
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_x = topleft_x
+			# pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
+			
+			bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			bottomleft_y /= 2
+			bottomleft_y += 47
+			bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+			bottomright_y = bottomleft_y
+			pygame.draw.line(self.ecran, (255, 0, 0), (bottomleft_x, bottomleft_y), (bottomright_x, bottomright_y))
+			
+			topleft_x = self.largeur / 2
+			topleft_x += 85
+			topleft_y = 0
+			bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			bottomleft_x = topleft_x
+			pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
 			
 			# after drawing everything, flip this display
 			pygame.display.flip()
