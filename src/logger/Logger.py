@@ -4,8 +4,8 @@ Logger utilisé dans le projet
 
 import logging
 
-# mode = "run"
-mode = "test"
+mode = "run"
+# mode = "test"
 
 chemin_logger = ""
 if mode == "run":
