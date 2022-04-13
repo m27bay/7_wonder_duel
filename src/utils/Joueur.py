@@ -2,7 +2,8 @@
 Fichier de la classe Joueur.
 """
 from src.utils.Carte import Carte
-from src.utils.Outils import logger, mon_str_liste
+from src.utils.Outils import mon_str_liste
+from src.logger.Logger import logger
 
 
 class Joueur:

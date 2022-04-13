@@ -15,7 +15,7 @@ class TestConstructionPlateau(unittest.TestCase):
 		self.j1 = Joueur("Bruno")
 		self.j2 = Joueur("Antoine")
 		self.plateau = Plateau(self.j1, self.j2)
-		
+	
 	def test_constructeur(self):
 		self.assertEqual(self.plateau.joueur1, self.j1)
 		self.assertEqual(self.plateau.joueur2, self.j2)
@@ -46,31 +46,31 @@ class TestConstructionPlateau(unittest.TestCase):
 		self.assertEqual(plateau.merveilles, [])
 		self.assertEqual(plateau.jetons_progres, [])
 		self.assertEqual(plateau.jetons_progres_plateau, [])
-		
+	
 	def test_eq(self):
 		j1 = Joueur("Bruno")
 		j2 = Joueur("Antoine")
 		plateau = Plateau(j1, j2)
 		
 		self.assertEqual(plateau, self.plateau)
-		
+	
 	def test_constructeur_par_copie(self):
 		copie = self.plateau.constructeur_par_copie()
 		
 		self.assertEqual(copie, self.plateau)
-		
+	
 	def test_constructeur_par_copie_ajout(self):
 		copie = self.plateau.constructeur_par_copie()
 		copie.cartes_plateau.append(Carte("pretoire", ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3))
 		
 		self.assertNotEqual(copie, self.plateau)
-		
+	
 	def test_constructeur_par_copie_suppression(self):
 		copie = self.plateau.constructeur_par_copie()
 		copie.cartes_age_I.clear()
 		
 		self.assertNotEqual(copie, self.plateau)
-		
+	
 	def test_constructeur_par_copie_suppression_carte_original_dans_copie_plateau(self):
 		self.plateau.cartes_plateau = [
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -98,8 +98,21 @@ class TestConstructionPlateau(unittest.TestCase):
 		
 		self.assertTrue(carte_presente)
 		self.assertFalse(copie.reste_des_cartes())
+	
+	def test_preparation_merveilles(self):
+		self.plateau.preparation_plateau()
 		
-		
+		self.assertEqual(self.plateau.joueur1.merveilles[0].nom, "pyramides")
+		self.assertEqual(self.plateau.joueur1.merveilles[1].nom, "grand phare")
+		self.assertEqual(self.plateau.joueur1.merveilles[2].nom, "temple d artemis")
+		self.assertEqual(self.plateau.joueur1.merveilles[3].nom, "statue de zeus")
+
+		self.assertEqual(self.plateau.joueur2.merveilles[0].nom, "circus maximus")
+		self.assertEqual(self.plateau.joueur2.merveilles[1].nom, "piree")
+		self.assertEqual(self.plateau.joueur2.merveilles[2].nom, "via appia")
+		self.assertEqual(self.plateau.joueur2.merveilles[3].nom, "colosse")
+
+
 class TestOutilsPlateau(unittest.TestCase):
 	def setUp(self) -> None:
 		self.j1 = Joueur("Bruno")
