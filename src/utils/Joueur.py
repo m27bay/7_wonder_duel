@@ -44,6 +44,7 @@ class Joueur:
 			"pendule": 0,
 			"plume": 0
 		}
+		
 		self.nbr_symb_scientifique_diff = 0
 		
 	def __eq__(self, other):
@@ -140,7 +141,7 @@ class Joueur:
 		:return: une liste avec les ressources_manquantes manquantes.
 		"""
 		
-		logger.debug(f"[{self.nom}] couts_manquants(\'{carte.nom}\')")
+		logger.debug(f"couts_manquants({carte.nom})")
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -160,12 +161,12 @@ class Joueur:
 					monnaie_manquante = "monnaie " + prix_manquant
 					couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = monnaie_manquante
 					
-					logger.debug(f"\t[{self.nom}] manque {monnaie_manquante}")
+					logger.debug(f"manque {monnaie_manquante}")
 				
 				else:
 					# ce n'est pas un cout manquant
 					couts_manquants_carte.remove(cout_manquant)
-					logger.debug(f"\t[{self.nom}] possede argent necessaire")
+					logger.debug("possede argent necessaire")
 			
 			# cout ressource
 			else:
@@ -184,12 +185,12 @@ class Joueur:
 								ressource_manquante = effet_split[0] + " " + effet_split[1] + " " + quantite_manquante
 								couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = ressource_manquante
 								
-								logger.debug(f"\t[{self.nom}] manque {ressource_manquante}")
+								logger.debug(f"manque {ressource_manquante}")
 							
 							else:
 								# ce n'est pas un cout manquant
 								couts_manquants_carte.remove(cout_manquant)
-								logger.debug(f"\t[{self.nom}] possede {cout_manquant_split[1]}")
+								logger.debug(f"possede {cout_manquant_split[1]}")
 		
 		return couts_manquants_carte
 	
@@ -248,7 +249,7 @@ class Joueur:
 		:return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
 		"""
 		
-		logger.debug(f"[{self.nom}] possede_carte_reduction avec la ressource \'{ressource}\'")
+		logger.debug(f"possede_carte_reduction({ressource})")
 		
 		for carte in self.cartes:
 			for effet in carte.effets:
@@ -256,10 +257,9 @@ class Joueur:
 				
 				# reduc_ressource type prixReduc
 				if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
-					logger.debug(f"\t[{self.nom}] possede une carte donnant une reduction")
+					logger.debug(f"{effet}")
 					return int(effet_split[2])
 		
-		logger.debug(f"\t[{self.nom}] ne possede pas de carte donnant une reduction")
 		return 0
 	
 	def possede_cartes_couleur(self, couleur: str) -> list:
@@ -350,21 +350,20 @@ class Joueur:
 					
 					self.points_victoire += int(effet_split[1])
 	
-	# def selection_merveille(self, nbr_repetition: int, liste_merveilles_alea: list) -> None:
-	# 	"""
-	# 	Selection d'un ou des merveilles pour le nom_joueur parmis une liste de merveille.
-	#
-	# 	:param nbr_repetition: nombre de merveille a choisir.
-	# 	:param liste_merveilles_alea: une liste de merveille ou choisir la/les merveille(s).
-	# 	"""
-	# 	if len(liste_merveilles_alea) == 1:
-	# 		print(f"\nAttribution de la derniere merveille ({liste_merveilles_alea[0].nom})"
-	# 			f" au [{self.nom}]")
-	# 		self.merveilles.append(liste_merveilles_alea[0])
-	# 		liste_merveilles_alea.remove(liste_merveilles_alea[0])
-	# 	else:
-	# 		for _ in range(nbr_repetition):
-	# 			merveille_choisie = demander_element_dans_une_liste(self.nom, "merveille", liste_merveilles_alea)
-	# 			self.merveilles.append(merveille_choisie)
-	# 			liste_merveilles_alea.remove(merveille_choisie)
+	def trouver_repartition_monnaies(self):
+		repartition = {6: 0, 3: 0, 1: 0}
+		
+		monnaie = self.monnaie
+		
+		pieces = [6, 3, 1]
+		pos = 0
+		
+		while monnaie > 0:
+			if monnaie >= pieces[pos]:
+				monnaie -= pieces[pos]
+				repartition[pieces[pos]] += 1
+			else:
+				pos += 1
+		
+		return repartition
 					

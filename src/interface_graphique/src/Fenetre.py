@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
@@ -15,7 +17,7 @@ RATIO_IMAGE = 0.13
 RATIO_MERVEILLE = 0.08
 RATIO_JETONS_PROGRES = 0.12
 RATIO_JETONS_MILITAIRE2 = 0.16
-RATIO_JETONS_MILITAIRE5 = 0.15
+RATIO_JETONS_MILITAIRE5 = 0.14
 RATIO_MONNAIES_6 = 0.16
 RATIO_MONNAIES_3 = 0.18
 RATIO_MONNAIES_1 = 0.16
@@ -24,6 +26,7 @@ RATIO_PLATEAU = 0.50
 RATIO_BANQUE = 0.05
 RATIO_ZOOM_CARTE = 0.70
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
+
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -280,98 +283,102 @@ class Fenetre:
 	
 	def __dessiner_monnaies(self):
 		# j1
-		coord_x, coord_y = self.rect_image_plateau.bottomleft
-		coord_x /= 2
-		coord_y /= 4
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 6.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_6
-		
-		coord_x += larg / 2
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 1.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_1
-		
-		coord_x += larg * 3 / 4
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 3.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_1
-		
-		coord_x -= larg / 4
-		coord_y += larg / 2
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
+		if self.plateau.joueur1.monnaie > 0:
+			coord_x, coord_y = self.rect_image_plateau.bottomleft
+			coord_x /= 4
+			coord_y /= 4
+			
+			repartition = self.plateau.joueur1.trouver_repartition_monnaies()
+			
+			piece1 = None
+			for piece, qte in repartition.items():
+				if qte != 0:
+					piece1 = piece
+					break
+			
+			chemin_monnaies = f"{DOSSIER_IMAGES}monnaies {piece1}.xcf"
+			image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
+			
+			larg, haut = image_monnaies.get_size()
+			larg *= RATIO_MONNAIES_6
+			
+			image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
+			self.ecran.blit(image_monnaies, (coord_x, coord_y))
+			
+			repartition[piece1] -= 1
+			
+			for piece, qte in repartition.items():
+				for _ in range(qte):
+					chemin_monnaies = f"{DOSSIER_IMAGES}monnaies {piece}.xcf"
+					image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
+					
+					coord_x += larg / 2
+					
+					larg, haut = image_monnaies.get_size()
+					if piece == 6:
+						larg *= RATIO_MONNAIES_6
+					elif piece == 3:
+						larg *= RATIO_MONNAIES_3
+					else:
+						larg *= RATIO_MONNAIES_1
+					
+					image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
+					self.ecran.blit(image_monnaies, (coord_x, coord_y))
 		
 		# j2
-		coord_x, coord_y = self.rect_image_plateau.bottomright
-		coord_x += 10
-		coord_y /= 4
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 6.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_6
-		
-		coord_x += larg / 2
-		coord_x += larg / 2
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 1.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_1
-		
-		coord_x += larg * 3 / 4
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
-		
-		chemin_monnaies = f"{DOSSIER_IMAGES}monnaies 3.xcf"
-		image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
-		
-		larg, haut = image_monnaies.get_size()
-		larg *= RATIO_MONNAIES_1
-		
-		coord_x -= larg / 4
-		coord_y += larg / 2
-		
-		image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
-		self.ecran.blit(image_monnaies, (coord_x, coord_y))
+		if self.plateau.joueur2.monnaie > 0:
+			coord_x, coord_y = self.rect_image_plateau.bottomright
+			coord_x += 10
+			coord_y /= 4
+			
+			repartition = self.plateau.joueur2.trouver_repartition_monnaies()
+			
+			piece1 = None
+			for piece, qte in repartition.items():
+				if qte != 0:
+					piece1 = piece
+					break
+			
+			chemin_monnaies = f"{DOSSIER_IMAGES}monnaies {piece1}.xcf"
+			image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
+			
+			larg, haut = image_monnaies.get_size()
+			larg *= RATIO_MONNAIES_6
+			
+			image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
+			self.ecran.blit(image_monnaies, (coord_x, coord_y))
+			
+			repartition[piece1] -= 1
+			
+			for piece, qte in repartition.items():
+				for _ in range(qte):
+					chemin_monnaies = f"{DOSSIER_IMAGES}monnaies {piece}.xcf"
+					image_monnaies = pygame.image.load(chemin_monnaies).convert_alpha()
+					
+					coord_x += larg / 2
+					
+					larg, haut = image_monnaies.get_size()
+					if piece == 6:
+						larg *= RATIO_MONNAIES_6
+					elif piece == 3:
+						larg *= RATIO_MONNAIES_3
+					else:
+						larg *= RATIO_MONNAIES_1
+					
+					image_monnaies = pygame.transform.scale(image_monnaies, (larg, larg))
+					self.ecran.blit(image_monnaies, (coord_x, coord_y))
 		
 	def __deplacer_jeton_attaque(self):
-		if self.plateau.position_jeton_conflit > 9:
-			nbr_deplacement = 9 - self.plateau.position_jeton_conflit
-			top_x, top_y, larg, long = self.rect_jeton_conflit
-			top_x += nbr_deplacement * (8 + nbr_deplacement - 1)
+		nbr_deplacement = abs(9 - self.plateau.position_jeton_conflit)
+			
+		top_x, top_y, larg, long = self.rect_jeton_conflit
+		top_x = self.largeur/2 + nbr_deplacement * 10
 		
-		elif self.plateau.position_jeton_conflit < 9:
-			nbr_deplacement = self.plateau.position_jeton_conflit - 9
-			top_x, top_y, larg, long = self.rect_jeton_conflit
-			top_x -= nbr_deplacement * (8 + nbr_deplacement)
+		self.rect_jeton_conflit = (top_x, top_y, larg, long)
 			
 	def __dessiner_jetons_militaire(self):
 		top_x = self.largeur / 2
-		top_x += 85
+		top_x += 83
 		_, top_y = self.rect_image_plateau.bottomleft
 		top_y /= 2
 		top_y += 47
@@ -382,7 +389,7 @@ class Fenetre:
 		)
 		
 		top_x -= 2*85
-		top_x -= 65
+		top_x -= 62
 		self.sprite_jetons_militaire.add(
 			SpriteJetonsMilitaire(
 				self.plateau.jetons_militaire[1], top_x, top_y, RATIO_JETONS_MILITAIRE2
@@ -390,7 +397,7 @@ class Fenetre:
 		)
 		
 		top_x = self.largeur / 2
-		top_x += 85 + 80
+		top_x += 85 + 82
 		self.sprite_jetons_militaire.add(
 			SpriteJetonsMilitaire(
 				self.plateau.jetons_militaire[5], top_x, top_y, RATIO_JETONS_MILITAIRE5
@@ -399,7 +406,7 @@ class Fenetre:
 		
 		top_x = self.largeur / 2
 		top_x -= 2 * 85
-		top_x -= 70
+		top_x -= 66
 		self.sprite_jetons_militaire.add(
 			SpriteJetonsMilitaire(
 				self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5
@@ -417,6 +424,13 @@ class Fenetre:
 			
 	def __piocher_carte(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.piocher(sprite_carte.carte)
+		
+		for effet in sprite_carte.carte.effets:
+			
+			effet_split = effet.split(" ")
+			if effet_split[0] == "attaquer":
+				self.plateau.position_jeton_conflit += int(effet_split[1])
+				self.__deplacer_jeton_attaque()
 		
 		if ret == -1:
 			self.plateau.defausser(sprite_carte.carte)
@@ -500,9 +514,9 @@ class Fenetre:
 						bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
 						
 						if (clic_x < bottomleft_x and clic_y > bottomleft_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur1)\
-							or (clic_x > bottomright_x and clic_y > bottomright_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+							and self.plateau.joueur_qui_joue == self.plateau.joueur1) \
+								or (clic_x > bottomright_x and clic_y > bottomright_y
+									and self.plateau.joueur_qui_joue == self.plateau.joueur2):
 							
 							if self.sprite_carte_zoomer is not None:
 								
@@ -513,23 +527,23 @@ class Fenetre:
 									self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
 									self.sprite_carte_zoomer = None
 									self.plateau.joueur_qui_joue = self.plateau.adversaire()
-							
+						
 						if self.rect_image_banque.collidepoint(clic_x, clic_y):
 							
 							if self.sprite_carte_zoomer is not None:
-							
+								
 								self.sprite_carte_zoomer.dezoomer()
 								self.plateau.defausser(self.sprite_carte_zoomer.carte)
 								self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
 								self.plateau.joueur_qui_joue = self.plateau.adversaire()
 								self.sprite_carte_zoomer = None
-								
+						
 						for jeton in self.jetons_progres_plateau:
 							
 							if self.sprite_carte_zoomer is None:
 								
 								if jeton.rect.collidepoint(clic_x, clic_y):
-		
+									
 									if event.button == 1:
 										
 										if isinstance(jeton, SpriteJetonsProgres):
@@ -550,7 +564,7 @@ class Fenetre:
 				else:
 					nbr_noeuds = 0
 					_, carte_a_prendre, _ = minimax(self.plateau, 2, True, nbr_noeuds)
-					print("à prendre :", carte_a_prendre.nom)
+					# print("à prendre :", carte_a_prendre.nom)
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						if isinstance(sprite_carte, SpriteCarte):
@@ -559,7 +573,7 @@ class Fenetre:
 								self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
 					
 					self.plateau.joueur_qui_joue = self.plateau.adversaire()
-					
+			
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
 				self.__dessiner_carte()
@@ -568,19 +582,19 @@ class Fenetre:
 				group_sprit.update()
 			for group_sprit in self.sprite_j2:
 				group_sprit.update()
-				
+			
 			self.merverille_j1.update()
 			self.merverille_j2.update()
+			
+			self.sprite_jetons_militaire.update()
 			
 			if self.sprite_carte_zoomer is not None:
 				self.jetons_progres_plateau.update()
 				self.sprite_cartes_plateau.update()
-				
+			
 			else:
 				self.sprite_cartes_plateau.update()
 				self.jetons_progres_plateau.update()
-			
-			self.sprite_jetons_militaire.update()
 			
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
@@ -598,30 +612,30 @@ class Fenetre:
 				group_sprit.draw(self.ecran)
 			for group_sprit in self.sprite_j2:
 				group_sprit.draw(self.ecran)
-				
+			
 			self.merverille_j1.draw(self.ecran)
 			self.merverille_j2.draw(self.ecran)
+			
+			pygame.draw.ellipse(self.ecran, (255, 0, 0), self.rect_jeton_conflit, 50)
+			self.sprite_jetons_militaire.draw(self.ecran)
 			
 			if self.sprite_carte_zoomer is not None:
 				self.jetons_progres_plateau.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
-				
+			
 			else:
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.jetons_progres_plateau.draw(self.ecran)
 			
-			pygame.draw.ellipse(self.ecran, (255, 0, 0), self.rect_jeton_conflit, 50)
-			
-			self.sprite_jetons_militaire.draw(self.ecran)
-			
 			# OUTIL DEBUG #
 			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
-			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topleft,
-				self.rect_image_plateau.bottomleft)
-			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topright,
-				self.rect_image_plateau.bottomright)
-			pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.bottomright,
-				self.rect_image_plateau.bottomleft)
+			
+			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topleft,
+			# 	self.rect_image_plateau.bottomleft)
+			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.topright,
+			# 	self.rect_image_plateau.bottomright)
+			# pygame.draw.line(self.ecran, (255, 0, 0), self.rect_image_plateau.bottomright,
+			# 	self.rect_image_plateau.bottomleft)
 			
 			# x, y = self.rect_image_plateau.topleft
 			# x += 1 / 4 * self.rect_image_plateau.width
@@ -664,19 +678,19 @@ class Fenetre:
 			# bottomleft_x = topleft_x
 			# pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
 			
-			bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-			bottomleft_y /= 2
-			bottomleft_y += 47
-			bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
-			bottomright_y = bottomleft_y
-			pygame.draw.line(self.ecran, (255, 0, 0), (bottomleft_x, bottomleft_y), (bottomright_x, bottomright_y))
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_y /= 2
+			# bottomleft_y += 47
+			# bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
+			# bottomright_y = bottomleft_y
+			# pygame.draw.line(self.ecran, (255, 0, 0), (bottomleft_x, bottomleft_y), (bottomright_x, bottomright_y))
 			
-			topleft_x = self.largeur / 2
-			topleft_x += 85
-			topleft_y = 0
-			bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-			bottomleft_x = topleft_x
-			pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
+			# topleft_x = self.largeur / 2
+			# topleft_x += 85
+			# topleft_y = 0
+			# bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+			# bottomleft_x = topleft_x
+			# pygame.draw.line(self.ecran, (255, 0, 0), (topleft_x, topleft_y), (bottomleft_x, bottomleft_y))
 			
 			# after drawing everything, flip this display
 			pygame.display.flip()
