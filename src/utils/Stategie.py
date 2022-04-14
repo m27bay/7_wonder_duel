@@ -110,16 +110,17 @@ def fonction_evaluation(partie):
 			
 	# print("evaluation_j1 carte :", evaluation_j1)
 	
-	evaluation_j1 += 2*partie.joueur1.nbr_symb_scientifique_diff
-	# print("evaluation_j1 nbr_symb_scientifique_diff :", evaluation_j1)
-	
-	evaluation_j1 += partie.joueur1.points_victoire
-	# print("evaluation_j1 points_victoire :", evaluation_j1)
-	
-	if partie.position_jeton_conflit > 9:
-		evaluation_j1 += 2 * (partie.position_jeton_conflit - 9)
-	
-	# print(f"evaluation j1 : {evaluation_j1}\n")
+	if partie.age != 1:
+		evaluation_j1 += 2*partie.joueur1.nbr_symb_scientifique_diff
+		# print("evaluation_j1 nbr_symb_scientifique_diff :", evaluation_j1)
+		
+		evaluation_j1 += partie.joueur1.points_victoire
+		# print("evaluation_j1 points_victoire :", evaluation_j1)
+		
+		if partie.position_jeton_conflit > 9:
+			evaluation_j1 += 2 * (partie.position_jeton_conflit - 9)
+		
+		# print(f"evaluation j1 : {evaluation_j1}\n")
 	
 	return evaluation_j2 - evaluation_j1
 
