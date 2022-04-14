@@ -8,3 +8,4 @@ if __name__ == '__main__':
 	
 	fenetre = Fenetre("7 wonder Duel", plateau)
 	fenetre.boucle_principale()
+	
