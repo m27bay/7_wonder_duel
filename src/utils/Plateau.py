@@ -43,6 +43,7 @@ class Plateau:
 			self.joueur1 = joueur1
 			self.joueur2 = joueur2
 			self.joueur_qui_joue = None
+			self.joueur_gagnant = None
 			
 			#
 			self.choix_auto_merveilles = choix_auto_merveilles
@@ -286,6 +287,7 @@ class Plateau:
 			self.joueur1 = None
 			self.joueur2 = None
 			self.joueur_qui_joue = None
+			self.joueur_gagnant = None
 			self.choix_auto_merveilles = None
 			self.monnaie_banque = None
 			self.age = None
@@ -307,6 +309,9 @@ class Plateau:
 		
 		plateau.joueur1 = self.joueur1.constructeur_par_copie()
 		plateau.joueur2 = self.joueur2.constructeur_par_copie()
+		
+		if self.joueur_gagnant is not None:
+			plateau.joueur_gagnant = self.joueur_gagnant.constructeur_par_copie()
 		
 		if self.joueur_qui_joue == self.joueur1:
 			plateau.joueur_qui_joue = plateau.joueur1
@@ -610,58 +615,65 @@ class Plateau:
 		if not self.reste_des_cartes():
 			
 			if self.age == 3:
-				self.fin_de_partie("cartes_vide")
-				return 2
+				self.fin_de_partie()
+				return -1
 			
 			else:
 				self.age += 1
 				self.__preparation_cartes()
 				return 1
+			
 		return 0
 	
-	def fin_de_partie(self, raison_fin: str):
-		if raison_fin == "militaire":
-			if self.position_jeton_conflit == 0:
-				return raison_fin, self.joueur2.nom
+	def fin_de_partie(self):
+		logger.debug("fin_de_partie()")
+		
+		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
+			logger.debug("victoire j2")
+			self.joueur_gagnant = self.joueur2
+		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
+			logger.debug("victoire j1")
+			self.joueur_gagnant = self.joueur1
+		else:
+			self.joueur1.compter_point_victoire()
+			self.joueur2.compter_point_victoire()
 			
-			elif self.position_jeton_conflit == 18:
-				return raison_fin, self.joueur2.nom
-		
-		elif raison_fin == "scientifique":
-			return raison_fin, self.joueur_qui_joue.nom
-		
-		elif raison_fin == "cartes_vide":
-			self.joueur_qui_joue.compter_point_victoire()
-			self.adversaire().compter_point_victoire()
+			numero_jeton = self.numero_jeton_militaire()
+			jeton = self.jetons_militaire[numero_jeton]
+			if self.position_jeton_conflit > 9:
+				self.joueur1.points_victoire += jeton.points_victoire
+			elif self.position_jeton_conflit < 9:
+				self.joueur2.points_victoire += jeton.points_victoire
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
-				return "points victoire", self.joueur1.nom
-			
+				self.joueur_gagnant = self.joueur1
+				logger.debug("victoire j1")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-				return "points victoire", self.joueur2.nom
-			
+				self.joueur_gagnant = self.joueur2
+				logger.debug("victoire j2")
 			else:
-				return "points victoire", "none"
+				self.joueur_gagnant = -1
+				logger.debug("egalite")
 				
 	def gain_argent_banque(self, somme_gagnee: int):
-		logger.debug(f"ain_argent_banque({somme_gagnee})")
+		logger.debug(f"gain_argent_banque({somme_gagnee})")
 		
 		if somme_gagnee == 0:
 			return 0
 		
 		if self.monnaie_banque == 0:
 			gain = 0
-			logger.debug(f"Plus d'argent dans la banque")
+			logger.debug("monnaie_banque == 0")
 		
 		elif self.monnaie_banque < somme_gagnee:
 			gain = self.monnaie_banque
 			self.monnaie_banque = 0
-			logger.debug(f"Plus assez d'argent dans la banque, gain de {gain} monnaies")
+			logger.debug(f"monnaie_banque < somme_gagnee, gain = {gain}")
 		
 		else:
 			gain = somme_gagnee
 			self.monnaie_banque -= somme_gagnee
-			logger.debug(f"Gain de {gain} monnaies")
+			logger.debug(f"gain = {gain}")
 		
 		return gain
 	
@@ -672,6 +684,7 @@ class Plateau:
 		:param ressources_manquantes: liste des ressources manquantes
 		:return prixDesRessources
 		"""
+		logger.debug(f"acheter_ressources({ressources_manquantes})")
 		
 		prix_commerce = 0
 		
@@ -688,17 +701,24 @@ class Plateau:
 		# si le nom_joueur adverse ne produit aucune ressouces ressources manquantes
 		if len(carte_liste_ressource_adversaire) == 0:
 			
+			logger.debug("carte_liste_ressource_adversaire = vide")
+			
 			for ressource_manquante in ressources_manquantes:
 				
 				ressource_manquante_split = ressource_manquante.split(" ")
+				prix_reduc = self.joueur_qui_joue.possede_carte_reduction(ressource_manquante_split[1])
 				
-				if self.joueur_qui_joue.possede_carte_reduction(ressource_manquante_split[1]) != 0:
+				if prix_reduc != 0:
 					# (1 * quantite_ressource_adversaire = 0) * quantite_ressource_necessaire pour le nom_joueur
-					prix_commerce += int(ressource_manquante_split[2])
-					
+					logger.debug(f"prix_reduc = {prix_reduc}")
+					prix_commerce += prix_reduc * int(ressource_manquante_split[2])
+					logger.debug(f"prix_commerce = {prix_commerce}")
+				
 				else:
 					# (2 * quantite_ressource_adversaire = 0) * quantite_ressource_necessaire pour le nom_joueur
+					logger.debug("prix_reduc = 0")
 					prix_commerce += (2 * int(ressource_manquante_split[2]))
+					logger.debug(f"prix_commerce = {prix_commerce}")
 		
 		# le nom_joueur adverse produit des ressouces qui me manquent
 		else:
@@ -708,6 +728,8 @@ class Plateau:
 				if carte.couleur == "jaune":
 					carte_liste_ressource_adversaire.remove(carte)
 			
+			logger.debug(f"carte_liste_ressource_adversaire = {carte_liste_ressource_adversaire}")
+			
 			for ressource_manquante in ressources_manquantes:
 				ressource_manquante_split = ressource_manquante.split(" ")
 				
@@ -715,10 +737,10 @@ class Plateau:
 				ressource_trouve = False
 				
 				# parmis les cartes produisant la ressouce que j'achete
-				for carteRessourceAdversaire in carte_liste_ressource_adversaire:
+				for carte_ressource_adversaire in carte_liste_ressource_adversaire:
 					
 					# parmis les effets de cette carte
-					for effet in carteRessourceAdversaire.effets:
+					for effet in carte_ressource_adversaire.effets:
 						ressource_adversaire_split = effet.split(" ")
 						
 						# nom_joueur adversaire produit ressource qu'il me manque ?
@@ -730,12 +752,20 @@ class Plateau:
 							
 							if prix_reduc != 0:
 								# (prix_reduc * quantite_ressource_necessaire pour le nom_joueur)
-								prix_commerce += (prix_reduc * int(ressource_manquante_split[2]))
+								logger.debug(f"prix_reduc = {prix_reduc}")
+								prix_commerce += (
+									(prix_reduc + int(ressource_adversaire_split[2])) *
+									int(ressource_manquante_split[2])
+								)
+								logger.debug(f"prix_commerce = {prix_commerce}")
 								
 							else:
 								# (2 + quantite_ressource_adversaire) * quantite_ressource_necessaire pour le nom_joueur
+								logger.debug("prix_reduc = 0")
 								prix_commerce += (
-										(2 + int(ressource_adversaire_split[2])) * int(ressource_manquante_split[2]))
+										(2 + int(ressource_adversaire_split[2])) * int(ressource_manquante_split[2])
+								)
+								logger.debug(f"prix_commerce = {prix_commerce}")
 				
 				# si l'adversaire ne produit pas la ressource
 				if not ressource_trouve:
@@ -859,12 +889,7 @@ class Plateau:
 			
 			else:
 				return merveille_a_construire
-	#
-	#
-	# Partie effets
-	#
-	#
-	
+			
 	def numero_jeton_militaire(self):
 		"""
 		Renvoie le numero du jeton militaire dans le tableau en fonction de la postion
@@ -889,12 +914,6 @@ class Plateau:
 			return -1
 	
 	def deplacer_pion_miltaire(self, nbr_deplacement: int):
-		"""
-		TODO : documentation a faire
-
-		:param nbr_deplacement:
-		"""
-		
 		logger.debug(f"deplacer_pion_miltaire(\'{nbr_deplacement}\')")
 		
 		# On deplace le pion case par case
@@ -909,7 +928,7 @@ class Plateau:
 			
 			# si le pion se situe au bout du plateau militaire, il y a une victoire militaire
 			if self.position_jeton_conflit in [0, 18]:
-				return self.fin_de_partie("militaire")
+				return self.fin_de_partie()
 			
 			else:
 				numero_jeton = self.numero_jeton_militaire()
@@ -919,22 +938,13 @@ class Plateau:
 					
 					if not jeton.est_utilise:
 						logger.debug(f"[{self.joueur_qui_joue.nom}] prend le jeton {numero_jeton}, "
-							f"gagne {jeton.points_victoire} points de victoire, l'adversaire perd "
-							f"{jeton.pieces} monnaies")
+							f"l'adversaire perd {jeton.pieces} monnaies")
 						
-						self.joueur_qui_joue.points_victoire += jeton.points_victoire
-						self.adversaire().monnaie -= jeton.pieces
-						self.monnaie_banque += jeton.pieces
+						self.gain_argent_banque(jeton.pieces)
 						jeton.est_utilise = True
 	
 	def appliquer_effets_carte(self, carte: Carte):
-		"""
-		TODO : documentation a faire
-
-		:param carte:
-		"""
-		
-		logger.debug(f"appliquer_effets_carte(\'{carte.nom}\')")
+		logger.debug(f"appliquer_effets_carte({carte.nom})")
 		
 		for effet in carte.effets:
 			
@@ -947,95 +957,34 @@ class Plateau:
 				nbr_bouclier = int(effet_split[1])
 				
 				if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
-					logger.debug(f"[{self.joueur_qui_joue.nom}] bonus attaquer du jeton \'strategie\'")
 					nbr_bouclier += 1
 					
-				return self.deplacer_pion_miltaire(nbr_bouclier)
-			
-			elif effet_split[0] == "symbole_scientifique":
-				print("fonction \"gain_symbole_scientifique\" à faire")
-				# if self.gain_symbole_scientifique(effet_split[1]):
-				# 	carte.effets.remove(effet)
-				#
-				# 	if len(self.joueur_qui_joue.jetons_progres) == 6:
-				# 		return self.fin_de_partie("scientifique")
-			
-			elif effet_split[0] == "point_victoire":
-				logger.debug(f"[{self.joueur_qui_joue.nom}] gain de {effet_split[1]} points de victoire")
-				self.joueur_qui_joue.points_victoire += int(effet_split[1])
+				self.deplacer_pion_miltaire(nbr_bouclier)
 			
 			elif effet_split[0] == "monnaie":
-				logger.debug(f"[{self.joueur_qui_joue.nom}] gain de {effet_split[1]} monnaies")
+				logger.debug(f"[{self.joueur_qui_joue.nom}] {effet}")
 				self.joueur_qui_joue.monnaie += self.gain_argent_banque(int(effet_split[1]))
 			
-			elif effet_split[0] == "ressource_au_choix":
-				# remplace effet ressource au choix par un ressource classique
-				ressource = ""
-				# "ressource_au_choix x y"
-				if len(effet_split) == 3:
-					# ressource = self.demander_ressource_au_choix([effet_split[1], effet_split[2]])
-					print("fonction \"demander_ressource_au_choix\" à faire")
-				# "ressource_au_choix x y z"
-				elif len(effet_split) == 4:
-					# ressource = self.demander_ressource_au_choix([effet_split[1], effet_split[2], effet_split[3]])
-					print("fonction \"demander_ressource_au_choix\" à faire")
-				
-				logger.debug(f"[{self.joueur_qui_joue.nom}] choix : {ressource}")
-				carte.effets.remove(effet)
-				carte.effets.append(ressource)
-				
-				ressource_split = ressource.split(" ")
-				self.joueur_qui_joue.ressources[ressource_split[1]] += 1
-			
 			elif effet_split[0] == "monnaie_par_carte":
-				logger.debug(f"[{self.joueur_qui_joue.nom}] monnaie_par_carte : {effet_split[1]}")
+				logger.debug(f"[{self.joueur_qui_joue.nom}] {effet}")
+				
 				for ma_carte in self.joueur_qui_joue.cartes:
 					if ma_carte.couleur == effet_split[1]:
 						self.joueur_qui_joue.monnaie += self.gain_argent_banque(int(effet_split[2]))
-						
-		return "none", "none"
 	
 	def appliquer_effets_merveille(self, merveille: CarteFille):
-		"""
-		TODO : documentation a faire
-		
-		:param merveille:
-		:return:
-		"""
-		
-		logger.debug(f"\t[{self.joueur_qui_joue.nom}] appliquer_effets_merveille(\'{merveille.nom}\')")
+		logger.debug(f"appliquer_effets_merveille({merveille.nom})")
 		
 		for effet in merveille.effets:
 			
-			logger.debug(f"\t[{self.joueur_qui_joue.nom}] \'{effet}\'")
 			effet_split = effet.split(" ")
 			
 			# effet commun avec certains carte
-			if effet_split[0] in ["symbole_scientifique", "point_victoire", "monnaie",
-				"monnaie_par_carte", "ressource_au_choix"]:
-				
-				return self.appliquer_effets_carte(merveille)
+			if effet_split[0] in ["monnaie", "monnaie_par_carte"]:
+				self.appliquer_effets_carte(merveille)
 				
 			elif effet_split[0] == "attaquer":
-				return self.deplacer_pion_miltaire(int(effet_split[1]))
-			
-			elif effet_split[0] == "defausse_carte_adversaire":
-				if len(self.adversaire().possede_cartes_couleur(effet_split[2])) != 0:
-					# self.defausser_carte_adversaire(effet_split[1])
-					print("fonction \"defausser_carte_adversaire\" à faire")
-				else:
-					print("Le nom_joueur adverse ne possede aucune carte de cette couleur.")
-			
-			elif effet_split[0] == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
-				return "none", "rejouer"
-			
-			elif effet_split[0] == "jeton_progres_aleatoire":
-				# self.gain_jeton_progres_alea()
-				print("fonction \'gain_jeton_progres_alea\' à faire")
-			
-			elif effet_split[0] == "construction_fausse_gratuite":
-				# self.construction_carte_defausser()
-				print("fonction \'construction_carte_defausser\' à faire")
+				self.deplacer_pion_miltaire(int(effet_split[1]))
 			
 			elif effet_split[0] == "adversaire_perd_monnaie":
 				self.adversaire().monnaie -= int(effet_split[1])
@@ -1049,7 +998,7 @@ class Plateau:
 
 		:param jeton:
 		"""
-		logger.debug(f"\t[{self.joueur_qui_joue.nom}] appliquer_effets_jeton(\'{jeton.nom}\')")
+		logger.debug(f"appliquer_effets_jeton(\'{jeton.nom}\')")
 		
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			logger.debug(f"\t[{self.joueur_qui_joue.nom}] gain de 6 monnaies")

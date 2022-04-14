@@ -7,7 +7,7 @@ import unittest
 from src.utils.Carte import Carte
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
-from src.utils.Plateau import Plateau
+from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 
 
 class TestConstructionPlateau(unittest.TestCase):
@@ -182,6 +182,84 @@ class TestOutilsPlateau(unittest.TestCase):
 					liste_carte_prenable.append(carte)
 		
 		self.assertEqual(liste_carte_prenable, plateau.liste_cartes_prenables())
+		
+	def test_changement_age_cartes_plateau_vide(self):
+		ret = self.plateau.changement_age()
+		
+		self.assertEqual(1, ret)
+		self.assertEqual(2, self.plateau.age)
+		
+	def test_changement_age_cartes_plateau_rempli(self):
+		self.plateau.preparation_plateau()
+		ret = self.plateau.changement_age()
+		
+		self.assertEqual(0, ret)
+		self.assertEqual(1, self.plateau.age)
+		
+	def test_changement_age_cartes_plateau_age_3(self):
+		self.plateau.age = 3
+		ret = self.plateau.changement_age()
+		
+		self.assertEqual(-1, ret)
+		
+	def test_fin_partie_militaire_joueur1(self):
+		self.plateau.position_jeton_conflit = 18
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+		
+	def test_fin_partie_militaire_joueur2(self):
+		self.plateau.position_jeton_conflit = 0
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+		
+	def test_fin_partie_scientifique_joueur1(self):
+		self.j1.nbr_symb_scientifique_diff = 6
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+
+	def test_fin_partie_scientifique_joueur2(self):
+		self.j2.nbr_symb_scientifique_diff = 6
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+
+	def test_fin_partie_points_victoire_joueur1(self):
+		self.j1.cartes.append(
+			Carte("atelier",
+				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+				None, "vert", age=1)
+		)
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+
+	def test_fin_partie_points_victoire_joueur2(self):
+		self.j2.cartes.append(
+			Carte("atelier",
+				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+				None, "vert", age=1)
+		)
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+
+	def test_fin_partie_points_victoire_egalite(self):
+		self.j1.cartes.append(
+			Carte("atelier",
+				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+				None, "vert", age=1)
+		)
+		self.j2.cartes.append(
+			Carte("apothicaire",
+				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+				["ressource verre 1"], None, "vert", age=1)
+		)
+		self.plateau.fin_de_partie()
+		self.assertEqual(self.plateau.joueur_gagnant, -1)
+		
+		
+class TestAcheterRessources(unittest.TestCase):
+	def setUp(self) -> None:
+		self.j1 = Joueur("Bruno")
+		self.j2 = Joueur("Antoine")
+		self.plateau = Plateau(self.j1, self.j2)
 	
 	def test_acheter_ressource_non_produite_par_adversaire(self):
 		self.plateau.joueur_qui_joue = self.j1
@@ -234,11 +312,6 @@ class TestOutilsPlateau(unittest.TestCase):
 		prix = self.plateau.acheter_ressources(["ressource pierre 1"])
 		
 		self.assertEqual(1, prix)
-		
-	def test_changement_age(self):
-		self.plateau.changement_age()
-		self.assertEqual(2, self.plateau.age)
-		self.assertTrue(self.plateau.reste_des_cartes())
 
 
 class TestAttaquerJoueur1(unittest.TestCase):
