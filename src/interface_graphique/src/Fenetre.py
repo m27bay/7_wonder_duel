@@ -40,7 +40,7 @@ class Fenetre:
 		
 		default_sprite_image = SpriteCarte(Carte("academie", None, None, None, None, 3), 0, 0, RATIO_IMAGE)
 		self.default_hauteur_sprite = default_sprite_image.rect.height
-		self.default_largeur_spirte = default_sprite_image.rect.width
+		self.default_largeur_sprite = default_sprite_image.rect.width
 		
 		default_sprite_merveille = SpriteMerveille(CarteFille("piree", None, None), 0, 0, RATIO_MERVEILLE)
 		self.default_hauteur_merveille = default_sprite_merveille.rect.height
@@ -51,6 +51,7 @@ class Fenetre:
 		self.default_largeur_jetons_progres = default_sprite_jetons_progres.rect.width
 		
 		self.sprite_cartes_plateau = pygame.sprite.Group()
+		self.sprite_cartes_defaussees = pygame.sprite.Group()
 		
 		self.sprite_j1 = [
 			pygame.sprite.Group(),
@@ -132,7 +133,7 @@ class Fenetre:
 		self.__dessiner_jetons_militaire()
 		
 	def __dessiner_carte_age_I(self):
-		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
+		origine_cartes = self.largeur / 2 - self.default_largeur_sprite - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
 		_, haut_gauche_y = self.rect_image_plateau.bottomright
@@ -147,14 +148,14 @@ class Fenetre:
 					self.sprite_cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
-					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
+					haut_gauche_x += self.default_largeur_sprite + self.espace_entre_carte
 			
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_sprite / 2 - self.espace_entre_carte
 			haut_gauche_y += self.default_hauteur_sprite / 2
 	
 	def __dessiner_carte_age_II(self):
-		origine_cartes = self.largeur / 2 - 3 * self.default_largeur_spirte - self.espace_entre_carte / 2
+		origine_cartes = self.largeur / 2 - 3 * self.default_largeur_sprite - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
 		_, haut_gauche_y = self.rect_image_plateau.bottomright
@@ -169,14 +170,14 @@ class Fenetre:
 					self.sprite_cartes_plateau.add(sprite_carte)
 					
 					# coords carte suivante
-					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
+					haut_gauche_x += self.default_largeur_sprite + self.espace_entre_carte
 			
 			# coords changement ligne
-			haut_gauche_x = origine_cartes + (num_ligne+1) * self.default_largeur_spirte/2 - self.espace_entre_carte
+			haut_gauche_x = origine_cartes + (num_ligne+1) * self.default_largeur_sprite / 2 - self.espace_entre_carte
 			haut_gauche_y += self.default_hauteur_sprite/2
 			
 	def __dessiner_carte_age_III(self):
-		origine_cartes = self.largeur / 2 - self.default_largeur_spirte - self.espace_entre_carte / 2
+		origine_cartes = self.largeur / 2 - self.default_largeur_sprite - self.espace_entre_carte / 2
 		
 		haut_gauche_x = origine_cartes
 		_, haut_gauche_y = self.rect_image_plateau.bottomright
@@ -193,25 +194,25 @@ class Fenetre:
 					self.sprite_cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
-					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
+					haut_gauche_x += self.default_largeur_sprite + self.espace_entre_carte
 
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_x = origine_cartes - (num_ligne + 1) * self.default_largeur_sprite / 2 - self.espace_entre_carte
 			haut_gauche_y += self.default_hauteur_sprite / 2
 			
 		#
-		haut_gauche_x = origine_cartes - self.default_largeur_spirte/2
+		haut_gauche_x = origine_cartes - self.default_largeur_sprite / 2
 		carte = self.plateau.cartes_plateau[3][1]
 		self.sprite_cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
 		
 		#
-		haut_gauche_x = origine_cartes + self.default_largeur_spirte + self.default_largeur_spirte / 2
+		haut_gauche_x = origine_cartes + self.default_largeur_sprite + self.default_largeur_sprite / 2
 		carte = self.plateau.cartes_plateau[3][5]
 		self.sprite_cartes_plateau.add(SpriteCarte(carte, haut_gauche_x, haut_gauche_y, RATIO_IMAGE))
 		haut_gauche_y += self.default_hauteur_sprite/2
 		
 		#
-		haut_gauche_x = origine_cartes - self.default_largeur_spirte - self.espace_entre_carte
+		haut_gauche_x = origine_cartes - self.default_largeur_sprite - self.espace_entre_carte
 		for num_ligne in range(4, len(self.plateau.cartes_plateau)):
 			ligne_cartes = self.plateau.cartes_plateau[num_ligne]
 			for num_colone in range(len(ligne_cartes)):
@@ -223,11 +224,11 @@ class Fenetre:
 					self.sprite_cartes_plateau.add(sprite_carte)
 
 					# coords carte suivante
-					haut_gauche_x += self.default_largeur_spirte + self.espace_entre_carte
+					haut_gauche_x += self.default_largeur_sprite + self.espace_entre_carte
 
 			# coords changement ligne
-			haut_gauche_x = origine_cartes - self.default_largeur_spirte + \
-							(num_ligne - 4 + 1) * self.default_largeur_spirte / 2 - self.espace_entre_carte
+			haut_gauche_x = origine_cartes - self.default_largeur_sprite + \
+							(num_ligne - 4 + 1) * self.default_largeur_sprite / 2 - self.espace_entre_carte
 			haut_gauche_y += self.default_hauteur_sprite/2
 	
 	def __dessiner_carte(self):
@@ -434,7 +435,7 @@ class Fenetre:
 				self.__deplacer_jeton_attaque()
 		
 		if ret == -1:
-			self.plateau.defausser(sprite_carte.carte)
+			self.__defausser(self.sprite_carte_zoomer)
 		
 		else:
 			type_carte = self.__position_type_carte(sprite_carte.carte)
@@ -455,18 +456,27 @@ class Fenetre:
 				decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
 			
 			if type_carte == 0:
-				coord_y = type_carte * self.default_largeur_spirte
+				coord_y = type_carte * self.default_largeur_sprite
 			else:
 				coord_y = type_carte * (
-					self.default_largeur_spirte + self.espace_entre_carte
+						self.default_largeur_sprite + self.espace_entre_carte
 				)
 			
 			coord_y -= self.rect_image_plateau.height*1/4
-			coord_y += self.default_largeur_spirte
+			coord_y += self.default_largeur_sprite
 			coord_x += decalage_x
 			
 			sprite_joueur_qui_joue[type_carte].add(sprite_carte)
 			sprite_carte.changer_coords(coord_x, coord_y)
+			
+	def __defausser(self, carte_prenable: SpriteCarte):
+		self.plateau.defausser(carte_prenable.carte)
+		self.sprite_cartes_defaussees.add(carte_prenable)
+		
+		coord_x = self.largeur / 2 - self.rect_image_plateau.width / 4
+		coord_y = self.hauteur - (self.default_hauteur_sprite + self.espace_entre_carte)
+		print(coord_x, coord_y)
+		carte_prenable.changer_coords(coord_x, coord_y)
 		
 	def boucle_principale(self):
 		en_cours = True
@@ -537,7 +547,7 @@ class Fenetre:
 							if self.sprite_carte_zoomer is not None:
 								
 								self.sprite_carte_zoomer.dezoomer()
-								self.plateau.defausser(self.sprite_carte_zoomer.carte)
+								self.__defausser(self.sprite_carte_zoomer)
 								self.sprite_cartes_plateau.remove(self.sprite_carte_zoomer)
 								self.plateau.joueur_qui_joue = self.plateau.adversaire()
 								self.sprite_carte_zoomer = None
@@ -650,6 +660,7 @@ class Fenetre:
 			self.sprite_cartes_plateau.update()
 			self.merverille_j1.update()
 			self.merverille_j2.update()
+			self.sprite_cartes_defaussees.update()
 			
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
@@ -678,24 +689,28 @@ class Fenetre:
 				self.jetons_progres_plateau.draw(self.ecran)
 				self.merverille_j1.draw(self.ecran)
 				self.merverille_j2.draw(self.ecran)
+				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
 				
 			elif self.sprite_merveille_j1_zoomer is not None:
 				self.jetons_progres_plateau.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merverille_j2.draw(self.ecran)
+				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.merverille_j1.draw(self.ecran)
 				
 			elif self.sprite_merveille_j2_zoomer is not None:
 				self.jetons_progres_plateau.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merverille_j1.draw(self.ecran)
+				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.merverille_j2.draw(self.ecran)
 				
 			elif self.sprite_jeton_zoomer is not None:
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merverille_j1.draw(self.ecran)
 				self.merverille_j2.draw(self.ecran)
+				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.jetons_progres_plateau.draw(self.ecran)
 			
 			else:
@@ -703,6 +718,7 @@ class Fenetre:
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merverille_j1.draw(self.ecran)
 				self.merverille_j2.draw(self.ecran)
+				self.sprite_cartes_defaussees.draw(self.ecran)
 			
 			# OUTIL DEBUG #
 			# pygame.draw.line(self.ecran, (255, 0, 0), (self.largeur/2, 0), (self.largeur/2, self.hauteur))
