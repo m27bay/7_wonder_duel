@@ -774,7 +774,7 @@ class Plateau:
 		return prix_commerce
 	
 	def piocher(self, carte_prenable: Carte):
-		# construction de la carte gratuite via chainage
+		# construction carte
 		if not self.joueur_qui_joue.possede_carte_chainage(carte_prenable):
 			
 			# la carte ne coute rien
@@ -785,24 +785,15 @@ class Plateau:
 				self.joueur_qui_joue.cartes.append(carte_prenable)
 				return 1
 			
-			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
+			# if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
 				# self.reduction_couts_construction_carte(carte_prenable)
-				print("fonction \"reduction_couts_construction_carte\" à faire")
+				# print("fonction \"reduction_couts_construction_carte\" à faire")
 			
 			# verification ressources nom_joueur
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
 			
 			# le nom_joueur possede toutes les ressouces
 			if len(liste_ressource_necessaire) == 0:
-				
-				# on retire uniquement la monnaie
-				for cout in carte_prenable.couts:
-					# monnaie x
-					cout_split = cout.split(" ")
-					if cout_split[0] == "monnaie":
-						self.joueur_qui_joue.monnaie -= int(cout_split[1])
-				
-				# fin action
 				self.enlever_carte(carte_prenable)
 				self.appliquer_effets_carte(carte_prenable)
 				self.joueur_qui_joue.cartes.append(carte_prenable)

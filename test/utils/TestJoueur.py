@@ -193,21 +193,6 @@ class TestJoueur(unittest.TestCase):
 		)
 		self.joueur.compter_point_victoire()
 		self.assertEqual(4+3*2+3, self.joueur.points_victoire)
-	
-	# def test_selection_merveille(self):
-	# 	liste_merveilles = [
-	# 		CarteFille("merveille0", None, None),
-	# 		CarteFille("merveille1", None, None),
-	# 		CarteFille("merveille2", None, None),
-	# 		CarteFille("merveille3", None, None),
-	# 		CarteFille("merveille4", None, None)
-	# 	]
-	#
-	# 	# entree : merveille3, merveille1
-	# 	joueur = Joueur("joueur2")
-	# 	# copy de la liste car on supprime les merveilles une fois choisie.
-	# 	joueur.selection_merveille(2, liste_merveilles.copy())
-	# 	self.assertEqual([liste_merveilles[3], liste_merveilles[1]], joueur.merveilles)
 
 
 if __name__ == '__main__':
