@@ -20,6 +20,7 @@ class CarteFille(Carte):
 		:param couts: liste de couts pour construire la CarteFille respactant un pattern precis.
 		"""
 		super().__init__(nom, effets, couts, None, None, None)
+		self.est_construite = False
 		
 	def __str__(self):
 		"""
@@ -41,6 +42,8 @@ class CarteFille(Carte):
 			
 		if self.couts is not None:
 			carte_fille.couts = self.couts.copy()
+			
+		carte_fille.est_construite = self.est_construite
 		
 		return carte_fille
 	
