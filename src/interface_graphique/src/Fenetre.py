@@ -1,5 +1,3 @@
-import time
-
 import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
@@ -14,11 +12,11 @@ from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
 from src.utils.Stategie import minimax
 
-RATIO_IMAGE = 0.13
-RATIO_MERVEILLE = 0.08
-RATIO_JETONS_PROGRES = 0.12
-RATIO_JETONS_MILITAIRE2 = 0.16
-RATIO_JETONS_MILITAIRE5 = 0.14
+RATIO_IMAGE = 0.15
+RATIO_MERVEILLE = 0.10
+RATIO_JETONS_PROGRES = 0.155
+RATIO_JETONS_MILITAIRE2 = 0.18
+RATIO_JETONS_MILITAIRE5 = 0.16
 RATIO_MONNAIES_6 = 0.16
 RATIO_MONNAIES_3 = 0.18
 RATIO_MONNAIES_1 = 0.16
@@ -36,7 +34,7 @@ class Fenetre:
 		
 		self.plateau = plateau
 		
-		self.ecran = pygame.display.set_mode((1200, 700))
+		self.ecran = pygame.display.set_mode()
 		self.largeur, self.hauteur = self.ecran.get_size()
 		
 		pygame.display.set_caption(titre)
