@@ -3,7 +3,7 @@ Fichier classe Plateau
 """
 import random
 
-from src.logger.Logger import logger
+from src.logger.Logger import LOGGER
 
 from src.utils.Carte import Carte
 from src.utils.JetonMilitaire import JetonMilitaire
@@ -388,7 +388,7 @@ class Plateau:
 		"""
 		Prepare le plateau, les cartes, les jetons_progres, la monnaie des joueurs, les merveilles des joueurs.
 		"""
-		logger.debug("preparation_plateau")
+		LOGGER.log("preparation_plateau")
 		self.__preparation_cartes()
 		self.__preparation_jetons_progres()
 		self.__preparation_monnaies_joueurs()
@@ -485,14 +485,14 @@ class Plateau:
 		Prepare les 5 jetons_progres progres aleatoire du plateau.
 		"""
 		
-		logger.debug("__preparation_jetons_progres")
+		LOGGER.log("__preparation_jetons_progres")
 		
 		for _ in range(5):
 			jeton_random = random.choice(self.jetons_progres)
 			self.jetons_progres.remove(jeton_random)
 			self.jetons_progres_plateau.append(jeton_random)
 			
-			logger.debug(f"\tjetons aleatoire choisit : {jeton_random.nom}")
+			LOGGER.log(f"\tjetons aleatoire choisit : {jeton_random.nom}")
 	
 	def __preparation_monnaies_joueurs(self) -> None:
 		"""
@@ -516,24 +516,24 @@ class Plateau:
 		"""
 		
 		if not self.choix_auto_merveilles:
-			logger.debug("choix merveilles par les joueurs")
+			LOGGER.log("choix merveilles par les joueurs")
 			print("fonction \"__preparation_merveilles\" à faire")
 		
 		else:  # choix automatique des merveilles (d'apres les regles)
-			logger.debug("choix merveilles automatique")
+			LOGGER.log("choix merveilles automatique")
 			
 			self.joueur1.merveilles.append(self.merveilles[7])
 			self.joueur1.merveilles.append(self.merveilles[2])
 			self.joueur1.merveilles.append(self.merveilles[10])
 			self.joueur1.merveilles.append(self.merveilles[9])
-			logger.debug(f"[{self.joueur1.nom}] liste merveilles : "
+			LOGGER.log(f"[{self.joueur1.nom}] liste merveilles : "
 				f"\'pyramides\', \'grand phare\', \'temple d artemis\', \'statue de zeus\'")
 			
 			self.joueur2.merveilles.append(self.merveilles[0])
 			self.joueur2.merveilles.append(self.merveilles[6])
 			self.joueur2.merveilles.append(self.merveilles[11])
 			self.joueur2.merveilles.append(self.merveilles[1])
-			logger.debug(f"[{self.joueur2.nom}] liste merveilles : "
+			LOGGER.log(f"[{self.joueur2.nom}] liste merveilles : "
 				f"\'circus maximus\', \'piree\', \'via appia\', \'colosse\'")
 	
 	#
@@ -556,7 +556,7 @@ class Plateau:
 		"""
 		
 		if not simulation:
-			logger.debug(f"enlever_carte(\'{carte_a_enlever.nom}\')")
+			LOGGER.log(f"enlever_carte(\'{carte_a_enlever.nom}\')")
 		carte_trouvee = False
 		
 		for num_ligne, ligne_carte in enumerate(self.cartes_plateau):
@@ -568,11 +568,11 @@ class Plateau:
 		
 		if not carte_trouvee:
 			if not simulation:
-				logger.debug(f"{carte_a_enlever.nom} pas sur le plateau")
+				LOGGER.log(f"{carte_a_enlever.nom} pas sur le plateau")
 			exit(-1)
 			
 		if not simulation:
-			logger.debug(f"{carte_a_enlever.nom} enlevee")
+			LOGGER.log(f"{carte_a_enlever.nom} enlevee")
 		
 		for carte in self.liste_cartes_prenables():
 			carte.devoiler()
@@ -630,16 +630,16 @@ class Plateau:
 	
 	def fin_de_partie(self, simulation: bool):
 		if not simulation:
-			logger.debug("fin_de_partie()")
+			LOGGER.log("fin_de_partie()")
 		
 		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
 			self.joueur_gagnant = self.joueur2
 			if not simulation:
-				logger.debug("victoire j2")
+				LOGGER.log("victoire j2")
 		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
 			self.joueur_gagnant = self.joueur1
 			if not simulation:
-				logger.debug("victoire j1")
+				LOGGER.log("victoire j1")
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
@@ -654,19 +654,19 @@ class Plateau:
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
 				self.joueur_gagnant = self.joueur1
 				if not simulation:
-					logger.debug("victoire j1")
+					LOGGER.log("victoire j1")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
 				self.joueur_gagnant = self.joueur2
 				if not simulation:
-					logger.debug("victoire j2")
+					LOGGER.log("victoire j2")
 			else:
 				self.joueur_gagnant = -1
 				if not simulation:
-					logger.debug("egalite")
+					LOGGER.log("egalite")
 				
 	def action_banque(self, somme_gagnee: int, simulation: bool):
 		if not simulation:
-			logger.debug(f"action_banque({somme_gagnee})")
+			LOGGER.log(f"action_banque({somme_gagnee})")
 		
 		if somme_gagnee == 0:
 			return 0
@@ -693,7 +693,7 @@ class Plateau:
 		:return prixDesRessources
 		"""
 		if not simulation:
-			logger.debug(f"acheter_ressources({ressources_manquantes})")
+			LOGGER.log(f"acheter_ressources({ressources_manquantes})")
 		
 		prix_commerce = 0
 		
@@ -710,7 +710,7 @@ class Plateau:
 		# si le nom_joueur adverse ne produit aucune ressouces ressources manquantes
 		if len(carte_liste_ressource_adversaire) == 0:
 			if not simulation:
-				logger.debug("carte_liste_ressource_adversaire = vide")
+				LOGGER.log("carte_liste_ressource_adversaire = vide")
 			
 			for ressource_manquante in ressources_manquantes:
 				
@@ -778,8 +778,7 @@ class Plateau:
 			
 			# la carte ne coute rien
 			if carte_prenable.couts is None or len(carte_prenable.couts) == 0:
-				# fin action
-				self.enlever_carte(carte_prenable, simulation)
+				
 				self.joueur_qui_joue.cartes.append(carte_prenable)
 				return self.appliquer_effets_carte(carte_prenable, simulation)
 			
@@ -801,7 +800,6 @@ class Plateau:
 					if cout_split[0] == "monnaie":
 						self.joueur_qui_joue.monnaie -= self.action_banque(int(cout_split[1]), simulation)
 						
-				self.enlever_carte(carte_prenable, simulation)
 				self.joueur_qui_joue.cartes.append(carte_prenable)
 				return self.appliquer_effets_carte(carte_prenable, simulation)
 			
@@ -826,8 +824,6 @@ class Plateau:
 						self.monnaie_banque += prix
 					self.joueur_qui_joue.monnaie -= prix
 					
-					# fin action
-					self.enlever_carte(carte_prenable, simulation)
 					self.joueur_qui_joue.cartes.append(carte_prenable)
 					return self.appliquer_effets_carte(carte_prenable, simulation)
 		
@@ -837,7 +833,6 @@ class Plateau:
 			if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
 				self.joueur_qui_joue.monnaie += self.action_banque(4, simulation)
 				
-			self.enlever_carte(carte_prenable, simulation)
 			self.joueur_qui_joue.cartes.append(carte_prenable)
 			return self.appliquer_effets_carte(carte_prenable, simulation)
 		
@@ -847,7 +842,7 @@ class Plateau:
 		# gain de une piece par carte jaune
 		for carte_joueur in self.joueur_qui_joue.cartes:
 			if carte_joueur.couleur == "jaune":
-				self.joueur_qui_joue.monnaie += self.action_banque(2, simulation)
+				self.joueur_qui_joue.monnaie += self.action_banque(1, simulation)
 				
 		self.enlever_carte(carte_prenable, simulation)
 		self.cartes_defaussees.append(carte_prenable)
@@ -910,7 +905,7 @@ class Plateau:
 	
 	def deplacer_pion_miltaire(self, nbr_deplacement: int, simulation: bool):
 		if not simulation:
-			logger.debug(f"deplacer_pion_miltaire({nbr_deplacement})")
+			LOGGER.log(f"deplacer_pion_miltaire({nbr_deplacement})")
 		
 		# On deplace le pion case par case
 		for _ in range(nbr_deplacement):
@@ -921,7 +916,7 @@ class Plateau:
 				self.position_jeton_conflit += 1
 			
 			if not simulation:
-				logger.debug(f"Nouvelle position {self.position_jeton_conflit}")
+				LOGGER.log(f"Nouvelle position {self.position_jeton_conflit}")
 			
 			# si le pion se situe au bout du plateau militaire, il y a une victoire militaire
 			if self.position_jeton_conflit in [0, 18]:
@@ -935,7 +930,7 @@ class Plateau:
 					
 					if not jeton.est_utilise:
 						if not simulation:
-							logger.debug(f"[{self.joueur_qui_joue.nom}] prend le jeton {numero_jeton}, "
+							LOGGER.log(f"[{self.joueur_qui_joue.nom}] prend le jeton {numero_jeton}, "
 								f"l'adversaire perd {jeton.pieces} monnaies")
 						
 						self.action_banque(jeton.pieces, simulation)
@@ -943,7 +938,7 @@ class Plateau:
 	
 	def appliquer_effets_carte(self, carte: Carte, simulation: bool):
 		if not simulation:
-			logger.debug(f"appliquer_effets_carte({carte.nom})")
+			LOGGER.log(f"appliquer_effets_carte({carte.nom})")
 		
 		for effet in carte.effets:
 			
@@ -968,12 +963,12 @@ class Plateau:
 			
 			elif effet_split[0] == "monnaie":
 				if not simulation:
-					logger.debug(f"[{self.joueur_qui_joue.nom}] {effet}")
+					LOGGER.log(f"[{self.joueur_qui_joue.nom}] {effet}")
 				self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[1]), simulation)
 			
 			elif effet_split[0] == "monnaie_par_carte":
 				if not simulation:
-					logger.debug(f"[{self.joueur_qui_joue.nom}] {effet}")
+					LOGGER.log(f"[{self.joueur_qui_joue.nom}] {effet}")
 				
 				for ma_carte in self.joueur_qui_joue.cartes:
 					if ma_carte.couleur == effet_split[1]:
@@ -981,7 +976,7 @@ class Plateau:
 		return 1
 	
 	def appliquer_effets_merveille(self, merveille: CarteFille, simulation: bool):
-		logger.debug(f"appliquer_effets_merveille({merveille.nom})")
+		LOGGER.log(f"appliquer_effets_merveille({merveille.nom})")
 		
 		for effet in merveille.effets:
 			
@@ -999,16 +994,16 @@ class Plateau:
 		
 	def appliquer_effets_jeton(self, jeton: JetonProgres, simulation: bool):
 		if not simulation:
-			logger.debug(f"appliquer_effets_jeton({jeton.nom})")
+			LOGGER.log(f"appliquer_effets_jeton({jeton.nom})")
 		
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			if not simulation:
-				logger.debug("agriculture, urbanisme")
+				LOGGER.log("agriculture, urbanisme")
 			self.joueur_qui_joue.monnaie -= self.action_banque(6, simulation)
 		
 		elif jeton.nom == "philosophie":
 			if not simulation:
-				logger.debug("philosophie")
+				LOGGER.log("philosophie")
 			self.joueur_qui_joue.points_victoire += 7
 			
 		# elif jeton.nom == "loi":

@@ -1,18 +1,16 @@
 """
 Logger utilisé dans le projet
 """
-
 import logging
 
-mode = "run"
-# mode = "test"
+class MonLogger:
+	def __init__(self):
+		logging.basicConfig(filename="src/logger/logger.log", format='%(asctime)s %(message)s', filemode='w')
+		self.logger = logging.getLogger()
+		self.logger.setLevel(logging.DEBUG)
+		
+	def log(self, log: str):
+		self.logger.debug(log)
+	
 
-chemin_logger = ""
-if mode == "run":
-	chemin_logger = "src/logger/logger.log"
-elif mode == "test":
-	chemin_logger = "src/logger/logger_test.log"
-
-logging.basicConfig(filename=chemin_logger, format='%(asctime)s %(message)s', filemode='w')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+LOGGER = MonLogger()

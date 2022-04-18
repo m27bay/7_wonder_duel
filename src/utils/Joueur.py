@@ -1,9 +1,9 @@
 """
 Fichier de la classe Joueur.
 """
+from src.logger.Logger import LOGGER
 from src.utils.Carte import Carte
 from src.utils.Outils import mon_str_liste
-from src.logger.Logger import logger
 
 
 class Joueur:
@@ -137,7 +137,7 @@ class Joueur:
 		"""
 		
 		if not simulation:
-			logger.debug(f"couts_manquants({carte.nom})")
+			LOGGER.log(f"couts_manquants({carte.nom})")
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -158,13 +158,13 @@ class Joueur:
 					couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = monnaie_manquante
 					
 					if not simulation:
-						logger.debug(f"manque {monnaie_manquante}")
+						LOGGER.log(f"manque {monnaie_manquante}")
 				
 				else:
 					# ce n'est pas un cout manquant
 					couts_manquants_carte.remove(cout_manquant)
 					if not simulation:
-						logger.debug("possede argent necessaire")
+						LOGGER.log("possede argent necessaire")
 			
 			# cout ressource
 			else:
@@ -184,36 +184,36 @@ class Joueur:
 								couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = ressource_manquante
 								
 								if not simulation:
-									logger.debug(f"manque {ressource_manquante}")
+									LOGGER.log(f"manque {ressource_manquante}")
 							
 							else:
 								# ce n'est pas un cout manquant
 								couts_manquants_carte.remove(cout_manquant)
 								
 								if not simulation:
-									logger.debug(f"possede {cout_manquant_split[1]}")
+									LOGGER.log(f"possede {cout_manquant_split[1]}")
 		
 		return couts_manquants_carte
 	
 	def possede_carte_chainage(self, carte: Carte, simulation: bool):
 		if not simulation:
-			logger.debug(f"possede_carte_chainage(\'{carte.nom}\')")
+			LOGGER.log(f"possede_carte_chainage(\'{carte.nom}\')")
 		
 		# si la carte ne possede pas de carte de chainage
 		if carte.nom_carte_chainage is None:
 			if not simulation:
-				logger.debug("chainage : None")
+				LOGGER.log("chainage : None")
 			return False
 		
 		#
 		for ma_carte in self.cartes:
 			if ma_carte.nom == carte.nom_carte_chainage:
 				if not simulation:
-					logger.debug("chainage : Oui")
+					LOGGER.log("chainage : Oui")
 				return True
 			
 		if not simulation:
-			logger.debug("chainage : Non")
+			LOGGER.log("chainage : Non")
 		return False
 	
 	def production_type_ressources(self, ressource: str, simulation: bool):
@@ -224,7 +224,7 @@ class Joueur:
 		:return: une carte si elle existe, None sinon.
 		"""
 		if not simulation:
-			logger.debug(f"production_type_ressources({ressource})")
+			LOGGER.log(f"production_type_ressources({ressource})")
 		
 		ressource_split = ressource.split(" ")
 		for carte in self.cartes:
@@ -234,11 +234,11 @@ class Joueur:
 				# ressource type quantite
 				if effet_split[0] == "ressource" and effet_split[1] == ressource_split[1]:
 					if not simulation:
-						logger.debug(f"{carte.nom}")
+						LOGGER.log(f"{carte.nom}")
 					return carte
 				
 		if not simulation:
-			logger.debug("production_type_ressources None")
+			LOGGER.log("production_type_ressources None")
 		return None
 	
 	def possede_carte_reduction(self, ressource: str, simulation: bool):
@@ -249,7 +249,7 @@ class Joueur:
 		:return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
 		"""
 		if not simulation:
-			logger.debug(f"possede_carte_reduction({ressource})")
+			LOGGER.log(f"possede_carte_reduction({ressource})")
 		
 		for carte in self.cartes:
 			for effet in carte.effets:
@@ -258,7 +258,7 @@ class Joueur:
 				# reduc_ressource type prixReduc
 				if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
 					if not simulation:
-						logger.debug(f"{effet}")
+						LOGGER.log(f"{effet}")
 					return int(effet_split[2])
 		
 		return 0
@@ -271,13 +271,13 @@ class Joueur:
 		:return: une liste de carte.
 		"""
 		if not simulation:
-			logger.debug(f"possede_cartes_couleur({couleur})")
+			LOGGER.log(f"possede_cartes_couleur({couleur})")
 		
 		liste_cartes_couleur = []
 		for carte in self.cartes:
 			if carte.couleur == couleur:
 				if not simulation:
-					logger.debug(f"{carte.nom} : {carte.couleur}")
+					LOGGER.log(f"{carte.nom} : {carte.couleur}")
 				liste_cartes_couleur.append(carte)
 		
 		return liste_cartes_couleur
@@ -299,7 +299,7 @@ class Joueur:
 		
 		self.points_victoire = 0
 		if not simulation:
-			logger.debug("compter_point_victoire()")
+			LOGGER.log("compter_point_victoire()")
 		
 		# compter points victoire avec les cartes
 		for carte in self.cartes:
