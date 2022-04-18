@@ -1,6 +1,5 @@
 import math
 
-from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau
 
 
@@ -81,6 +80,7 @@ def partie_fini(partie: Plateau):
 	
 	
 def fonction_evaluation(partie):
+	# TODO : prendre en compte merveille, carte guilde
 	evaluation_j2 = 0
 	for carte in partie.joueur2.cartes:
 		if carte.est_face_cachee:
@@ -141,8 +141,10 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 			
 			# print(f"boucle carte : {carte}\n")
 			
-			copie_partie = partie.constructeur_par_copie()
-			copie_partie.piocher(carte)
+			copie_partie: Plateau = partie.constructeur_par_copie()
+			ret = copie_partie.piocher(carte, True)
+			if ret == -1:
+				copie_partie.defausser(carte, True)
 			
 			# print("appel rec\n")
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, False, nbr_noeuds)
@@ -166,8 +168,11 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 			
 			# print(f"boucle carte : {carte}\n")
 			
-			copie_partie = partie.constructeur_par_copie()
-			copie_partie.piocher(carte)
+			copie_partie: Plateau = partie.constructeur_par_copie()
+			ret = copie_partie.piocher(carte, True)
+			
+			if ret == -1:
+				copie_partie.defausser(carte, True)
 			
 			# print("appel rec\n")
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, True, nbr_noeuds)

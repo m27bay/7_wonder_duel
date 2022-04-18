@@ -120,28 +120,24 @@ class Joueur:
 				self.nbr_symb_scientifique_diff += 1
 		
 	def retirer_monnaie(self, monnaie: int):
-		"""
-		TODO : documentation a faire
-
-		:param monnaie:
-		:return:
-		"""
 		if self.monnaie - monnaie < 0:
 			return False
 		else:
 			self.monnaie -= monnaie
 			return True
 	
-	def couts_manquants(self, carte: Carte):
+	def couts_manquants(self, carte: Carte, simulation: bool):
 		"""
 		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
 		que le nom_joueur ne possede pas pour construire une carte.
 
+		:param simulation:
 		:param carte: carte a construire.
 		:return: une liste avec les ressources_manquantes manquantes.
 		"""
 		
-		logger.debug(f"couts_manquants({carte.nom})")
+		if not simulation:
+			logger.debug(f"couts_manquants({carte.nom})")
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -161,12 +157,14 @@ class Joueur:
 					monnaie_manquante = "monnaie " + prix_manquant
 					couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = monnaie_manquante
 					
-					logger.debug(f"manque {monnaie_manquante}")
+					if not simulation:
+						logger.debug(f"manque {monnaie_manquante}")
 				
 				else:
 					# ce n'est pas un cout manquant
 					couts_manquants_carte.remove(cout_manquant)
-					logger.debug("possede argent necessaire")
+					if not simulation:
+						logger.debug("possede argent necessaire")
 			
 			# cout ressource
 			else:
@@ -185,48 +183,48 @@ class Joueur:
 								ressource_manquante = effet_split[0] + " " + effet_split[1] + " " + quantite_manquante
 								couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = ressource_manquante
 								
-								logger.debug(f"manque {ressource_manquante}")
+								if not simulation:
+									logger.debug(f"manque {ressource_manquante}")
 							
 							else:
 								# ce n'est pas un cout manquant
 								couts_manquants_carte.remove(cout_manquant)
-								logger.debug(f"possede {cout_manquant_split[1]}")
+								
+								if not simulation:
+									logger.debug(f"possede {cout_manquant_split[1]}")
 		
 		return couts_manquants_carte
 	
-	def possede_carte_chainage(self, carte: Carte):
-		"""
-		Indique si le nom_joueur possede la carte de chainage de la carte en parametre.
-
-		:param carte: la carte dont on cherche la carte de chainage.
-		:return: vrai/ faux.
-		"""
-		
-		logger.debug(f"[{self.nom}] possede_carte_chainage(\'{carte.nom}\')")
+	def possede_carte_chainage(self, carte: Carte, simulation: bool):
+		if not simulation:
+			logger.debug(f"possede_carte_chainage(\'{carte.nom}\')")
 		
 		# si la carte ne possede pas de carte de chainage
 		if carte.nom_carte_chainage is None:
-			logger.debug(f"\t[{self.nom}] pas de carte de chainage")
+			if not simulation:
+				logger.debug("chainage : None")
 			return False
 		
 		#
 		for ma_carte in self.cartes:
 			if ma_carte.nom == carte.nom_carte_chainage:
-				logger.debug(f"\t[{self.nom}] possede la carte chainage")
+				if not simulation:
+					logger.debug("chainage : Oui")
 				return True
-		
-		logger.debug(f"\t[{self.nom}] ne possede pas carte chainage")
+			
+		if not simulation:
+			logger.debug("chainage : Non")
 		return False
 	
-	def production_type_ressources(self, ressource: str):
+	def production_type_ressources(self, ressource: str, simulation: bool):
 		"""
 		Retourne la carte produisant la ressource.
 
 		:param ressource: la ressource dont on veut la carte.
 		:return: une carte si elle existe, None sinon.
 		"""
-		
-		logger.debug(f"[{self.nom}] production_type_ressources avec la ressource \'{ressource}\'")
+		if not simulation:
+			logger.debug(f"production_type_ressources({ressource})")
 		
 		ressource_split = ressource.split(" ")
 		for carte in self.cartes:
@@ -235,21 +233,23 @@ class Joueur:
 				
 				# ressource type quantite
 				if effet_split[0] == "ressource" and effet_split[1] == ressource_split[1]:
-					logger.debug(f"\t[{self.nom}] possede une carte qui produit la ressource")
+					if not simulation:
+						logger.debug(f"{carte.nom}")
 					return carte
-		
-		logger.debug(f"\t[{self.nom}] ne possede pas de carte qui produit la ressource")
+				
+		if not simulation:
+			logger.debug("production_type_ressources None")
 		return None
 	
-	def possede_carte_reduction(self, ressource: str):
+	def possede_carte_reduction(self, ressource: str, simulation: bool):
 		"""
 		Renvoie le prix de la reduction de la ressource.
 
 		:param ressource: la ressource dont on cherche la reduction.
 		:return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
 		"""
-		
-		logger.debug(f"possede_carte_reduction({ressource})")
+		if not simulation:
+			logger.debug(f"possede_carte_reduction({ressource})")
 		
 		for carte in self.cartes:
 			for effet in carte.effets:
@@ -257,25 +257,27 @@ class Joueur:
 				
 				# reduc_ressource type prixReduc
 				if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
-					logger.debug(f"{effet}")
+					if not simulation:
+						logger.debug(f"{effet}")
 					return int(effet_split[2])
 		
 		return 0
 	
-	def possede_cartes_couleur(self, couleur: str) -> list:
+	def possede_cartes_couleur(self, couleur: str, simulation: bool) -> list:
 		"""
 		Renvoie une liste de carte de la même couleur que celle en parametre.
 
 		:param couleur: la couleur a rechercher.
 		:return: une liste de carte.
 		"""
-		
-		logger.debug(f"[{self.nom}] possede_cartes_couleur avec la couleur \'{couleur}\'")
+		if not simulation:
+			logger.debug(f"possede_cartes_couleur({couleur})")
 		
 		liste_cartes_couleur = []
 		for carte in self.cartes:
 			if carte.couleur == couleur:
-				logger.debug(f"\t[{self.nom}] la carte \'{carte.nom}\' est de la même couleur")
+				if not simulation:
+					logger.debug(f"{carte.nom} : {carte.couleur}")
 				liste_cartes_couleur.append(carte)
 		
 		return liste_cartes_couleur
@@ -290,13 +292,14 @@ class Joueur:
 	
 		return any(jeton.nom == nom_jetons_progres for jeton in self.jetons_progres)
 	
-	def compter_point_victoire(self) -> None:
+	def compter_point_victoire(self, simulation: bool) -> None:
 		"""
 		Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
 		"""
 		
 		self.points_victoire = 0
-		logger.debug(f"[{self.nom}] compter_point_victoire()")
+		if not simulation:
+			logger.debug("compter_point_victoire()")
 		
 		# compter points victoire avec les cartes
 		for carte in self.cartes:
@@ -305,9 +308,6 @@ class Joueur:
 				# decoupe l effet
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire":
-					
-					logger.debug(f"\t[{self.nom}] carte \'{carte.nom}\' donne {effet_split[1]} points de victoire")
-					
 					self.points_victoire += int(effet_split[1])
 		
 		# compter points de victoire avec les merveilles
@@ -317,10 +317,6 @@ class Joueur:
 				# decoupe l effet
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire":
-					
-					logger.debug(f"\t[{self.nom}] merveille \'{merveille.nom}\' donne "
-						f"{effet_split[1]} points de victoire")
-					
 					self.points_victoire += int(effet_split[1])
 		
 		# compter points de victoire avec les jetons_progres
@@ -330,24 +326,12 @@ class Joueur:
 				# decoupe l effet
 				effet_split = effet.split(" ")
 				if effet_split[0] == "point_victoire_par_jeton":
-					
-					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-						f"{effet_split[1]} points de victoire par jeton")
-					
 					self.points_victoire += int(effet_split[1]) * len(self.jetons_progres)
 					
 				elif effet_split[0] == "point_victoire":
-					
-					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-						f"{effet_split[1]} points de victoire")
-					
 					self.points_victoire += int(effet_split[1])
 				
 				elif effet_split[0] == "point_victoire_fin_partie":
-					
-					logger.debug(f"\t[{self.nom}] jeton \'{jeton.nom}\' donne "
-						f"{effet_split[1]} points de victoire en fin de partie")
-					
 					self.points_victoire += int(effet_split[1])
 	
 	def trouver_repartition_monnaies(self):
