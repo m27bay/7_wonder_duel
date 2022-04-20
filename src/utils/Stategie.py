@@ -1,76 +1,14 @@
 import math
+import csv
 
 from src.utils.Plateau import Plateau
 
 
-eval_carte = {
-	"chantier": 20,
-	"exploitation": 16,
-	"bassin argileux": 20,
-	"cavite": 16,
-	"gisement": 20,
-	"mine": 16,
-	"verrerie": 16,
-	"presse": 16,
-	"tour de garde": 12,
-	"atelier": 12,
-	"apothicaire": 12,
-	"depot de pierre": 16,
-	"depot d argile": 16,
-	"depot de bois": 16,
-	"ecurie": 13,
-	"caserne": 13,
-	"palissade": 13,
-	"scriptorium": 13,
-	"officine": 13,
-	"theatre": 6,
-	"autel": 6,
-	"bains": 7,
-	"taverne": 19,
-	"scierie": 16,
-	"briqueterie": 16,
-	"carriere": 16,
-	"soufflerie": 20,
-	"sechoir": 20,
-	"muraille": 14,
-	"forum": 5,
-	"caravanserail": 5,
-	"douane": 6,
-	"tribunal": 5,
-	"haras": 14,
-	"baraquements": 14,
-	"champs de tir": 15,
-	"place d armes": 15,
-	"bibliotheque": 13,
-	"dispensaire": 13,
-	"ecole": 12,
-	"laboratoire": 12,
-	"statue": 13,
-	"temple": 13,
-	"aqueduc": 12,
-	"rostres": 13,
-	"brasserie": 20,
-	"arsenal": 17,
-	"pretoire": 17,
-	"academie": 12,
-	"etude": 12,
-	"chambre de commerce": 15,
-	"port": 16,
-	"armurerie": 16,
-	"palace": 15,
-	"hotel de ville": 14,
-	"obelisque": 13,
-	"fortifications": 15,
-	"atelier de siege": 15,
-	"cirque": 15,
-	"universite": 12,
-	"observatoire": 12,
-	"jardins": 14,
-	"pantheon": 14,
-	"senat": 13,
-	"phare": 11,
-	"arene": 11
-}
+notation_carte = {}
+with open("src/utils/notation_cartes.csv", mode='r') as file:
+	fichier_cvs = csv.reader(file)
+	for lignes in fichier_cvs:
+		notation_carte[lignes[0]] = int(lignes[1])
 
 
 def partie_fini(partie: Plateau):
@@ -86,7 +24,7 @@ def fonction_evaluation(partie):
 		if carte.est_face_cachee:
 			evaluation_j2 += 10
 		else:
-			evaluation_j2 += eval_carte[carte.nom]
+			evaluation_j2 += notation_carte[carte.nom]
 	
 	if partie.age != 1:
 		evaluation_j2 += 2 * partie.joueur2.nbr_symb_scientifique_diff
@@ -100,7 +38,7 @@ def fonction_evaluation(partie):
 		if carte.est_face_cachee:
 			evaluation_j1 += 10
 		else:
-			evaluation_j1 += eval_carte[carte.nom]
+			evaluation_j1 += notation_carte[carte.nom]
 		
 	if partie.age != 1:
 		evaluation_j1 += 2*partie.joueur1.nbr_symb_scientifique_diff
@@ -108,7 +46,7 @@ def fonction_evaluation(partie):
 		if partie.position_jeton_conflit > 9:
 			evaluation_j1 += 2 * (partie.position_jeton_conflit - 9)
 	
-	print(f"evaluation_j2 : {evaluation_j2}, evaluation_j1 : {evaluation_j1}")
+	# print(f"evaluation_j2 : {evaluation_j2}, evaluation_j1 : {evaluation_j1}")
 	return evaluation_j2 - evaluation_j1
 
 
@@ -120,7 +58,7 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 	
 	if coup_bot:
 		partie.joueur_qui_joue = partie.joueur2
-		print("j2")
+		# print("j2")
 		max_eval = -math.inf
 		
 		for carte in partie.liste_cartes_prenables():
@@ -137,7 +75,7 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 				copie_partie.enlever_carte(carte)
 			
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, False, nbr_noeuds)
-			print(f"evaluation : {evaluation}, carte : {carte}")
+			# print(f"evaluation : {evaluation}, carte : {carte}")
 			
 			if evaluation > max_eval:
 				max_eval = evaluation
@@ -147,7 +85,7 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 	
 	else:
 		partie.joueur_qui_joue = partie.joueur1
-		print("j1")
+		# print("j1")
 		min_eval = math.inf
 		
 		for carte in partie.liste_cartes_prenables():
@@ -163,7 +101,7 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 				copie_partie.enlever_carte(carte)
 			
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, True, nbr_noeuds)
-			print(f"evaluation : {evaluation}, carte : {carte}")
+			# print(f"evaluation : {evaluation}, carte : {carte}")
 			
 			if evaluation < min_eval:
 				min_eval = evaluation
