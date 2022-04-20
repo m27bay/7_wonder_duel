@@ -87,7 +87,7 @@ class Plateau:
 				Carte("depot de pierre", ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
 				Carte("depot d argile", ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
 				Carte("depot de bois", ["reduc_ressource bois 1"], ["monnaie 3"], None, "jaune", age=1),
-				Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
+				Carte("ecuries", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1),
 				Carte("caserne", ["attaquer 1"], ["ressource argile 1"], None, "rouge", age=1),
 				Carte("palissade", ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
 				Carte("scriptorium", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1),
@@ -902,7 +902,6 @@ class Plateau:
 					nbr_bouclier += 1
 
 				self.deplacer_pion_miltaire(nbr_bouclier)
-				return 3
 				
 			elif effet_split[0] == "symbole_scientifique":
 				self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
