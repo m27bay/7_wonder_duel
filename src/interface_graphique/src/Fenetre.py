@@ -27,6 +27,8 @@ RATIO_ZOOM_CARTE = 0.65
 RATIO_ZOOM_MERVEILLE = 0.45
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
 
+PROFONDEUR_BOT = 3
+
 
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau):
@@ -121,14 +123,14 @@ class Fenetre:
 		self.__dessiner_carte()
 		
 		top_x = self.largeur / 2
-		top_x -= 11
+		top_x -= 12
 		_, top_y = self.rect_image_plateau.bottomleft
 		top_y /= 2
 		top_y -= 5
 		top = (top_x, top_y)
 		
-		larg = 23
-		long = 45
+		larg = 26
+		long = 56
 		
 		self.rect_jeton_conflit = pygame.Rect(top, (larg, long))
 		
@@ -393,7 +395,7 @@ class Fenetre:
 		
 	def __deplacer_jeton_attaque(self):
 		# TODO : corriger décalage affichage
-		nbr_deplacement = abs(9 - self.plateau.position_jeton_conflit)
+		nbr_deplacement = 9 - self.plateau.position_jeton_conflit
 		
 		top_x, top_y, larg, long = self.rect_jeton_conflit
 		top_x = self.largeur/2 + nbr_deplacement * 10
@@ -401,41 +403,28 @@ class Fenetre:
 		self.rect_jeton_conflit = (top_x, top_y, larg, long)
 		
 	def __dessiner_jetons_militaire(self):
-		top_x = self.largeur / 2
-		top_x += 83
-		_, top_y = self.rect_image_plateau.bottomleft
-		top_y /= 2
-		top_y += 47
-		self.sprite_jetons_militaire.add(
-			SpriteJetonsMilitaire(
-				self.plateau.jetons_militaire[4], top_x, top_y, RATIO_JETONS_MILITAIRE2
-			)
-		)
+		plat_long = self.rect_image_plateau.width
+		plat_larg = self.rect_image_plateau.height
 		
-		top_x -= 2*85
-		top_x -= 62
+		top_x, top_y = self.rect_image_plateau.topright
+		top_x -= plat_long * 0.35
+		top_y += plat_larg * (3 / 4)
 		self.sprite_jetons_militaire.add(
-			SpriteJetonsMilitaire(
-				self.plateau.jetons_militaire[1], top_x, top_y, RATIO_JETONS_MILITAIRE2
-			)
-		)
+			SpriteJetonsMilitaire(self.plateau.jetons_militaire[4], top_x, top_y, RATIO_JETONS_MILITAIRE2))
 		
-		top_x = self.largeur / 2
-		top_x += 85 + 82
+		top_x += plat_long * 0.13
 		self.sprite_jetons_militaire.add(
-			SpriteJetonsMilitaire(
-				self.plateau.jetons_militaire[5], top_x, top_y, RATIO_JETONS_MILITAIRE5
-			)
-		)
+			SpriteJetonsMilitaire(self.plateau.jetons_militaire[5], top_x, top_y, RATIO_JETONS_MILITAIRE5))
 		
-		top_x = self.largeur / 2
-		top_x -= 2 * 85
-		top_x -= 66
+		
+		top_x, _ = self.rect_image_plateau.topleft
+		top_x += plat_long * 0.25
 		self.sprite_jetons_militaire.add(
-			SpriteJetonsMilitaire(
-				self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5
-			)
-		)
+			SpriteJetonsMilitaire(self.plateau.jetons_militaire[1], top_x, top_y, RATIO_JETONS_MILITAIRE2))
+
+		top_x -= plat_long * 0.13
+		self.sprite_jetons_militaire.add(
+			SpriteJetonsMilitaire(self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5))
 	
 	def __position_type_carte(self, carte: Carte):
 		if not isinstance(carte, CarteFille):
@@ -450,10 +439,13 @@ class Fenetre:
 		ret = self.plateau.piocher(sprite_carte.carte, False)
 		
 		if ret == -1:
-			self.__dessiner_defausser(self.sprite_carte_j1_zoomer)
-		
-		elif ret == 2:
-			self.choix_jeton = True
+			self.__dessiner_defausser(sprite_carte)
+			return
+		else:
+			self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
+			
+			if ret == 2:
+				self.choix_jeton = True
 		
 		for effet in sprite_carte.carte.effets:
 			
@@ -564,7 +556,7 @@ class Fenetre:
 									self.__dessiner_piocher(self.sprite_carte_j1_zoomer)
 									self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 									self.plateau.joueur_qui_joue = self.plateau.adversaire()
-									LOGGER.log(f"{self.plateau.joueur_qui_joue.nom}")
+									LOGGER.log(self.plateau.joueur_qui_joue.nom)
 									self.sprite_carte_j1_zoomer = None
 						
 						if self.rect_image_banque.collidepoint(clic_x, clic_y):
@@ -575,7 +567,7 @@ class Fenetre:
 								self.__dessiner_defausser(self.sprite_carte_j1_zoomer)
 								self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 								self.plateau.joueur_qui_joue = self.plateau.adversaire()
-								LOGGER.log(f"{self.plateau.joueur_qui_joue.nom}")
+								LOGGER.log(self.plateau.joueur_qui_joue.nom)
 								self.sprite_carte_j1_zoomer = None
 						
 						if self.sprite_carte_j1_zoomer is None \
@@ -650,8 +642,8 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					_, carte_a_prendre, _ = minimax(self.plateau, 2, True, nbr_noeuds)
-					# print("à prendre :", carte_a_prendre.nom)
+					eval, carte_a_prendre, nbr_noeuds = minimax(self.plateau, PROFONDEUR_BOT, True, nbr_noeuds)
+					LOGGER.log(f"eval : {eval}, carte_a_prendre : {carte_a_prendre}, nbr_noeuds : {nbr_noeuds}")
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						
@@ -678,7 +670,7 @@ class Fenetre:
 											self.sprite_carte_j2_zoomer = None
 											self.__dessiner_piocher(sprite_carte)
 											self.plateau.joueur_qui_joue = self.plateau.adversaire()
-											LOGGER.log(f"{self.plateau.joueur_qui_joue.nom}")
+											LOGGER.log(self.plateau.joueur_qui_joue.nom)
 			
 			# PARTIE Update
 			if self.plateau.changement_age(False) == 1:
