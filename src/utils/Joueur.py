@@ -125,7 +125,6 @@ class Joueur:
 			self.monnaie -= monnaie
 			return True
 	
-	# TODO : refaire test
 	def couts_manquants(self, carte: Carte):
 		"""
 		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
@@ -181,6 +180,8 @@ class Joueur:
 									try:
 										couts_manquants_carte.remove(cout_manquant)
 									except ValueError:
+										# TODO : parfois couts_manquants_carte est vide, pourquoi
+										print(carte, mon_str_liste(self.cartes))
 										print(f"Erreur : couts_manquants()\n{couts_manquants_carte}.remove({cout_manquant})")
 										exit(-2)
 		

@@ -394,12 +394,20 @@ class Fenetre:
 					self.ecran.blit(image_monnaies, (coord_x, coord_y))
 		
 	def __deplacer_jeton_attaque(self):
+		# TODO : bug affiche si j1 attaque puis j2 attaque
 		top_x, top_y, larg, long = self.rect_jeton_conflit
 		
+		nbr_deplacement = abs(self.plateau.position_jeton_conflit - 9)
+		decalage = 49
+		
+		top_x = self.largeur / 2
+		top_x -= 12
+		
 		if self.plateau.position_jeton_conflit > 9:
-			top_x = (self.largeur / 2) + ((self.plateau.position_jeton_conflit - 9) * (self.rect_image_plateau.width * 0.045))
+			top_x += nbr_deplacement * decalage
 		elif self.plateau.position_jeton_conflit < 9:
-			top_x = (self.largeur / 2) - ((9 - self.plateau.position_jeton_conflit) * (self.rect_image_plateau.width * 0.06))
+			print("test")
+			top_x -= nbr_deplacement * decalage
 		
 		self.rect_jeton_conflit = (top_x, top_y, larg, long)
 		
@@ -455,9 +463,6 @@ class Fenetre:
 			
 			if ret == 2:
 				self.choix_jeton = True
-			
-			elif ret == 3:
-				self.__deplacer_jeton_attaque()
 				
 			type_carte = self.__position_type_carte(sprite_carte.carte)
 			
@@ -741,6 +746,8 @@ class Fenetre:
 				self.merveille_j1.draw(self.ecran)
 				self.merveille_j2.draw(self.ecran)
 				self.sprite_cartes_defaussees.draw(self.ecran)
+				
+			self.__deplacer_jeton_attaque()
 				
 			# after drawing everything, flip this display
 			pygame.display.flip()
