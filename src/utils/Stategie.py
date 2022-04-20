@@ -76,7 +76,7 @@ eval_carte = {
 def partie_fini(partie: Plateau):
 	return (not partie.reste_des_cartes()) \
 		or (partie.joueur1.symb_scientifique == 6 or partie.joueur2.symb_scientifique == 6) \
-		or (partie.position_jeton_conflit == 18 or partie.position_jeton_conflit == 0)
+		or (partie.position_jeton_conflit in [0, 18])
 	
 	
 def fonction_evaluation(partie):
@@ -88,18 +88,12 @@ def fonction_evaluation(partie):
 		else:
 			evaluation_j2 += eval_carte[carte.nom]
 	
-	# print("evaluation_j2 carte :", evaluation_j2)
-	
-	evaluation_j2 += 2 * partie.joueur2.nbr_symb_scientifique_diff
-	# print("evaluation_j2 nbr_symb_scientifique_diff:", evaluation_j2)
-	
-	evaluation_j2 += partie.joueur2.points_victoire
-	# print("evaluation_j2 points_victoire :", evaluation_j2)
-	
-	if partie.position_jeton_conflit < 9:
-		evaluation_j2 += 2 * (9 - partie.position_jeton_conflit)
-	
-	# print(f"evaluation j2 : {evaluation_j2}\n")
+	if partie.age != 1:
+		evaluation_j2 += 2 * partie.joueur2.nbr_symb_scientifique_diff
+		evaluation_j2 += partie.joueur2.points_victoire
+		
+		if partie.position_jeton_conflit < 9:
+			evaluation_j2 += 2 * (9 - partie.position_jeton_conflit)
 	
 	evaluation_j1 = 0
 	for carte in partie.joueur1.cartes:
@@ -107,27 +101,18 @@ def fonction_evaluation(partie):
 			evaluation_j1 += 10
 		else:
 			evaluation_j1 += eval_carte[carte.nom]
-			
-	# print("evaluation_j1 carte :", evaluation_j1)
-	
+		
 	if partie.age != 1:
 		evaluation_j1 += 2*partie.joueur1.nbr_symb_scientifique_diff
-		# print("evaluation_j1 nbr_symb_scientifique_diff :", evaluation_j1)
-		
 		evaluation_j1 += partie.joueur1.points_victoire
-		# print("evaluation_j1 points_victoire :", evaluation_j1)
-		
 		if partie.position_jeton_conflit > 9:
 			evaluation_j1 += 2 * (partie.position_jeton_conflit - 9)
-		
-		# print(f"evaluation j1 : {evaluation_j1}\n")
 	
+	print(f"evaluation_j2 : {evaluation_j2}, evaluation_j1 : {evaluation_j1}")
 	return evaluation_j2 - evaluation_j1
 
 
 def minimax(partie, profondeur, coup_bot, nbr_noeuds):
-	# print(f"coup_bot : {coup_bot}\nprofondeur : {profondeur}\n")
-	
 	if profondeur == 0 or partie_fini(partie):
 		return fonction_evaluation(partie), None, nbr_noeuds+1
 	
@@ -135,56 +120,54 @@ def minimax(partie, profondeur, coup_bot, nbr_noeuds):
 	
 	if coup_bot:
 		partie.joueur_qui_joue = partie.joueur2
+		print("j2")
 		max_eval = -math.inf
 		
 		for carte in partie.liste_cartes_prenables():
 			
-			# print(f"boucle carte : {carte}\n")
-			
 			copie_partie: Plateau = partie.constructeur_par_copie()
-			ret = copie_partie.piocher(carte, True)
-			if ret == -1:
-				copie_partie.defausser(carte, True)
+			# TODO : vérifier ajouter carte dans joueur qui joue
+			ret = copie_partie.piocher(carte)
 			
-			# print("appel rec\n")
+			if ret == -1:
+				copie_partie.defausser(carte)
+			
+			else:
+				copie_partie.joueur_qui_joue.cartes.append(carte)
+				copie_partie.enlever_carte(carte)
+			
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, False, nbr_noeuds)
-			# print(f"nbr_noeuds : {nbr_noeuds}")
-			# print(f"evaluation : {evaluation}")
+			print(f"evaluation : {evaluation}, carte : {carte}")
 			
 			if evaluation > max_eval:
 				max_eval = evaluation
-				# print(f"\nchangement eval max : {max_eval}")
 				carte_a_prendre = carte
-				# print(f"carte_a_prendre : {carte_a_prendre}\n")
-		
-		# print(f"nbr_noeuds : {nbr_noeuds+1}")
+				
 		return max_eval, carte_a_prendre, nbr_noeuds+1
 	
 	else:
 		partie.joueur_qui_joue = partie.joueur1
+		print("j1")
 		min_eval = math.inf
 		
 		for carte in partie.liste_cartes_prenables():
 			
-			# print(f"boucle carte : {carte}\n")
-			
 			copie_partie: Plateau = partie.constructeur_par_copie()
-			ret = copie_partie.piocher(carte, True)
+			ret = copie_partie.piocher(carte)
 			
 			if ret == -1:
-				copie_partie.defausser(carte, True)
+				copie_partie.defausser(carte)
+				
+			else:
+				copie_partie.joueur_qui_joue.cartes.append(carte)
+				copie_partie.enlever_carte(carte)
 			
-			# print("appel rec\n")
 			evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, True, nbr_noeuds)
-			# print(f"nbr_noeuds : {nbr_noeuds}")
-			# print(f"evaluation : {evaluation}\n")
+			print(f"evaluation : {evaluation}, carte : {carte}")
 			
 			if evaluation < min_eval:
 				min_eval = evaluation
-				# print(f"changement eval min : {min_eval}")
 				carte_a_prendre = carte
-				# print(f"carte_a_prendre : {carte_a_prendre}\n")
-				
-		# print(f"nbr_noeuds : {nbr_noeuds + 1}")
+		
 		return min_eval, carte_a_prendre, nbr_noeuds+1
 		
