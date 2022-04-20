@@ -1,3 +1,4 @@
+# TODO : optimiser affichage pour avoir moins de lattence
 import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
@@ -5,7 +6,6 @@ from src.interface_graphique.src.SpriteCarte import SpriteCarte
 from src.interface_graphique.src.SpriteJetonsMilitaire import SpriteJetonsMilitaire
 from src.interface_graphique.src.SpriteJetonsProgres import SpriteJetonsProgres
 from src.interface_graphique.src.SpriteMerveille import SpriteMerveille
-from src.logger.Logger import LOGGER
 from src.utils.Carte import Carte
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
@@ -394,13 +394,21 @@ class Fenetre:
 					self.ecran.blit(image_monnaies, (coord_x, coord_y))
 		
 	def __deplacer_jeton_attaque(self):
-		# TODO : corriger décalage affichage
-		nbr_deplacement = 9 - self.plateau.position_jeton_conflit
-		
 		top_x, top_y, larg, long = self.rect_jeton_conflit
-		top_x = self.largeur/2 + nbr_deplacement * 10
+		
+		if self.plateau.position_jeton_conflit > 9:
+			top_x = (self.largeur / 2) + ((self.plateau.position_jeton_conflit - 9) * (self.rect_image_plateau.width * 0.045))
+		elif self.plateau.position_jeton_conflit < 9:
+			top_x = (self.largeur / 2) - ((9 - self.plateau.position_jeton_conflit) * (self.rect_image_plateau.width * 0.06))
 		
 		self.rect_jeton_conflit = (top_x, top_y, larg, long)
+		
+		for jeton_militaire in self.plateau.jetons_militaire:
+			for sprite_jeton_militaire in self.sprite_jetons_militaire:
+				if isinstance(sprite_jeton_militaire, SpriteJetonsMilitaire):
+					if jeton_militaire.est_utilise and jeton_militaire == sprite_jeton_militaire.jeton:
+						self.sprite_jetons_militaire.remove(sprite_jeton_militaire)
+					
 		
 	def __dessiner_jetons_militaire(self):
 		plat_long = self.rect_image_plateau.width
@@ -436,25 +444,21 @@ class Fenetre:
 				return 6
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
-		ret = self.plateau.piocher(sprite_carte.carte, False)
+		ret = self.plateau.piocher(sprite_carte.carte)
 		
 		if ret == -1:
 			self.__dessiner_defausser(sprite_carte)
-			return
+			
 		else:
 			self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
+			self.plateau.enlever_carte(sprite_carte.carte)
 			
 			if ret == 2:
 				self.choix_jeton = True
-		
-		for effet in sprite_carte.carte.effets:
 			
-			effet_split = effet.split(" ")
-			if effet_split[0] == "attaquer":
-				self.plateau.position_jeton_conflit += int(effet_split[1])
+			elif ret == 3:
 				self.__deplacer_jeton_attaque()
-		
-		else:
+				
 			type_carte = self.__position_type_carte(sprite_carte.carte)
 			
 			sprite_carte.angle = 90
@@ -485,10 +489,9 @@ class Fenetre:
 			
 			sprite_joueur_qui_joue[type_carte].add(sprite_carte)
 			sprite_carte.changer_coords(coord_x, coord_y)
-			self.plateau.enlever_carte(sprite_carte.carte, False)
 			
 	def __dessiner_defausser(self, carte_prenable: SpriteCarte):
-		self.plateau.defausser(carte_prenable.carte, False)
+		self.plateau.defausser(carte_prenable.carte)
 		self.sprite_cartes_defaussees.add(carte_prenable)
 		
 		coord_x = self.largeur / 2 - self.rect_image_plateau.width / 4
@@ -556,7 +559,6 @@ class Fenetre:
 									self.__dessiner_piocher(self.sprite_carte_j1_zoomer)
 									self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 									self.plateau.joueur_qui_joue = self.plateau.adversaire()
-									LOGGER.log(self.plateau.joueur_qui_joue.nom)
 									self.sprite_carte_j1_zoomer = None
 						
 						if self.rect_image_banque.collidepoint(clic_x, clic_y):
@@ -567,7 +569,6 @@ class Fenetre:
 								self.__dessiner_defausser(self.sprite_carte_j1_zoomer)
 								self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 								self.plateau.joueur_qui_joue = self.plateau.adversaire()
-								LOGGER.log(self.plateau.joueur_qui_joue.nom)
 								self.sprite_carte_j1_zoomer = None
 						
 						if self.sprite_carte_j1_zoomer is None \
@@ -629,8 +630,7 @@ class Fenetre:
 											
 											ret = self.plateau.construire_merveille(
 												merveille.merveille,
-												self.sprite_carte_j1_zoomer.carte,
-												False
+												self.sprite_carte_j1_zoomer.carte
 											)
 											
 											if ret != -1:
@@ -643,7 +643,6 @@ class Fenetre:
 				else:
 					nbr_noeuds = 0
 					eval, carte_a_prendre, nbr_noeuds = minimax(self.plateau, PROFONDEUR_BOT, True, nbr_noeuds)
-					LOGGER.log(f"eval : {eval}, carte_a_prendre : {carte_a_prendre}, nbr_noeuds : {nbr_noeuds}")
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						
@@ -670,10 +669,9 @@ class Fenetre:
 											self.sprite_carte_j2_zoomer = None
 											self.__dessiner_piocher(sprite_carte)
 											self.plateau.joueur_qui_joue = self.plateau.adversaire()
-											LOGGER.log(self.plateau.joueur_qui_joue.nom)
 			
 			# PARTIE Update
-			if self.plateau.changement_age(False) == 1:
+			if self.plateau.changement_age() == 1:
 				self.__dessiner_carte()
 			
 			for group_sprit in self.sprite_j1:
