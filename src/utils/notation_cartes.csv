@@ -1,66 +1,85 @@
-chantier,20
-exploitation,16
-bassin argileux,20
-cavite,16
-gisement,20
-mine,16
-verrerie,16
-presse,16
-tour de garde,12
-atelier,12
-apothicaire,12
-depot de pierre,15
-depot d argile,15
-depot de bois,15
-ecuries,13
-caserne,13
-palissade,13
-scriptorium,13
-officine,13
-theatre,6
-autel,6
-bains,7
-taverne,19
-scierie,16
-briqueterie,16
-carriere,16
-soufflerie,20
-sechoir,20
-muraille,14
-forum,5
-caravanserial,5
-douanes,6
-tribunal,5
-haras,14
-baraduements,14
-champ de tir,15
-place d'armes,15
-bibliotheque,13
-dispensaire,13
-ecole,12
-laboratoire,12
-statue,13
-temple,13
-aqueduc,12
-rostres,13
-braserie,20
-arsenal,17
-pretoire,17
-academie,12
-etude,12
-chambre de commerce,15
-port,16
-armurerie,16
-palace,15
-hotel de ville,14
-obelisque,13
-fortifications,15
-atelier de siege,15
-cirque,15
-universite,12
-observatoire,12
-jardins,14
-pantheon,14
-senat,13
-phare,11
-arene,11
+chantier,20,,,,
+exploitation,16,,,,
+bassin argileux,20,,,,
+cavite,16,,,,
+gisement,20,,,,
+mine,16,,,,
+verrerie,16,,,,
+presse,16,,,,
+tour de garde,12,,,,
+atelier,12,,,,
+apothicaire,12,,,,
+depot de pierre,15,,,,
+depot d argile,15,,,,
+depot de bois,15,,,,
+ecuries,13,,,,
+caserne,13,,,,
+palissade,13,,,,
+scriptorium,13,,,,
+officine,13,,,,
+theatre,6,,,,
+autel,6,,,,
+bains,7,,,,
+taverne,19,,,,
+scierie,16,, ,,
+briqueterie,16,,,, 
+carriere,16,,,,
+soufflerie,20,,,,
+sechoir,20,,,,
+muraille,14,,,,
+forum,5,,,,
+caravanserail,5,,,,
+douanes,6,,,,
+tribunal,5,,,,
+haras,14,,,,
+baraduements,14,,,,
+champ de tir,15,,,,
+place d'armes,15,,,,
+bibliotheque,13,,,,
+dispensaire,13,,,,
+ecole,12,,,,
+laboratoire,12,,,,
+statue,13,,,,
+temple,13,,,,
+aqueduc,12,,,,
+rostres,13,,,,
+brasserie,20,,,,
+arsenal,17,,,,
+pretoire,17,,,,
+academie,12,,,,
+etude,12,,,,
+chambre de commerce,15,,,,
+port,16,,,,
+armurerie,16,,,,
+palace,15,,,,
+hotel de ville,14,,,,
+obelisque,13,,,,
+fortifications,15,,,,
+atelier de siege,15,,,,
+cirque,15,,,,
+universite,12,,,,
+observatoire,12,,,,
+jardins,14,,,,
+pantheon,14,,,,
+senat,13,,,,
+phare,11,,,,
+arene,11,,,,
+guilde des commerçants,14,,,,
+guilde des armateurs,14,,,,
+guilde des bâtisseurs,14,,,,
+guilde des magistrats,14,,,,
+guilde des scientifiques,14,,,,
+guilde des usuriers,14,,,,
+guilde des tacticiens,14,,,,
+Le Circus Maximus,10,,,,
+Le Colosse,10,,,,
+Le Grand Phare,15,,,,
+Les Jardins Suspendus ,20,,,,
+La Grande Bibliothèque,5,,,,
+Le Mausolée ,15,,,,
+Le Pirée,15,,,,
+Les Pyramides ,10,,,,
+Le Sphinx,5,,,,
+La Statue de Zeus,15,,,,
+Le Temple d'Arthémis,20,,,,
+La Via Appia,20,,,,
