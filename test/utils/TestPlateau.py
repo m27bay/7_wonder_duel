@@ -253,16 +253,6 @@ class TestOutilsPlateau(unittest.TestCase):
 		)
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.joueur_gagnant, -1)
-	
-	def test_piocher_gisement(self):
-		self.plateau.joueur1.cartes.append(
-			Carte("depot de pierre", ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
-		)
-		self.plateau.joueur_qui_joue = self.plateau.joueur1
-		self.plateau.joueur_qui_joue.monnaie = 0
-		carte = Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1)
-		self.plateau.piocher(carte)
-		self.assertTrue(True)
 		
 		
 class TestAcheterRessources(unittest.TestCase):

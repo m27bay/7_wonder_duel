@@ -748,9 +748,10 @@ class Plateau:
 				# print("fonction \"reduction_couts_construction_carte\" à faire")
 			
 			# verification ressources nom_joueur
-			# print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
+			print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
+			print(self)
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
-			# print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
+			print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
 			
 			# le nom_joueur possede toutes les ressouces
 			if len(liste_ressource_necessaire) == 0:

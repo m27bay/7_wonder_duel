@@ -125,6 +125,7 @@ class Joueur:
 			self.monnaie -= monnaie
 			return True
 	
+	# TODO : bug
 	def couts_manquants(self, carte: Carte):
 		"""
 		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
@@ -133,6 +134,9 @@ class Joueur:
 		:param carte: carte a construire.
 		:return: une liste avec les ressources_manquantes manquantes.
 		"""
+		
+		if carte.couts is None or len(carte.couts) == 0:
+			return []
 		
 		# Cout ou Effet
 		# "monnaie prix"
@@ -154,7 +158,10 @@ class Joueur:
 				
 				else:
 					# ce n'est pas un cout manquant
-					couts_manquants_carte.remove(cout_manquant)
+					try:
+						couts_manquants_carte.remove(cout_manquant)
+					except ValueError:
+						exit(-2)
 			
 			# cout ressource
 			else:
@@ -181,9 +188,30 @@ class Joueur:
 										couts_manquants_carte.remove(cout_manquant)
 									except ValueError:
 										# TODO : parfois couts_manquants_carte est vide, pourquoi
-										print(carte, mon_str_liste(self.cartes))
+										print(f"couts_manquants({carte.nom})\n{mon_str_liste(self.cartes)}")
 										print(f"Erreur : couts_manquants()\n{couts_manquants_carte}.remove({cout_manquant})")
 										exit(-2)
+						
+						elif effet_split[0] == "ressource_au_choix":
+							
+							for i in range(len(effet_split) - 2):
+								
+								if cout_manquant_split[1] == effet_split[i]:
+									
+									if int(cout_manquant_split[2]) > 1:
+										
+										quantite_manquante = str(int(cout_manquant_split[2]) - 1)
+										ressource_manquante = "ressource " + effet_split[
+											i] + " " + quantite_manquante
+										couts_manquants_carte[
+											couts_manquants_carte.index(cout_manquant)] = ressource_manquante
+									
+									else:
+										
+										try:
+											couts_manquants_carte.remove(cout_manquant)
+										except ValueError:
+											exit(-2)
 		
 		return couts_manquants_carte
 	
