@@ -1,18 +1,25 @@
 """
 Logger utilisé dans le projet
 """
-
 import logging
 
-mode = "run"
-# mode = "test"
+class MonLogger:
+	def __init__(self, chemin_fichier, nom):
+		self.chemin_fichier = chemin_fichier
+		self.nom = nom
+		logging.basicConfig(filename=self.chemin_fichier + self.nom, format='%(asctime)s %(message)s', filemode='w')
+		self.logger = logging.getLogger(self.nom)
+		self.logger.setLevel(logging.DEBUG)
+		
+	def log(self, log: str):
+		logger = logging.getLogger(self.nom)
+		logger.debug(log)
+	
 
-chemin_logger = ""
-if mode == "run":
-	chemin_logger = "src/logger/logger.log"
-elif mode == "test":
-	chemin_logger = "src/logger/logger_test.log"
+# LOGGER RUN
+# LOGGER = MonLogger("src/logger/", "logger.log")
+# LOGGER_MINIMAX = MonLogger("src/logger/", "logger_minimax.log")
 
-logging.basicConfig(filename=chemin_logger, format='%(asctime)s %(message)s', filemode='w')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+# LOGGER TEST
+# LOGGER = MonLogger("../../src/logger/", "logger.log")
+# LOGGER_MINIMAX = MonLogger("../../src/logger/", "logger_minimax.log")

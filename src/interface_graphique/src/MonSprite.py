@@ -33,14 +33,14 @@ class MonSprite(pygame.sprite.Sprite):
 	
 	def modifier_taille_image(self):
 		larg, haut = self.image.get_size()
-		ration_image = haut / larg
+		ratio_image = haut / larg
 		
 		if self.largeur_zoom == 0:
 			larg *= int(self.ration_longeur_fenetre)
 		else:
 			larg *= int(self.largeur_zoom)
 		
-		haut = ration_image * larg
+		haut = ratio_image * larg
 		self.image = pygame.transform.scale(self.image, (larg, haut))
 	
 	def deplacer_image(self):
