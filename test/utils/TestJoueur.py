@@ -58,22 +58,25 @@ class TestJoueur(unittest.TestCase):
 	
 	def test_aucune_ressources_manquantes(self):
 		self.joueur.cartes.append(Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1))
+		self.joueur.ressources["bois"] = 1
 		carte = Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1)
 		self.assertEqual([], self.joueur.couts_manquants(carte))
 		
 	def test_une_ressources_manquantes(self):
 		carte = Carte("atelier",
-			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papyrus 1"],
 			None, "vert", age=1)
-		self.assertEqual(["ressource papurys 1"], self.joueur.couts_manquants(carte))
+		self.assertEqual(["ressource papyrus 1"], self.joueur.couts_manquants(carte))
 		
 	def test_une_quantite_ressources_manquantes(self):
 		self.joueur.cartes.append(Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1))
+		self.joueur.ressources["pierre"] = 1
 		carte = Carte("muraille", ["attaquer 2"], ["ressource pierre 2"], None, "rouge", age=2)
 		self.assertEqual(["ressource pierre 1"], self.joueur.couts_manquants(carte))
 		
 	def test_une_quantite_et_une_autre_ressources_manquantes(self):
 		self.joueur.cartes.append(Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1))
+		self.joueur.ressources["bois"] = 1
 		carte = Carte("tribunal", ["point_victoire 5"], ["ressource bois 2", "ressource verre 1"], None,
 			"bleu", age=2)
 		self.assertEqual(["ressource bois 1", "ressource verre 1"], self.joueur.couts_manquants(carte))
