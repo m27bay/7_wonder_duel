@@ -79,7 +79,7 @@ class Plateau:
 				Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1),
 				Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1),
 				Carte("atelier",
-					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papyrus 1"],
 					None, "vert", age=1),
 				Carte("apothicaire",
 					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"], ["ressource verre 1"],
@@ -748,10 +748,10 @@ class Plateau:
 				# print("fonction \"reduction_couts_construction_carte\" à faire")
 			
 			# verification ressources nom_joueur
-			print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
-			print(self)
+			# print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
+			# print(self)
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
-			print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
+			# print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
 			
 			# le nom_joueur possede toutes les ressouces
 			if len(liste_ressource_necessaire) == 0:
