@@ -36,9 +36,9 @@ class MonSprite(pygame.sprite.Sprite):
 		ratio_image = haut / larg
 		
 		if self.largeur_zoom == 0:
-			larg *= int(self.ration_longeur_fenetre)
+			larg *= self.ration_longeur_fenetre
 		else:
-			larg *= int(self.largeur_zoom)
+			larg *= self.largeur_zoom
 		
 		haut = ratio_image * larg
 		self.image = pygame.transform.scale(self.image, (larg, haut))
