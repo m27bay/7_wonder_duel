@@ -398,7 +398,7 @@ class Fenetre:
 		top_x, top_y, larg, long = self.rect_jeton_conflit
 		
 		nbr_deplacement = abs(self.plateau.position_jeton_conflit - 9)
-		decalage = 49
+		decalage = 37
 		
 		top_x = self.largeur / 2
 		top_x -= 12
@@ -406,7 +406,6 @@ class Fenetre:
 		if self.plateau.position_jeton_conflit > 9:
 			top_x += nbr_deplacement * decalage
 		elif self.plateau.position_jeton_conflit < 9:
-			print("test")
 			top_x -= nbr_deplacement * decalage
 		
 		self.rect_jeton_conflit = (top_x, top_y, larg, long)
@@ -717,6 +716,7 @@ class Fenetre:
 			self.merveille_j2.draw(self.ecran)
 			
 			pygame.draw.ellipse(self.ecran, (255, 0, 0), self.rect_jeton_conflit, 50)
+			self.__deplacer_jeton_attaque()
 			self.sprite_jetons_militaire.draw(self.ecran)
 			
 			if self.sprite_carte_j1_zoomer is not None:
@@ -747,10 +747,9 @@ class Fenetre:
 				self.merveille_j2.draw(self.ecran)
 				self.sprite_cartes_defaussees.draw(self.ecran)
 				
-			self.__deplacer_jeton_attaque()
-				
 			# after drawing everything, flip this display
 			pygame.display.flip()
 		
+		print(self.plateau)
 		pygame.quit()
 		
