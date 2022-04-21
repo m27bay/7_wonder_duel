@@ -125,8 +125,88 @@ class Joueur:
 			self.monnaie -= monnaie
 			return True
 	
-	# TODO : bug
 	def couts_manquants(self, carte: Carte):
+		if carte.couts is None or len(carte.couts) == 0:
+			return []
+		
+		else:
+			liste_couts_manquants = []
+			
+			for cout in carte.couts:
+				cout_split = cout.split(" ")
+				cout_type = cout_split[0]
+				
+				if cout_type == "ressource":
+					cout_type_ressource = cout_split[1]
+					cout_qte_ressource = int(cout_split[2])
+					qte_produite = self.ressources[cout_type_ressource]
+					
+					if qte_produite < cout_qte_ressource:
+						difference_qte = cout_qte_ressource - qte_produite
+						ressource_manquante = f"ressource {cout_type_ressource} {difference_qte}"
+						liste_couts_manquants.append(ressource_manquante)
+				
+				elif cout_type == "monnaie":
+					qte_monnaie = int(cout_split[1])
+					
+					if self.monnaie < qte_monnaie:
+						difference_qte = qte_monnaie - self.monnaie
+						ressource_manquante = f"monnaie {difference_qte}"
+						liste_couts_manquants.append(ressource_manquante)
+						
+			if len(liste_couts_manquants) == 0:
+				return []
+			
+			if len(liste_couts_manquants) == 1:
+				cout_manquant_split = liste_couts_manquants[0].split(" ")
+				cout_manquant_type = cout_manquant_split[0]
+				
+				if cout_manquant_type == "monnaie":
+					return liste_couts_manquants
+				
+			return liste_couts_manquants
+		
+	# TODO : code a refaire avec choix via interface (JC)
+	# TODO : il faut de même pour les meilleurs
+	def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list, liste_choix: list):
+		copy_liste_couts_manquants = liste_couts_manquants.copy()
+		for ma_carte in self.cartes:
+			
+			for effet in ma_carte:
+				effet_split = effet.split(" ")
+				effet_type = effet_split[0]
+
+				if effet_type == "ressource_au_choix":
+					effet_type_ressource_1 = effet_split[1]
+					effet_type_ressource_2 = effet_split[2]
+					effet_type_ressource_3 = None
+
+					if len(effet_split) == 4:
+						effet_type_ressource_3 = effet_split[3]
+
+					for cout_manquant in copy_liste_couts_manquants:
+						cout_manquant_split = cout_manquant.split(" ")
+						cout_manquant_type = cout_manquant_split[0]
+
+						if cout_manquant_type == "ressource":
+							cout_manquant_ressource = cout_manquant_split[1]
+							cout_manquant_qte = int(cout_manquant_split[2])
+							
+							if cout_manquant_ressource == effet_type_ressource_1 \
+								or cout_manquant_ressource == effet_type_ressource_2 \
+								or cout_manquant_ressource == effet_type_ressource_3:
+								
+								if cout_manquant_qte == 1:
+									liste_couts_manquants.remove(cout_manquant)
+								else:
+									difference_qte = cout_manquant_qte - 1
+									nouv_cout_manquant = f"ressource {cout_manquant_ressource} {difference_qte}"
+									liste_couts_manquants[liste_couts_manquants.index(cout_manquant)] = nouv_cout_manquant
+		
+		return liste_couts_manquants
+								
+	# TODO : bug
+	def couts_manquants2(self, carte: Carte):
 		"""
 		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
 		que le nom_joueur ne possede pas pour construire une carte.
@@ -165,9 +245,9 @@ class Joueur:
 			
 			# cout ressource
 			else:
-				for carte in self.cartes:
+				for ma_carte in self.cartes:
 					
-					for effet in carte.effets:
+					for effet in ma_carte.effets:
 						
 						# decoupage effets
 						effet_split = effet.split(" ")

@@ -750,6 +750,5 @@ class Fenetre:
 			# after drawing everything, flip this display
 			pygame.display.flip()
 		
-		print(self.plateau)
 		pygame.quit()
 		
