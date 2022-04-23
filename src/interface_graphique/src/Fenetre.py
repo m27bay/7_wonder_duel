@@ -662,7 +662,6 @@ class Fenetre:
 											
 											ret = self.plateau.construire_merveille(
 												merveille.merveille,
-												self.sprite_carte_j1_zoomer.carte
 											)
 											
 											if ret != -1:
@@ -674,7 +673,7 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					_, carte_a_prendre, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					_, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 						-math.inf, math.inf, True, nbr_noeuds)
 					
 					for sprite_carte in self.sprite_cartes_plateau:
@@ -778,6 +777,23 @@ class Fenetre:
 				
 			# after drawing everything, flip this display
 			pygame.display.flip()
-		
+
+
+		format_texte = pygame.font.SysFont("arial", 50)
+		tempo = self.plateau.joueur_gagnant
+		if tempo == "j1":
+			texte = format_texte.render("VICTOIRE JOUEUR 1 ", True, (1, 159,255))
+		elif tempo == "j2":
+			texte = format_texte.render("VICTOIRE JOUEUR 2 ", True, (1, 159,255))
+		self.ecran.blit(texte, [100, 40])
+
+		pygame.display.flip()
+		continuer = True
+
+		while continuer:
+			for event in pygame.event.get():
+				if event.type == pygame.KEYDOWN:
+					continuer = False
+
 		pygame.quit()
 		

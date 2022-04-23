@@ -360,11 +360,12 @@ def affichage_enssemble():
             quel_menu, niveau_difficulter = affichage_menu_difficulter()
         elif quel_menu == JOUER_JVO :
             jouer_vs_boot()
+            break
         else:
             break
 
 
 '#affichage_mode_jouer()'
 if __name__ == '__main__':
-    #affichage_enssemble()
-    choix_ressources2()
+    affichage_enssemble()
+
