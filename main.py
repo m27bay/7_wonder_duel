@@ -6,6 +6,10 @@ if __name__ == '__main__':
 	plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
 	plateau.preparation_plateau()
 	
-	fenetre = Fenetre("7 wonder Duel", plateau)
+	
+	# facile = 5
+	# normal = 7
+	# difficile = 9
+	fenetre = Fenetre("7 wonder Duel", plateau, 7)
 	fenetre.boucle_principale()
 	
