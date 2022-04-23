@@ -1,4 +1,6 @@
 # TODO : optimiser affichage pour avoir moins de lattence
+import math
+
 import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES
@@ -10,7 +12,7 @@ from src.utils.Carte import Carte
 from src.utils.CarteFille import CarteFille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
-from src.utils.Stategie import minimax
+from src.utils.Stategie import alpha_beta, alpha_beta_avec_merveille
 
 RATIO_IMAGE = 0.15
 RATIO_MERVEILLE = 0.10
@@ -27,14 +29,13 @@ RATIO_ZOOM_CARTE = 0.65
 RATIO_ZOOM_MERVEILLE = 0.45
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
 
-PROFONDEUR_BOT = 3
-
 
 class Fenetre:
-	def __init__(self, titre: str, plateau: Plateau):
+	def __init__(self, titre: str, plateau: Plateau, difficulte_profondeur):
 		pygame.init()
 		
 		self.plateau = plateau
+		self.difficulte_profondeur = difficulte_profondeur
 		
 		self.ecran = pygame.display.set_mode()
 		self.largeur, self.hauteur = self.ecran.get_size()
@@ -119,6 +120,8 @@ class Fenetre:
 		self.__dessiner_merveille()
 		
 		self.jetons_progres_plateau = pygame.sprite.Group()
+		self.jetons_progres_j1 = pygame.sprite.Group()
+		self.jetons_progres_j2 = pygame.sprite.Group()
 		self.__dessiner_jetons_scientifiques()
 		self.__dessiner_carte()
 		
@@ -394,7 +397,6 @@ class Fenetre:
 					self.ecran.blit(image_monnaies, (coord_x, coord_y))
 		
 	def __deplacer_jeton_attaque(self):
-		# TODO : bug affiche si j1 attaque puis j2 attaque
 		top_x, top_y, larg, long = self.rect_jeton_conflit
 		
 		nbr_deplacement = abs(self.plateau.position_jeton_conflit - 9)
@@ -415,7 +417,31 @@ class Fenetre:
 				if isinstance(sprite_jeton_militaire, SpriteJetonsMilitaire):
 					if jeton_militaire.est_utilise and jeton_militaire == sprite_jeton_militaire.jeton:
 						self.sprite_jetons_militaire.remove(sprite_jeton_militaire)
-					
+						
+	def __deplacer_jeton_scientifique(self, sprite_jeton: SpriteJetonsProgres):
+		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+			coord_x, coord_y = self.rect_image_plateau.bottomleft
+			coord_x /= 8
+			coord_y /= 8
+			
+			for _ in self.jetons_progres_j1:
+				coord_x += self.default_largeur_sprite
+				
+			sprite_jeton.changer_coords(coord_x, coord_y)
+			self.jetons_progres_j1.add(sprite_jeton)
+			self.jetons_progres_plateau.remove(sprite_jeton)
+			
+		else:
+			coord_x, coord_y = self.rect_image_plateau.bottomright
+			coord_x += 10
+			coord_y /= 8
+			
+			for _ in self.jetons_progres_j2:
+				coord_x += self.default_largeur_sprite
+			
+			sprite_jeton.changer_coords(coord_x, coord_y)
+			self.jetons_progres_j2.add(sprite_jeton)
+			self.jetons_progres_plateau.remove(sprite_jeton)
 		
 	def __dessiner_jetons_militaire(self):
 		plat_long = self.rect_image_plateau.width
@@ -430,7 +456,6 @@ class Fenetre:
 		top_x += plat_long * 0.13
 		self.sprite_jetons_militaire.add(
 			SpriteJetonsMilitaire(self.plateau.jetons_militaire[5], top_x, top_y, RATIO_JETONS_MILITAIRE5))
-		
 		
 		top_x, _ = self.rect_image_plateau.topleft
 		top_x += plat_long * 0.25
@@ -505,6 +530,9 @@ class Fenetre:
 	def boucle_principale(self):
 		en_cours = True
 		while en_cours:
+			if self.plateau.joueur_gagnant is not None:
+				en_cours = False
+			
 			# PARTIE Process input (events)
 			for event in pygame.event.get():
 				
@@ -548,12 +576,9 @@ class Fenetre:
 													self.sprite_carte_j1_zoomer = None
 						
 						bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-						bottomright_x, bottomright_y = self.rect_image_plateau.bottomright
 						
 						if (clic_x < bottomleft_x and clic_y > bottomleft_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur1) \
-								or (clic_x > bottomright_x and clic_y > bottomright_y
-									and self.plateau.joueur_qui_joue == self.plateau.joueur2):
+							and self.plateau.joueur_qui_joue == self.plateau.joueur1):
 							
 							if self.sprite_carte_j1_zoomer is not None:
 								
@@ -595,10 +620,13 @@ class Fenetre:
 										else:
 											if jeton == self.sprite_jeton_j1_zoomer:
 												
-												jeton.dezoomer()
-												# TODO : déplacer jeton dans la partie joueur
-												self.choix_jeton = False
-												self.sprite_jeton_j1_zoomer = None
+												if (clic_x < bottomleft_x and clic_y > bottomleft_y and
+													self.plateau.joueur_qui_joue == self.plateau.joueur1):
+													
+													jeton.dezoomer()
+													self.__deplacer_jeton_scientifique(jeton)
+													self.choix_jeton = False
+													self.sprite_jeton_j1_zoomer = None
 							
 						if self.sprite_jeton_j1_zoomer is None:
 							
@@ -646,7 +674,8 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					eval, carte_a_prendre, nbr_noeuds = minimax(self.plateau, PROFONDEUR_BOT, True, nbr_noeuds)
+					_, carte_a_prendre, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+						-math.inf, math.inf, True, nbr_noeuds)
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						
@@ -673,7 +702,7 @@ class Fenetre:
 											self.sprite_carte_j2_zoomer = None
 											self.__dessiner_piocher(sprite_carte)
 											self.plateau.joueur_qui_joue = self.plateau.adversaire()
-			
+											
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
 				self.__dessiner_carte()
