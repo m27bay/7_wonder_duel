@@ -779,11 +779,12 @@ class Fenetre:
 			pygame.display.flip()
 
 
-		format_texte = pygame.font.SysFont("arial", 50)
-		tempo = self.plateau.joueur_gagnant
-		if tempo == "j1":
+		format_texte = pygame.font.SysFont("arial", 70)
+		tempo = self.plateau.joueur_gagnant.nom
+		texte = ""
+		if tempo == "joueur":
 			texte = format_texte.render("VICTOIRE JOUEUR 1 ", True, (1, 159,255))
-		elif tempo == "j2":
+		elif tempo == "ordi":
 			texte = format_texte.render("VICTOIRE JOUEUR 2 ", True, (1, 159,255))
 		self.ecran.blit(texte, [100, 40])
 
