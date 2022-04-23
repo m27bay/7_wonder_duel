@@ -109,13 +109,13 @@ class Plateau:
 					None, "jaune", age=2),
 				Carte("caravanserail", ["ressource_au_choix bois argile pierre"],
 					["monnaie 2", "ressource verre 1", "ressource papyrus 1"], None, "jaune", age=2),
-				Carte("douane", ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
+				Carte("douanes", ["reduc_ressource papyrus 1", "reduc_ressource verre 1"], ["monnaie 4"],
 					None, "jaune", age=2),
 				Carte("tribunal", ["point_victoire 5"], ["ressource bois 2", "ressource verre 1"], None,
 					"bleu", age=2),
 				Carte("haras", ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2),
 				Carte("baraquements", ["attaquer 1"], ["monnaie 3"], "caserne", "rouge", age=2),
-				Carte("champs de tir", ["attaquer 2"],
+				Carte("champ de tir", ["attaquer 2"],
 					["ressource pierre 1", "ressource bois 1", "ressource papyrus 1"],
 					None, "rouge", age=2),
 				Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
@@ -163,7 +163,7 @@ class Plateau:
 				Carte("atelier de siege", ["attaquer 2"], ["ressource bois 3", "ressource verre 1"],
 					"champ de tir", "rouge", age=3),
 				Carte("cirque", ["attaquer 2"], ["ressource argile 2", "ressource pierre 2"],
-					"place d arme", "rouge", age=3),
+					"place d armes", "rouge", age=3),
 				Carte("universite", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
 					["ressource argile 1", "ressource verre 1", "ressource papyrus 1"], "ecole", "vert", age=3),
 				Carte("observatoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[0]}", "point_victoire 2"],
@@ -751,6 +751,7 @@ class Plateau:
 			# print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
 			# print(self)
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
+			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			# print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
 			
 			# le nom_joueur possede toutes les ressouces
@@ -806,7 +807,7 @@ class Plateau:
 		self.cartes_defaussees.append(carte_prenable)
 		self.enlever_carte(carte_prenable)
 		
-	def construire_merveille(self, merveille_a_construire: CarteFille, carte_a_sacrifier: Carte):
+	def construire_merveille(self, merveille_a_construire: CarteFille):
 		if merveille_a_construire.est_construite:
 			return -1
 		
@@ -836,8 +837,8 @@ class Plateau:
 				if cout_split[0] == "monnaie":
 					self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
 			
+		merveille_a_construire.est_construite = True
 		self.appliquer_effets_merveille(merveille_a_construire)
-		self.enlever_carte(carte_a_sacrifier)
 			
 	def numero_jeton_militaire(self):
 		"""
@@ -873,7 +874,8 @@ class Plateau:
 			
 			# si le pion se situe au bout du plateau militaire, il y a une victoire militaire
 			if self.position_jeton_conflit in [0, 18]:
-				return self.fin_de_partie()
+				self.fin_de_partie()
+				return -1
 			
 			else:
 				numero_jeton = self.numero_jeton_militaire()
@@ -885,6 +887,7 @@ class Plateau:
 						self.adversaire().monnaie -= jeton.pieces
 						if self.adversaire().monnaie < 0:
 							self.fin_de_partie()
+							return -1
 						self.monnaie_banque += jeton.pieces
 						self.joueur_qui_joue.points_victoire += jeton.points_victoire
 						
