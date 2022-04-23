@@ -1,9 +1,11 @@
+import math
+import time
 import unittest
 
 from src.utils.Carte import Carte
 from src.utils.Joueur import Joueur
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
-from src.utils.Stategie import fonction_evaluation
+from src.utils.Stategie import fonction_evaluation, alpha_beta, alpha_beta_avec_merveille
 from src.utils.Stategie import minimax
 
 
@@ -79,7 +81,7 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.plateau.cartes_plateau[2][8] = Carte("depot d argile", ["reduc_ressource argile 1"], ["monnaie 3"], None,
 			"jaune", age=1)
 
-		self.plateau.cartes_plateau[1][3] = Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1)
+		self.plateau.cartes_plateau[1][3] = Carte("ecuries", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1)
 		self.plateau.cartes_plateau[1][5] = Carte("scriptorium", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"],
 			["monnaie 2"], None, "vert", age=1)
 		self.plateau.cartes_plateau[1][7] = Carte("autel", ["point_victoire 3"], None, None, "bleu", age=1)
@@ -107,21 +109,55 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.assertEqual("bassin argileux", carte_a_prendre.nom)
 		self.assertEqual(37, nbr_noeuds)
 		
-	def test_simulation_partie(self):
-		self.plateau.joueur_qui_joue = self.plateau.joueur1
-		self.plateau.piocher(self.plateau.cartes_plateau[4][8])
-		self.plateau.joueur_qui_joue.cartes.append(self.plateau.cartes_plateau[4][8])
-		self.plateau.enlever_carte(self.plateau.cartes_plateau[4][8])
-		
+	def test_alha_beta_profondeur_2(self):
 		self.plateau.joueur_qui_joue = self.plateau.joueur2
 		nbr_noeuds = 0
-		eval_minimax, carte_a_prendre, nbr_noeuds = minimax(self.plateau, 2, True, nbr_noeuds)
+		eval_minimax, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, 2, -math.inf, math.inf, True, nbr_noeuds)
+
+		self.assertEqual(20 - 16, eval_minimax)
+		self.assertEqual("bassin argileux", carte_a_prendre.nom)
+		self.assertEqual(37, nbr_noeuds)
 		
-		self.assertEqual(16 - 20 - 16, eval_minimax)
-		self.assertTrue("exploitation" == carte_a_prendre.nom, "depot de bois" == carte_a_prendre.nom)
-		self.assertEqual(25, nbr_noeuds)
-		self.plateau.piocher()
-	
+	# def test_elagage(self):
+	# 	self.plateau.joueur_qui_joue = self.plateau.joueur2
+	# 	profondeur = 7
+	#
+	# 	nbr_noeuds_minimax = 0
+	# 	deb_minimax = time.time()
+	# 	_, _, nbr_noeuds_minimax = minimax(self.plateau, profondeur, True, nbr_noeuds_minimax)
+	# 	fin_minimax = time.time()
+	#
+	# 	nbr_noeuds_alpha_beta = 0
+	# 	deb_alpha_beta = time.time()
+	# 	_, _, nbr_noeuds_alpha_beta = alpha_beta(self.plateau, profondeur, -math.inf, math.inf, True, nbr_noeuds_alpha_beta)
+	# 	fin_alpha_beta = time.time()
+	#
+	# 	print(f"nbr_noeuds_minimax : {nbr_noeuds_minimax}, nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}")
+	# 	print(f"difference : {nbr_noeuds_minimax - nbr_noeuds_alpha_beta}")
+	# 	print(f"{((nbr_noeuds_minimax - nbr_noeuds_alpha_beta) / nbr_noeuds_minimax) * 100} % reduction")
+	# 	print(f"temps execution minimax : {fin_minimax - deb_minimax}")
+	# 	print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
+	# 	self.assertNotEqual(nbr_noeuds_minimax, nbr_noeuds_alpha_beta)
+		
+	def test_elagage_merveille(self):
+		self.plateau.joueur_qui_joue = self.plateau.joueur2
+		profondeur = 7
+
+		nbr_noeuds_alpha_beta = 0
+		deb_alpha_beta = time.time()
+		_, _, nbr_noeuds_alpha_beta = alpha_beta(self.plateau, profondeur, -math.inf, math.inf, True, nbr_noeuds_alpha_beta)
+		fin_alpha_beta = time.time()
+
+		nbr_noeuds_alpha_beta_merveille = 0
+		deb_alpha_beta_merveille = time.time()
+		_, _, nbr_noeuds_alpha_beta_merveille = alpha_beta_avec_merveille(self.plateau, profondeur,
+			-math.inf, math.inf, True, nbr_noeuds_alpha_beta_merveille)
+		fin_alpha_beta_merveille = time.time()
+
+		print(f"nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}, nbr_noeuds_alpha_beta_merveille : {nbr_noeuds_alpha_beta_merveille}")
+		print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
+		print(f"temps execution alpha_beta_merveille : {fin_alpha_beta_merveille - deb_alpha_beta_merveille}")
+		self.assertTrue(True)
 	
 class TestFonctionEvaluationDurantPartie2(unittest.TestCase):
 	def setUp(self) -> None:
