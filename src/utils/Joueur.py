@@ -168,11 +168,12 @@ class Joueur:
 		
 	# TODO : code a refaire avec choix via interface (JC)
 	# TODO : il faut de même pour les meilleurs
-	def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list, liste_choix: list):
+	# def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list, liste_choix: list):
+	def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list):
 		copy_liste_couts_manquants = liste_couts_manquants.copy()
 		for ma_carte in self.cartes:
 			
-			for effet in ma_carte:
+			for effet in ma_carte.effets:
 				effet_split = effet.split(" ")
 				effet_type = effet_split[0]
 
@@ -202,6 +203,8 @@ class Joueur:
 									difference_qte = cout_manquant_qte - 1
 									nouv_cout_manquant = f"ressource {cout_manquant_ressource} {difference_qte}"
 									liste_couts_manquants[liste_couts_manquants.index(cout_manquant)] = nouv_cout_manquant
+									
+								return liste_couts_manquants
 		
 		return liste_couts_manquants
 								
@@ -419,4 +422,12 @@ class Joueur:
 				pos += 1
 		
 		return repartition
-					
+	
+	def liste_merveilles_non_construite(self):
+		liste = []
+		for merveilles in self.merveilles:
+			if not merveilles.est_construite:
+				liste.append(merveilles)
+				
+		return liste
+	

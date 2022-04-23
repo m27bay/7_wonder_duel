@@ -80,6 +80,20 @@ class TestJoueur(unittest.TestCase):
 		carte = Carte("tribunal", ["point_victoire 5"], ["ressource bois 2", "ressource verre 1"], None,
 			"bleu", age=2)
 		self.assertEqual(["ressource bois 1", "ressource verre 1"], self.joueur.couts_manquants(carte))
+		
+	def test_cout_manquant_une_ressource_au_choix(self):
+		self.joueur.cartes.append(Carte("forum_custom", ["ressource_au_choix bois papyrus"],
+			["monnaie 3", "ressource argile 1"], None, "jaune", age=2))
+		carte = Carte("haras", ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2)
+		liste_couts_manquant = self.joueur.couts_manquants(carte)
+		self.assertEqual(["ressource argile 1"], self.joueur.cout_manquant_ressource_au_choix(liste_couts_manquant))
+	
+	def test_cout_manquant_deux_ressource_au_choix(self):
+		self.joueur.cartes.append(Carte("caravanserail", ["ressource_au_choix bois argile pierre"],
+			["monnaie 2", "ressource verre 1", "ressource papyrus 1"], None, "jaune", age=2))
+		carte = Carte("haras", ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2)
+		liste_couts_manquant = self.joueur.couts_manquants(carte)
+		self.assertEqual(["ressource bois 1"], self.joueur.cout_manquant_ressource_au_choix(liste_couts_manquant))
 	
 	def test_monnaies_manquantes(self):
 		self.joueur.monnaie = 4
