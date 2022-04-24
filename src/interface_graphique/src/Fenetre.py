@@ -9,6 +9,7 @@ from src.interface_graphique.src.SpriteJetonsMilitaire import SpriteJetonsMilita
 from src.interface_graphique.src.SpriteJetonsProgres import SpriteJetonsProgres
 from src.interface_graphique.src.SpriteMerveille import SpriteMerveille
 from src.utils.Carte import Carte
+from src.utils.CarteGuilde import CarteGuilde
 from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
@@ -471,7 +472,7 @@ class Fenetre:
 			SpriteJetonsMilitaire(self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5))
 	
 	def __position_type_carte(self, carte: Carte):
-		if not isinstance(carte, Merveille):
+		if not isinstance(carte, CarteGuilde):
 			liste_couleur = ["marron", "gris", "bleu", "vert", "jaune", "rouge"]
 			if carte.couleur in liste_couleur:
 				return liste_couleur.index(carte.couleur)
