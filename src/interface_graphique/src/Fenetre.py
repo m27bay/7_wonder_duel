@@ -660,12 +660,9 @@ class Fenetre:
 										if merveille.rect.collidepoint(clic_x, clic_y) \
 											and isinstance(merveille, SpriteMerveille):
 											
-											ret = self.plateau.construire_merveille(
-												merveille.merveille,
-											)
+											ret = self.plateau.construire_merveille(merveille.merveille)
 											
 											if ret != -1:
-												
 												self.sprite_carte_j1_zoomer.dezoomer()
 												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
 												self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
@@ -673,7 +670,7 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					_, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
+					_, carte_a_prendre, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
 						-math.inf, math.inf, True, nbr_noeuds)
 					
 					for sprite_carte in self.sprite_cartes_plateau:
@@ -777,24 +774,6 @@ class Fenetre:
 				
 			# after drawing everything, flip this display
 			pygame.display.flip()
-
-
-		format_texte = pygame.font.SysFont("arial", 70)
-		tempo = self.plateau.joueur_gagnant.nom
-		texte = ""
-		if tempo == "joueur":
-			texte = format_texte.render("VICTOIRE JOUEUR 1 ", True, (1, 159,255))
-		elif tempo == "ordi":
-			texte = format_texte.render("VICTOIRE JOUEUR 2 ", True, (1, 159,255))
-		self.ecran.blit(texte, [100, 40])
-
-		pygame.display.flip()
-		continuer = True
-
-		while continuer:
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN:
-					continuer = False
-
+		
 		pygame.quit()
 		
