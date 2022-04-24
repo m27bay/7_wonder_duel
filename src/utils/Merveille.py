@@ -14,7 +14,8 @@ class Merveille(Carte):
 		"""
 		return f"nom : {self.nom}, " \
 			f"effets : {str(self.effets)}, " \
-			f"couts : {str(self.couts)}"
+			f"couts : {str(self.couts)}, " \
+			f"est_construite {self.est_construite}"
 	
 	def constructeur_par_copie(self):
 		merveille = Merveille(None, None, None)
