@@ -1,4 +1,4 @@
-\contentsline {section}{\numberline {1}Développement d'une méthode e recherche arborescence pour Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs: application au jeu 7 Wonder-Duel}{3}{section.1}%
+\contentsline {section}{\numberline {1}Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs: application au jeu 7 Wonder-Duel}{3}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Sujet}{3}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Description du travail attendu}{3}{subsection.1.2}%
 \contentsline {subsection}{\numberline {1.3}Description du jeu : 7 wonders-Duel}{3}{subsection.1.3}%
@@ -15,16 +15,16 @@
 \contentsline {subsection}{\numberline {2.5}Méthode alpha-bêta}{9}{subsection.2.5}%
 \contentsline {subsubsection}{\numberline {2.5.1}Méthode min-max}{9}{subsubsection.2.5.1}%
 \contentsline {subsubsection}{\numberline {2.5.2}Amélioration alpha-bêta}{10}{subsubsection.2.5.2}%
-\contentsline {subsubsection}{\numberline {2.5.3}Coupure Alpha}{10}{subsubsection.2.5.3}%
+\contentsline {subsubsection}{\numberline {2.5.3}Coupure Alpha}{11}{subsubsection.2.5.3}%
 \contentsline {subsubsection}{\numberline {2.5.4}Coupure Bêta}{11}{subsubsection.2.5.4}%
-\contentsline {section}{\numberline {3}Travail effectué}{11}{section.3}%
-\contentsline {subsection}{\numberline {3.1}La fonction d'évaluation}{11}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Implémentation}{11}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Interface}{11}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Résultat obtenue}{11}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Conclusion}{11}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Objectif(s) atteint/ non atteint}{11}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Suggestion d'amélioration(s)}{11}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Difficultée(s) rencontrée(s)}{11}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Annexe}{11}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Code}{11}{subsection.5.1}%
+\contentsline {section}{\numberline {3}Travail effectué}{12}{section.3}%
+\contentsline {subsection}{\numberline {3.1}La fonction d'évaluation}{12}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Implémentation}{12}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Interface}{12}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Résultat obtenue}{12}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Conclusion}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Objectif(s) atteint/ non atteint}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Suggestion d'amélioration(s)}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Difficultée(s) rencontrée(s)}{12}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Annexe}{12}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Code}{12}{subsection.5.1}%
