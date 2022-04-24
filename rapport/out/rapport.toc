@@ -9,7 +9,7 @@
 \contentsline {subsection}{\numberline {2.2}Catégories de jeux}{7}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Représentation d'un jeu}{8}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}forme extensive}{8}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}forme normale}{8}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.2}forme normale}{9}{subsubsection.2.3.2}%
 \contentsline {subsubsection}{\numberline {2.3.3}forme caractéristique}{9}{subsubsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.4}Recherche arborescente et intelligence artificielle}{9}{subsection.2.4}%
 \contentsline {subsection}{\numberline {2.5}Méthode alpha-bêta}{9}{subsection.2.5}%
@@ -17,8 +17,8 @@
 \contentsline {subsubsection}{\numberline {2.5.2}Amélioration alpha-bêta}{10}{subsubsection.2.5.2}%
 \contentsline {subsubsection}{\numberline {2.5.3}Coupure Alpha}{11}{subsubsection.2.5.3}%
 \contentsline {subsubsection}{\numberline {2.5.4}Coupure Bêta}{11}{subsubsection.2.5.4}%
-\contentsline {section}{\numberline {3}Travail effectué}{12}{section.3}%
-\contentsline {subsection}{\numberline {3.1}La fonction d'évaluation}{12}{subsection.3.1}%
+\contentsline {section}{\numberline {3}Travail effectué}{11}{section.3}%
+\contentsline {subsection}{\numberline {3.1}La fonction d'évaluation}{11}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Implémentation}{12}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Interface}{12}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Résultat obtenue}{12}{subsection.3.4}%

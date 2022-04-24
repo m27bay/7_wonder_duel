@@ -7,10 +7,10 @@
 \usepackage[left=20mm, right=20mm]{geometry}
 \usepackage{biblatex}
 \usepackage[T1]{fontenc}
-\addbibresource{Bibliographie.bib}
+\addbibresource{rapport.bib}
 
 \title{TER
-\\\includegraphics[width=5cm]{images/UVSQ-logo}\\
+\\\includegraphics[width=5cm]{images/uvsqLogo}\\}
 \author{Cambresy Florian \\ Chalaud Jean-Christophe \\ Le Denmat Mickael}
 \date{(date)MM YYYY}
 
@@ -21,8 +21,7 @@
 	\tableofcontents
 
 	\newpage
-	\section{Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs:
-	application au jeu 7 Wonder-Duel}
+	\section{Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs: application au jeu 7 Wonder-Duel}
 	\subsection{Sujet}
 	Il s’agira tout d’abord pour les étudiants de se familiariser avec les méthodes de recherche arborescente
 	appliquées aux jeux, en particulier la méthode alpha-bêta.
@@ -68,25 +67,26 @@
 
 	\subsubsection{Règles du jeu}
 	Le jeu se présente comme suit dans le livret des règles\cite{regle_7_wonder_duel}.
-	 \\
-	 \includegraphics[width=15cm]{images/PlateauDebut.png}
-	 \\
+	\\
+	\includegraphics[width=15cm]{images/plateauDebutPartie}
+	\includegraphics[width=15cm]{images/contenueDuJeu}
+	\\
 
 	Il est constitué de:
 	\begin{itemize}
-		\item 1 plateau de jeu. \textcolor{red}{IMAGE ?}
-		\item 66 cartes Âge. \textcolor{red}{IMAGE ?}
+		\item 1 plateau de jeu.
+		\item 66 cartes Âge.
 		\begin{itemize}
 			\item 23 cartes pour l'Âge I.
 			\item 23 cartes pour l'Âge II.
 			\item 20 cartes pour l'Âge III.
 		\end{itemize}
 		\item 7 cartes Guilde.
-		\item 12 cartes Merveille, avec un nom, un coût en ressource et un effet (un bonus). \textcolor{red}{IMAGE ?}
-		\item 4 jetons Militaire, donnant une certaine somme de monnaie. \textcolor{red}{IMAGE ?}
-		\item 10 jetons Progrès. \textcolor{red}{IMAGE ?}
-		\item 1 Pion Conflit, indiquant quel joueur a l'avantage militaire. \textcolor{red}{IMAGE ?}
-		\item 31 pièces de monnaie \textcolor{red}{IMAGE ?}
+		\item 12 cartes Merveille, avec un nom, un coût en ressource et un effet (un bonus).
+		\item 4 jetons Militaire, donnant une certaine somme de monnaie.
+		\item 10 jetons Progrès.
+		\item 1 Pion Conflit, indiquant quel joueur a l'avantage militaire.
+		\item 31 pièces de monnaie.
 		\begin{itemize}
 			\item 14 de valeur 1.
 			\item 10 de valeur 3.
@@ -171,7 +171,7 @@
 
 	\subsection{Catégories de jeux}
 	Afin de connaître quelle approche doit être utilisée pour étudier les stratégies qui existent au sein d'un jeu,
-	la théorie repartie les jeux en différentes catégories\cite{wiki_typo_theorie_jeux}.
+	la théorie repartie les jeux en différentes catégories\cite{wiki_theorie_jeux}.
 	\begin{enumerate}
 		\item Coopératifs ou non.
 		\item Somme nulle ou non.
@@ -198,8 +198,10 @@
 
 	\subsection{Représentation d'un jeu}
 	Maintenant que nous savons comment définir un jeu, nous allons étudier comment représenter ce dernier et les
-	interactions entre les joueurs. Il existe globalement trois représentations\cite{wiki_representation_theorie_jeux}
-	, la forme extensive et la forme normale, qui sont utilisées pour les jeux non coopératifs et
+	interactions entre les joueurs.
+
+	Il existe globalement trois représentations\cite{wiki_theorie_jeux},
+	la forme extensive et la forme normale, qui sont utilisées pour les jeux non coopératifs et
 	la forme caractéristique pour les jeux coopératifs.
 
 	\subsubsection{forme extensive}
@@ -286,7 +288,6 @@
 
 	\subsubsection{Coupure Alpha}
 	\includegraphics[width=12cm]{images/elagageAlpha.JPG}
-	\textcolor{red}{A FAIRE PROPRE}
 
 	Prenons l'exemple ci-dessus pour expliquer la coupure alpha, elle se place du point de vue du joueur.
 	Une fois que la valeur du noeud B à été initialisé avec le minimum de ces fils (D, F) cette valeur va nous
@@ -298,14 +299,30 @@
 	de C s'ils existent) comme sur l'image ci-dessous.
 
 	\includegraphics[width=12cm]{images/elagageAlphaSuite.JPG}
-	\textcolor{red}{A FAIRE PROPRE}
 
 	\subsubsection{Coupure Bêta}
 	La coupure bêta est similaire mais se base du point de vue de l'ordinateur, on élague donc les
-	feuilles plus grande que la borne\cite{wiki_7_wonder}.
+	feuilles plus grande que la borne.
 
 	\section{Travail effectué}
 	\subsection{La fonction d'évaluation}
+		La fonction nous permet de donner un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
+		des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
+		présent sur le plateau. Pour cela nous avons commencé par réduire le nombre d'élément lors d'une partie et
+		nous avons travaillé uniquement avec les cartes. Après quelques brain storming nous avons conclu que la solution
+		la plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier
+		ce poids en fonction de la situation.
+
+		Nous avons défini un intervalle de valeur pour donner nos notes (entre 0 et 20)
+		et nous avons aussi attribué un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10).
+		Pour les cartes avec une valeur inférieure à 10, il est préférable de tenter de prendre face cachée,
+		avec une chance de 50 \% d'avoir une meilleure carte. De cette manière nous avons pu prendre en compte
+		l'évolution des âges au cours d'une partie. Par exemple, à l'âge un, nous avons donné un "poids" élevé à une
+		carte ressource, mais un "poids" faible à une carte attaque. Et nous avons inversé cette tendance à
+		l'âge deux et trois.
+
+		Après plusieurs parties contre l'ordinateur, nous avons ajouté la possibilité de construire des merveilles.
+		Nous avons utilisé la même méthode évoquée précédemment. \textcolor{red}{EN COURS D'IMPLEMENTATION}
 	\subsection{Implémentation}
 	\subsection{Interface}
 	\subsection{Résultat obtenue}
@@ -318,6 +335,7 @@
 	\section{Annexe}
 	\subsection{Code}
 
+	\newpage
 	\printbibliography
 
 \end{document}
