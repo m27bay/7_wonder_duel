@@ -1,4 +1,5 @@
 import pygame
+import time
 
 from src.interface_graphique.src import Boutton
 from src.interface_graphique.src.Fenetre import Fenetre
@@ -21,9 +22,21 @@ JOUER_JVJ = 6
 blank_color = (255, 255, 255)
 
 def musique():
-    music = pygame.mixer.Sound("src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
-    music.set_volume(0.9)
-    music.play()
+
+    pygame.mixer.init()
+
+    playlist = list()
+    playlist.append("src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
+    playlist.append("src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
+    playlist.append("src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
+
+    pygame.mixer.music.load(playlist.pop())  # Get the first track from the playlist
+    pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
+    pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
+    pygame.mixer.music.play()  # Play the music
+
+    if len(playlist) > 0:  # If there are more tracks in the queue...
+        pygame.mixer.music.queue(playlist.pop())  # Q
 
 
 def tableau_image():
