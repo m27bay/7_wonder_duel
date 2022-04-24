@@ -28,7 +28,7 @@ class TestMerveille(unittest.TestCase):
 			self.merveille.couts
 		)
 		
-	def test_constructeur_par_copie(self):
+	def test_constructeur_par_copie_suppression_effet(self):
 		copie = self.merveille.constructeur_par_copie()
 		self.assertEqual(copie, self.merveille)
 		
@@ -39,6 +39,11 @@ class TestMerveille(unittest.TestCase):
 			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"]
 		)
 		self.assertNotEqual(copie, self.merveille)
+		
+	def test_constructeur_par_copie_construire_merveille(self):
+		copie = self.merveille.constructeur_par_copie()
+		copie.est_construite = True
+		self.assertFalse(self.merveille.est_construite)
 		
 	def test_str(self):
 		str = "nom : merveille, " \
