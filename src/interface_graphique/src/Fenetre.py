@@ -278,6 +278,10 @@ class Fenetre:
 			compteur += 1
 			
 	def __dessiner_merveille_sacrifier(self, merveille_a_construire: SpriteMerveille, carte_a_sacrifier: SpriteCarte):
+		self.plateau.joueur_qui_joue.merveilles.append(merveille_a_construire.merveille)
+		self.plateau.enlever_carte(carte_a_sacrifier.carte)
+		self.plateau.merveilles.remove(merveille_a_construire.merveille)
+		
 		for merveille_j1 in self.merveille_j1:
 			
 			if isinstance(merveille_j1, SpriteMerveille) \
@@ -669,8 +673,11 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					_, carte_a_prendre, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					# _, carte, merveille, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					# 	-math.inf, math.inf, True, nbr_noeuds)
+					_, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 						-math.inf, math.inf, True, nbr_noeuds)
+					# print(f"carte : {carte}\nmerveille : {merveille}\nnbr_noeuds : {nbr_noeuds}")
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						
@@ -692,11 +699,11 @@ class Fenetre:
 										clic_x, clic_y = event.pos
 										
 										if sprite_carte.rect.collidepoint(clic_x, clic_y):
-										
 											self.sprite_carte_j2_zoomer.dezoomer()
 											self.sprite_carte_j2_zoomer = None
 											self.__dessiner_piocher(sprite_carte)
 											self.plateau.joueur_qui_joue = self.plateau.adversaire()
+								
 											
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
@@ -704,7 +711,6 @@ class Fenetre:
 			
 			for group_sprit in self.sprite_j1:
 				group_sprit.update()
-			# TODO : superposition inversé avec j2
 			for group_sprit in self.sprite_j2:
 				group_sprit.update()
 			
