@@ -838,7 +838,10 @@ class Plateau:
 				if cout_split[0] == "monnaie":
 					self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
 			
-		merveille_a_construire.est_construite = True
+		for merveille in self.joueur_qui_joue.merveilles:
+			if merveille == merveille_a_construire:
+				merveille.est_construite = True
+				
 		self.appliquer_effets_merveille(merveille_a_construire)
 			
 	def numero_jeton_militaire(self):
