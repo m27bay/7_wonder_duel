@@ -9,7 +9,7 @@ from src.interface_graphique.src.SpriteJetonsMilitaire import SpriteJetonsMilita
 from src.interface_graphique.src.SpriteJetonsProgres import SpriteJetonsProgres
 from src.interface_graphique.src.SpriteMerveille import SpriteMerveille
 from src.utils.Carte import Carte
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
 from src.utils.Stategie import alpha_beta, alpha_beta_avec_merveille
@@ -46,7 +46,7 @@ class Fenetre:
 		self.default_hauteur_sprite = default_sprite_image.rect.height
 		self.default_largeur_sprite = default_sprite_image.rect.width
 		
-		default_sprite_merveille = SpriteMerveille(CarteFille("piree", None, None), 0, 0, RATIO_MERVEILLE)
+		default_sprite_merveille = SpriteMerveille(Merveille("piree", None, None), 0, 0, RATIO_MERVEILLE)
 		self.default_hauteur_merveille = default_sprite_merveille.rect.height
 		self.default_largeur_merveille = default_sprite_merveille.rect.width
 		
@@ -467,13 +467,12 @@ class Fenetre:
 			SpriteJetonsMilitaire(self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5))
 	
 	def __position_type_carte(self, carte: Carte):
-		if not isinstance(carte, CarteFille):
+		if not isinstance(carte, Merveille):
 			liste_couleur = ["marron", "gris", "bleu", "vert", "jaune", "rouge"]
 			if carte.couleur in liste_couleur:
 				return liste_couleur.index(carte.couleur)
 		else:
-			if carte.nom.__contains__("guilde"):
-				return 6
+			return 6
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.piocher(sprite_carte.carte)

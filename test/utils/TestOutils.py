@@ -5,7 +5,7 @@ Fichier test de fonction.
 import unittest
 
 from src.utils.Carte import Carte
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 
 from src.utils.Outils import trouver_element_avec_nom, mon_str_liste
 from src.utils.Outils import trouver_ressource_avec_nom
@@ -22,11 +22,11 @@ class TestOutils(unittest.TestCase):
 		]
 
 		self.liste_merveilles = [
-			CarteFille("merveille0", None, None),
-			CarteFille("merveille1", None, None),
-			CarteFille("merveille2", None, None),
-			CarteFille("merveille3", None, None),
-			CarteFille("merveille4", None, None)
+			Merveille("merveille0", None, None),
+			Merveille("merveille1", None, None),
+			Merveille("merveille2", None, None),
+			Merveille("merveille3", None, None),
+			Merveille("merveille4", None, None)
 		]
 
 	def test_trouver_carte_avec_nom(self):

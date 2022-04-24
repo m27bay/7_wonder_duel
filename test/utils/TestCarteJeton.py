@@ -5,7 +5,7 @@ Fichier test pour la classe Carte.
 import unittest
 
 from src.utils.Carte import Carte
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 from src.utils.JetonMilitaire import JetonMilitaire
 from src.utils.JetonProgres import JetonProgres
 
@@ -60,7 +60,7 @@ class TestCarte(unittest.TestCase):
 
 class TestCarteFille(unittest.TestCase):
 	def setUp(self) -> None:
-		self.carte_fille = CarteFille("pyramides",
+		self.carte_fille = Merveille("pyramides",
 					["point_victoire 9"],
 					["ressource pierre 3", "ressource papyrus 1"]
 				)

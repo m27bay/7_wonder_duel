@@ -2,11 +2,11 @@ import pygame
 
 from src.interface_graphique.src.Constantes import DOSSIER_IMAGES_MERVEILLES
 from src.interface_graphique.src.MonSprite import MonSprite
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 
 
 class SpriteMerveille(MonSprite):
-	def __init__(self, merveille: CarteFille, haut_gauche_x: float, haut_gauche_y: float, ration_longeur_fenetre: float):
+	def __init__(self, merveille: Merveille, haut_gauche_x: float, haut_gauche_y: float, ration_longeur_fenetre: float):
 		super().__init__(haut_gauche_x, haut_gauche_y, ration_longeur_fenetre)
 	
 		self.merveille = merveille
