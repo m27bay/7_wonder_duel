@@ -534,7 +534,7 @@ class Fenetre:
 	def boucle_principale(self):
 		en_cours = True
 		while en_cours:
-			if self.plateau.joueur_gagnant is not None:
+			if self.plateau.victoire is not None:
 				en_cours = False
 			
 			# PARTIE Process input (events)
@@ -782,4 +782,4 @@ class Fenetre:
 			pygame.display.flip()
 		
 		pygame.quit()
-		
+		print("victoire : ", self.plateau.victoire)

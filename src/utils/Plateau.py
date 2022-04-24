@@ -42,7 +42,7 @@ class Plateau:
 			self.joueur1 = joueur1
 			self.joueur2 = joueur2
 			self.joueur_qui_joue = None
-			self.joueur_gagnant = None
+			self.victoire = None
 			
 			#
 			self.choix_auto_merveilles = choix_auto_merveilles
@@ -286,7 +286,7 @@ class Plateau:
 			self.joueur1 = None
 			self.joueur2 = None
 			self.joueur_qui_joue = None
-			self.joueur_gagnant = None
+			self.victoire = None
 			self.choix_auto_merveilles = None
 			self.monnaie_banque = None
 			self.age = None
@@ -309,8 +309,8 @@ class Plateau:
 		plateau.joueur1 = self.joueur1.constructeur_par_copie()
 		plateau.joueur2 = self.joueur2.constructeur_par_copie()
 		
-		if self.joueur_gagnant is not None:
-			plateau.joueur_gagnant = self.joueur_gagnant.constructeur_par_copie()
+		if self.victoire is not None:
+			plateau.victoire = self.victoire
 		
 		if self.joueur_qui_joue == self.joueur1:
 			plateau.joueur_qui_joue = plateau.joueur1
@@ -610,17 +610,13 @@ class Plateau:
 	
 	def fin_de_partie(self):
 		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
-			print("victoire militaire joueur2")
-			self.joueur_gagnant = self.joueur2
+			self.victoire = (self.joueur2.nom, "militaire")
 		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
-			print("victoire militaire joueur1")
-			self.joueur_gagnant = self.joueur1
+			self.victoire = (self.joueur1.nom, "militaire")
 		elif self.joueur1.monnaie < 0:
-			self.joueur_gagnant = self.joueur2
-			print("victoire monnaie joueur2")
+			self.victoire = (self.joueur2.nom, "monnaie")
 		elif self.joueur2.monnaie < 0:
-			self.joueur_gagnant = self.joueur1
-			print("victoire monnaie joueur1")
+			self.victoire = (self.joueur1.nom, "monnaie")
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
@@ -633,14 +629,11 @@ class Plateau:
 				self.joueur2.points_victoire += jeton.points_victoire
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
-				print("victoire scientifique joueur1")
-				self.joueur_gagnant = self.joueur1
+				self.victoire = (self.joueur1.nom, "points victoire")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-				print("victoire scientifique joueur2")
-				self.joueur_gagnant = self.joueur2
+				self.victoire = (self.joueur2.nom, "points victoire")
 			else:
-				print("egalité")
-				self.joueur_gagnant = -1
+				self.victoire = (None, "égalité")
 				
 	def action_banque(self, monnaies: int):
 		if monnaies == 0:
