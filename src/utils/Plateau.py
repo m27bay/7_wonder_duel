@@ -610,13 +610,17 @@ class Plateau:
 	
 	def fin_de_partie(self):
 		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
+			print("victoire militaire joueur2")
 			self.joueur_gagnant = self.joueur2
 		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
+			print("victoire militaire joueur1")
 			self.joueur_gagnant = self.joueur1
 		elif self.joueur1.monnaie < 0:
 			self.joueur_gagnant = self.joueur2
+			print("victoire monnaie joueur2")
 		elif self.joueur2.monnaie < 0:
 			self.joueur_gagnant = self.joueur1
+			print("victoire monnaie joueur1")
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
@@ -629,10 +633,13 @@ class Plateau:
 				self.joueur2.points_victoire += jeton.points_victoire
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
+				print("victoire scientifique joueur1")
 				self.joueur_gagnant = self.joueur1
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
+				print("victoire scientifique joueur2")
 				self.joueur_gagnant = self.joueur2
 			else:
+				print("egalité")
 				self.joueur_gagnant = -1
 				
 	def action_banque(self, monnaies: int):
