@@ -141,7 +141,8 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		
 	def test_elagage_merveille(self):
 		self.plateau.joueur_qui_joue = self.plateau.joueur2
-		profondeur = 7
+		self.plateau.age = 2
+		profondeur = 5
 
 		nbr_noeuds_alpha_beta = 0
 		deb_alpha_beta = time.time()
@@ -154,7 +155,8 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 			-math.inf, math.inf, True, nbr_noeuds_alpha_beta_merveille)
 		fin_alpha_beta_merveille = time.time()
 
-		print(f"nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}, nbr_noeuds_alpha_beta_merveille : {nbr_noeuds_alpha_beta_merveille}")
+		print(f"nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}")
+		print(f"nbr_noeuds_alpha_beta_merveille : {nbr_noeuds_alpha_beta_merveille}")
 		print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
 		print(f"temps execution alpha_beta_merveille : {fin_alpha_beta_merveille - deb_alpha_beta_merveille}")
 		self.assertTrue(True)

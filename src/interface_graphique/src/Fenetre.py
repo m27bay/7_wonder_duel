@@ -660,13 +660,9 @@ class Fenetre:
 										if merveille.rect.collidepoint(clic_x, clic_y) \
 											and isinstance(merveille, SpriteMerveille):
 											
-											ret = self.plateau.construire_merveille(
-												merveille.merveille,
-												self.sprite_carte_j1_zoomer.carte
-											)
+											ret = self.plateau.construire_merveille(merveille.merveille)
 											
 											if ret != -1:
-												
 												self.sprite_carte_j1_zoomer.dezoomer()
 												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
 												self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
