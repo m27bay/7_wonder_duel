@@ -306,6 +306,22 @@
 
 	\section{Travail effectué}
 	\subsection{La fonction d'évaluation}
+	La fonction nous permet de donner un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
+	des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
+	présent sur le plateau. Pour cela nous avons commencé par réduire le nombre d'élément lors d'une partie et nous
+	avons travaillé uniquement avec les cartes. Après quelques brain storming nous avons conclu que la solution la
+	plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier ce poids
+	en fonction de la situation.
+
+	Nous avons défini un intervalle de valeur pour donner nos notes (entre 0 et 20) et nous avons aussi attribué
+	un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
+	inférieure à 10, il est préférable de tenter de prendre face cachée, avec une chance de 50 \% d'avoir une meilleure
+	carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie. Par exemple, à
+	l'âge un, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à une carte attaque.
+	Et nous avons inversé cette tendance à l'âge deux et trois.
+
+	Après plusieurs parties contre l'ordinateur, nous avons ajouté la possibilité de construire des merveilles.
+	Nous avons utilisé la même méthode évoquée précédemment. \textcolor{red}{EN COURS D'IMPLEMENTATION}
 	\subsection{Implémentation}
 	\subsection{Interface}
 	\subsection{Résultat obtenue}
