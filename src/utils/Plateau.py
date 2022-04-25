@@ -845,7 +845,7 @@ class Plateau:
 			if merveille == merveille_a_construire:
 				merveille.est_construite = True
 				
-		self.appliquer_effets_merveille(merveille_a_construire)
+		return self.appliquer_effets_merveille(merveille_a_construire)
 			
 	def numero_jeton_militaire(self):
 		"""
@@ -935,16 +935,30 @@ class Plateau:
 		for effet in merveille.effets:
 			
 			effet_split = effet.split(" ")
+			type = effet[0]
 			
 			# effet commun avec certaines cartes
-			if effet_split[0] in ["monnaie", "monnaie_par_carte"]:
+			if type in ["monnaie", "monnaie_par_carte"]:
 				self.appliquer_effets_carte(merveille)
 				
-			elif effet_split[0] == "attaquer":
+			elif type == "attaquer":
 				self.deplacer_pion_miltaire(int(effet_split[1]))
 			
-			elif effet_split[0] == "adversaire_perd_monnaie":
-				self.adversaire().monnaie += self.action_banque(-int(effet_split[1]))
+			elif type == "adversaire_perd_monnaie":
+				self.adversaire().monnaie -= self.action_banque(-int(effet_split[1]))
+				
+			elif type == "rejouer":
+				return 1
+			
+			elif type == "defausse_carte_adversaire":
+				couleur = effet_split[1]
+				
+				if couleur == "gris":
+					return 20
+				elif couleur == "marron":
+					return 21
+				
+		return 0
 		
 	def appliquer_effets_jeton(self, jeton: JetonProgres):
 		if jeton.nom in ["agriculture", "urbanisme"]:

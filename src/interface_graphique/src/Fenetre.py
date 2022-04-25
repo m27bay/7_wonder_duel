@@ -680,7 +680,10 @@ class Fenetre:
 												self.sprite_carte_j1_zoomer.dezoomer()
 												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
 												self.sprite_carte_j1_zoomer = None
-												self.plateau.joueur_qui_joue = self.plateau.adversaire()
+												if ret == 1:
+													self.plateau.joueur_qui_joue = self.plateau.adversaire()
+												# if ret ==
+												# 	pass
 												
 				else:
 					if not simu_bot:
@@ -758,7 +761,12 @@ class Fenetre:
 																self.sprite_carte_j2_zoomer.dezoomer()
 																self.sprite_carte_j2_zoomer = None
 																self.__dessiner_merveille_sacrifier(merveille, sprite_carte)
-																self.plateau.joueur_qui_joue = self.plateau.adversaire()
+																if ret == 20:
+																	pass
+																	
+																elif ret != 1:
+																	self.plateau.joueur_qui_joue = self.plateau.adversaire()
+																
 															simu_bot = False
 												
 			# PARTIE Update
