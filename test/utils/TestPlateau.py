@@ -7,6 +7,7 @@ import unittest
 from src.utils.Carte import Carte
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
+from src.utils.Merveille import Merveille
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 
 
@@ -214,58 +215,84 @@ class TestOutilsPlateau(unittest.TestCase):
 		
 		self.assertEqual(-1, ret)
 	
-	def test_fin_partie_militaire_joueur1(self):
-		self.plateau.position_jeton_conflit = 18
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	# def test_fin_partie_militaire_joueur1(self):
+	# 	self.plateau.position_jeton_conflit = 18
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_militaire_joueur2(self):
+	# 	self.plateau.position_jeton_conflit = 0
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_scientifique_joueur1(self):
+	# 	self.j1.nbr_symb_scientifique_diff = 6
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_scientifique_joueur2(self):
+	# 	self.j2.nbr_symb_scientifique_diff = 6
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_points_victoire_joueur1(self):
+	# 	self.j1.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_points_victoire_joueur2(self):
+	# 	self.j2.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_points_victoire_egalite(self):
+	# 	self.j1.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.j2.cartes.append(
+	# 		Carte("apothicaire",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+	# 			["ressource verre 1"], None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, -1)
 	
-	def test_fin_partie_militaire_joueur2(self):
-		self.plateau.position_jeton_conflit = 0
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_scientifique_joueur1(self):
-		self.j1.nbr_symb_scientifique_diff = 6
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
-	
-	def test_fin_partie_scientifique_joueur2(self):
-		self.j2.nbr_symb_scientifique_diff = 6
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_points_victoire_joueur1(self):
-		self.j1.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
-	
-	def test_fin_partie_points_victoire_joueur2(self):
-		self.j2.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_points_victoire_egalite(self):
-		self.j1.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.j2.cartes.append(
-			Carte("apothicaire",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
-				["ressource verre 1"], None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, -1)
+	def test_construction_merveille_deja_constuite(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.merveilles[0].est_construite = True
+		ret = self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
+		self.assertEqual(ret, -1)
 		
+	def test_construction_merveille_monnaie_manquante(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.monnaie = 0
+		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["monnaie 2"]))
+		self.assertEqual(ret, -1)
+		
+	def test_construction_merveille_prix_achat_trop_eleve(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.monnaie = 1
+		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["ressource pierre 1"]))
+		self.assertEqual(ret, -1)
+		
+	def test_construction_merveille(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.ressources["pierre"] = 3
+		self.plateau.joueur1.ressources["papyrus"] = 1
+		self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
+		self.assertTrue(self.plateau.joueur1.merveilles[0].est_construite)
+		
+	# def test_appliquer_effet
 		
 class TestAcheterRessources(unittest.TestCase):
 	def setUp(self) -> None:

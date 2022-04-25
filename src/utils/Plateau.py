@@ -514,15 +514,15 @@ class Plateau:
 			pass
 		
 		else:  # choix automatique des merveilles (d'apres les regles)
-			self.joueur1.merveilles.append(self.merveilles[7])
-			self.joueur1.merveilles.append(self.merveilles[2])
-			self.joueur1.merveilles.append(self.merveilles[10])
-			self.joueur1.merveilles.append(self.merveilles[9])
+			self.joueur1.merveilles.append(self.merveilles[7]) # pyramides
+			self.joueur1.merveilles.append(self.merveilles[2]) # grand phare
+			self.joueur1.merveilles.append(self.merveilles[10]) # temple d artemis
+			self.joueur1.merveilles.append(self.merveilles[9]) # statue de zeus
 			
-			self.joueur2.merveilles.append(self.merveilles[0])
-			self.joueur2.merveilles.append(self.merveilles[6])
-			self.joueur2.merveilles.append(self.merveilles[11])
-			self.joueur2.merveilles.append(self.merveilles[1])
+			self.joueur2.merveilles.append(self.merveilles[0]) # circus maximus
+			self.joueur2.merveilles.append(self.merveilles[6]) # piree
+			self.joueur2.merveilles.append(self.merveilles[11]) # via appia
+			self.joueur2.merveilles.append(self.merveilles[1]) # colosse
 	
 	#
 	#
@@ -828,6 +828,9 @@ class Plateau:
 			prix = self.acheter_ressources(liste_ressource_necessaire)
 			if prix > self.joueur_qui_joue.monnaie:
 				return -1
+			else:
+				self.joueur_qui_joue.monnaie += self.action_banque(-prix)
+				print(f"{self.joueur_qui_joue.nom} paie {prix}")
 			
 		else:
 			# on retire uniquement la monnaie

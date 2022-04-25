@@ -280,25 +280,33 @@ class Fenetre:
 			compteur += 1
 			
 	def __dessiner_merveille_sacrifier(self, merveille_a_construire: SpriteMerveille, carte_a_sacrifier: SpriteCarte):
-		self.plateau.joueur_qui_joue.merveilles.append(merveille_a_construire.merveille)
-		self.plateau.enlever_carte(carte_a_sacrifier.carte)
-		
-		for merveille_j1 in self.merveille_j1:
+		carte_a_sacrifier.carte.cacher()
+
+		#
+		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+			liste_sprite_merveille = self.merveille_j1
+		else:
+			liste_sprite_merveille = self.merveille_j2
 			
-			if isinstance(merveille_j1, SpriteMerveille) \
-					and merveille_j1.merveille == merveille_a_construire.merveille:
-				
-				carte_a_sacrifier.carte.cacher()
+		#
+		for merveille in liste_sprite_merveille:
+			
+			if isinstance(merveille, SpriteMerveille) \
+					and merveille.merveille == merveille_a_construire.merveille:
 				
 				coord_x, coord_y = merveille_a_construire.rect.topleft
 				coord_y += self.default_largeur_sprite / 5
 				
 				# TODO : adapter image à la taille de la merveille
 				carte_a_sacrifier.changer_coords(coord_x, coord_y)
-				
-		self.merveille_j1.remove(merveille_a_construire)
-		self.merveille_j1.add(carte_a_sacrifier)
-		self.merveille_j1.add(merveille_a_construire)
+		
+		self.sprite_cartes_plateau.remove(carte_a_sacrifier)
+		liste_sprite_merveille.remove(merveille_a_construire)
+		liste_sprite_merveille.add(carte_a_sacrifier)
+		liste_sprite_merveille.add(merveille_a_construire)
+		
+		self.plateau.joueur_qui_joue.merveilles.append(merveille_a_construire.merveille)
+		self.plateau.enlever_carte(carte_a_sacrifier.carte)
 		
 	def __dessiner_jetons_scientifiques(self):
 		coord_x, coord_y = self.rect_image_plateau.topleft
@@ -532,6 +540,10 @@ class Fenetre:
 		carte_prenable.changer_coords(coord_x, coord_y)
 		
 	def boucle_principale(self):
+		simu_bot = False
+		carte_bot = None
+		merveille_bot = None
+		
 		en_cours = True
 		while en_cours:
 			if self.plateau.victoire is not None:
@@ -646,7 +658,6 @@ class Fenetre:
 											merveille.zoomer(RATIO_ZOOM_MERVEILLE, (self.largeur / 2, self.hauteur / 2))
 											merveille.angle = 0
 											merveille.pivoter()
-											
 											self.sprite_merveille_j1_zoomer = merveille
 											self.merveille_j1.remove(self.sprite_merveille_j1_zoomer)
 											self.merveille_j1.add(self.sprite_merveille_j1_zoomer)
@@ -665,25 +676,27 @@ class Fenetre:
 											and isinstance(merveille, SpriteMerveille):
 											
 											ret = self.plateau.construire_merveille(merveille.merveille)
-											
 											if ret != -1:
 												self.sprite_carte_j1_zoomer.dezoomer()
 												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
-												self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 												self.sprite_carte_j1_zoomer = None
+												self.plateau.joueur_qui_joue = self.plateau.adversaire()
 												
 				else:
-					nbr_noeuds = 0
-					deb = time.time()
-					_, carte_a_prendre, merveille_a_construire, nbr_noeuds = \
-						alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
-						-math.inf, math.inf, True, nbr_noeuds)
-					fin = time.time()
-					print(f"temps execution : {fin - deb}, nbr_noeuds : {nbr_noeuds}")
-					if merveille_a_construire is None:
-						print(f"carte_a_prendre : {carte_a_prendre.nom}")
-					else:
-						print(f"carte_a_prendre : {carte_a_prendre.nom}, merveille : {merveille_a_construire.nom}")
+					if not simu_bot:
+						simu_bot = True
+						
+						deb = time.time()
+						nbr_noeuds = 0
+						_, carte_bot, merveille_bot, nbr_noeuds = \
+							alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+							-math.inf, math.inf, True, nbr_noeuds)
+						fin = time.time()
+						print(f"temps execution : {fin - deb}, nbr_noeuds : {nbr_noeuds}")
+						if merveille_bot is None:
+							print(f"carte_a_prendre : {carte_bot.nom}")
+						else:
+							print(f"carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}")
 					# _, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 					# 	-math.inf, math.inf, True, nbr_noeuds)
 					# print(f"carte : {carte}\nmerveille : {merveille}\nnbr_noeuds : {nbr_noeuds}")
@@ -692,9 +705,9 @@ class Fenetre:
 						
 						if isinstance(sprite_carte, SpriteCarte):
 							
-							if sprite_carte.carte == carte_a_prendre:
+							if sprite_carte.carte == carte_bot:
 								
-								if merveille_a_construire is None:
+								if merveille_bot is None:
 								
 									if self.sprite_carte_j2_zoomer is None:
 										
@@ -714,6 +727,7 @@ class Fenetre:
 												self.sprite_carte_j2_zoomer = None
 												self.__dessiner_piocher(sprite_carte)
 												self.plateau.joueur_qui_joue = self.plateau.adversaire()
+												simu_bot = False
 												
 								else:
 									
@@ -721,10 +735,31 @@ class Fenetre:
 										
 										if isinstance(merveille, SpriteMerveille):
 											
-											if merveille.merveille == merveille_a_construire:
+											if merveille.merveille == merveille_bot:
 												
-												self.__dessiner_merveille_sacrifier(merveille, sprite_carte)
-												self.plateau.joueur_qui_joue = self.plateau.adversaire()
+												if self.sprite_carte_j2_zoomer is None:
+													
+													sprite_carte.zoomer(RATIO_ZOOM_CARTE,
+														(self.largeur / 2, self.hauteur / 2))
+													self.sprite_carte_j2_zoomer = sprite_carte
+													self.sprite_cartes_plateau.remove(self.sprite_carte_j2_zoomer)
+													self.sprite_cartes_plateau.add(self.sprite_carte_j2_zoomer)
+													
+												else:
+													
+													if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+														
+														clic_x, clic_y = event.pos
+														
+														if self.sprite_carte_j2_zoomer.rect.collidepoint(clic_x, clic_y):
+															
+															ret = self.plateau.construire_merveille(merveille.merveille)
+															if ret != -1:
+																self.sprite_carte_j2_zoomer.dezoomer()
+																self.sprite_carte_j2_zoomer = None
+																self.__dessiner_merveille_sacrifier(merveille, sprite_carte)
+																self.plateau.joueur_qui_joue = self.plateau.adversaire()
+															simu_bot = False
 												
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
