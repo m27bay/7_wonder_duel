@@ -215,8 +215,8 @@
 
 	\subsection{Représentation d'un jeu}
 	Maintenant que nous savons comment définir un jeu, nous allons étudier comment représenter ce dernier et les
-	interactions entre les joueurs. Il existe globalement trois représentations\cite{wiki_representation_theorie_jeux}
-	, la forme extensive et la forme normale, qui sont utilisées pour les jeux non coopératifs et
+	interactions entre les joueurs. Il existe globalement trois représentations\cite{wiki_representation_theorie_jeux},
+	la forme extensive et la forme normale, qui sont utilisées pour les jeux non coopératifs et
 	la forme caractéristique pour les jeux coopératifs.
 
 	\subsubsection{forme extensive}
@@ -327,19 +327,19 @@
 	des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
 	présents sur le plateau. Pour cela nous avons commencé par réduire le nombre d'éléments que nous prenons en
 	compte lors d'une partie et nous avons travaillé uniquement avec les cartes. De plus nous avons considéré
-	uniquement le carte de l'age I. Après quelques brain storming nous avons conclu que la solution la
+	uniquement les cartes de l'age I. Après quelques brain storming nous avons conclu que la solution la
 	plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier ce poids
 	en fonction de la situation.
 
 	% TODO : version JC
-	% Nous avons choisi pour l'intervalle des valeurs pour notée nos carte de 0 a 20, pour choisir les notes des differentes carte
-	% nous nous somme tous reunis afin de nous concerté afin de trouvé la notes la plus adequate pour la carte. Les cartes sont
-	% notes en fonction de l'age a laquelle elles appartiennent et aussi en fonction de l'importance de la carte. Nous avons
-	% donc décidé de priorisé les cartes ressources pour le primer, pour le second age nous avons décidé de priorisé les ressouces
-	% rares et noius commençons a mettre en evidence les cartes militaires et scientifiques. Enfin pour le dernier age ce sont
-	% les cartes militaires ainsi que les cartes qui raporte des points de victoires. Nous avons décidé d'un commun accort de
-	% mettre l'ensemble des cartes face cachées a une valeur neutre de 10. Suite a ce choix de notation nous avons réalisé
-	% la notation des différentes merveilles du jeux, ainsi que les jetons scientifiques.
+	% Nous avons choisi pour l'intervalle des valeurs pour notée nos cartes de 0 a 20, pour choisir les notes des differentes cartes
+	% nous nous sommes tous reunis afin de nous concerter pour trouver la note la plus adequate pour la carte. Les cartes sont
+	% notées en fonction de l'âge à laquelle elles appartiennent et aussi en fonction de l'importance de la carte. Nous avons
+	% donc décidé de prioriser les cartes ressources pour le premier, pour le second âge nous avons décidé de prioriser les ressources
+	% rares et nous commençons a mettre en évidence les cartes militaires et scientifiques. Enfin pour le dernier âge se sont
+	% les cartes militaires ainsi que les cartes qui rapportent des points de victoires. Nous avons décidé d'un accort commun de
+	% mettre l'ensemble des cartes face cachées à une valeur neutre de 10. Suite à ce choix de notation nous avons réalisé
+	% la notation des différentes merveilles du jeux, ainsi que des jetons scientifiques.
 
 	Nous avons défini un intervalle de valeur arbitraire pour donner nos notes (entre 0 et 20) et nous avons
 	aussi attribué un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
