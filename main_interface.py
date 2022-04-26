@@ -34,6 +34,7 @@ def musique():
     pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
     pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
     pygame.mixer.music.play()  # Play the music
+    pygame.mixer.music.set_volume(0.1)
 
     if len(playlist) > 0:  # If there are more tracks in the queue...
         pygame.mixer.music.queue(playlist.pop())  # Q
@@ -118,14 +119,14 @@ def affichage_menu_accueille():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 0:
                     bouton_son_off.affichage_du_bouton(window_tempo)
-                    pygame.mixer.pause()
+                    pygame.mixer.music.pause()
                     MUTE_SOUND = 1
                     status_son = 1
                     break
                 elif event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 1:
                     MUTE_SOUND = 0
                     bouton_son_on.affichage_du_bouton(window_tempo)
-                    pygame.mixer.unpause()
+                    pygame.mixer.music.unpause()
                     status_son = 0
                     break
                 elif event.button == 1 and bouton_quitter.rectangle.collidepoint(event.pos):
