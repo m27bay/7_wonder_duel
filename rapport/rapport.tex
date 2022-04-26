@@ -10,8 +10,76 @@
 \usepackage{csquotes}
 \usepackage{bookmark}
 \usepackage{biblatex}
-\addbibresource{rapport.bib}
+\usepackage{listings}
 \usepackage{hyperref}
+
+\addbibresource{rapport.bib}
+
+\lstset{
+  aboveskip=3mm,
+  belowskip=-2mm,
+  backgroundcolor=\color{darkWhite},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{green},
+  deletekeywords={...},
+  escapeinside={\%*}{*)},
+  extendedchars=true,
+  framexleftmargin=16pt,
+  framextopmargin=3pt,
+  framexbottommargin=6pt,
+  frame=tb,
+  keepspaces=true,
+  keywordstyle=\color{blue},
+  language=Python,
+  literate=
+  {²}{{\textsuperscript{2}}}1
+  {⁴}{{\textsuperscript{4}}}1
+  {⁶}{{\textsuperscript{6}}}1
+  {⁸}{{\textsuperscript{8}}}1
+  {€}{{\euro{}}}1
+  {é}{{\'e}}1
+  {è}{{\`{e}}}1
+  {ê}{{\^{e}}}1
+  {ë}{{\¨{e}}}1
+  {É}{{\'{E}}}1
+  {Ê}{{\^{E}}}1
+  {û}{{\^{u}}}1
+  {ù}{{\`{u}}}1
+  {â}{{\^{a}}}1
+  {à}{{\`{a}}}1
+  {á}{{\'{a}}}1
+  {ã}{{\~{a}}}1
+  {Á}{{\'{A}}}1
+  {Â}{{\^{A}}}1
+  {Ã}{{\~{A}}}1
+  {ç}{{\c{c}}}1
+  {Ç}{{\c{C}}}1
+  {õ}{{\~{o}}}1
+  {ó}{{\'{o}}}1
+  {ô}{{\^{o}}}1
+  {Õ}{{\~{O}}}1
+  {Ó}{{\'{O}}}1
+  {Ô}{{\^{O}}}1
+  {î}{{\^{i}}}1
+  {Î}{{\^{I}}}1
+  {í}{{\'{i}}}1
+  {Í}{{\~{Í}}}1,
+  morekeywords={*,...},
+  numbers=left,
+  numbersep=10pt,
+  numberstyle=\tiny\color{black},
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=1,
+  stringstyle=\color{green},
+  tabsize=4,
+  title=\lstname,
+}
 
 \title{
 	\Huge
@@ -343,15 +411,15 @@
 
 	Nous avons défini un intervalle de valeur arbitraire pour donner nos notes (entre 0 et 20) et nous avons
 	aussi attribué un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
-	inférieure à 10, il est préférable de tenter de prendre face cachée, avec une chance de 50 \% d'avoir une meilleure
-	carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie. Par exemple, à
-	l'âge I, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à une carte attaque.
-	Et nous avons inversé cette tendance à l'âge II et III car nous estimons qu'il est préférable de commencer par
-	récupèrer des ressources lors de l'age I afin de construire facilement des merveilles et des bâtiments complexes
-	dans l'age II et III. Cette solution nous permet aussi de prendre en compte le cout des cartes, par exemple les
-	cartes "Chantier" et "Exploitation" donne toutes les deux du bois mais "Exploitation" coute une pièces, si nous
-	avons le choix entre les deux il est préférable de prendre "Chantier" et d'utiliser la monnaie pour acheter des
-	ressources que nous ne possedons pas.
+	inférieure à 10, il est préférable de tenter de prendre la carte face cachée, avec une chance de 50 \% d'avoir
+	une meilleure carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie.
+	Par exemple, à l'âge I, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à
+	une carte attaque. Et nous avons inversé cette tendance à l'âge II et III car nous estimons qu'il est
+	préférable de commencer par	récupèrer des ressources lors de l'âge I afin de construire facilement
+	des merveilles et des bâtiments complexes dans l'âge II et III. Cette solution nous permet aussi de prendre
+	en compte le coût des cartes, par exemple les cartes "Chantier" et "Exploitation" donnent toutes les deux du bois
+	mais "Exploitation" coûte une pièce, si nous avons le choix entre les deux il est préférable de prendre "Chantier"
+	et d'utiliser la monnaie pour acheter des ressources que nous ne possédons pas.
 
 	% TODO : détail à ajouter
 	% TODO : mettre image du tableau
@@ -360,11 +428,82 @@
 	Nous avons utilisé la même méthode évoquée précédemment.
 
 	\subsection{Implémentation}
-	Pour l'implémentation nous avons décidé de commencer par s'intéréser au jeu et à réfléchir au découpage du jeu
-	en différent module ainsi que du desing de l'interface,	sans ce soucier de la partie "stratégie". Puis nous avons
-	créer l'arborescence des fichiers et nous avons discuter concernant le langage à utiliser. Il nous fallait un
-	langage orienté objet et que nous maîtrisions. Nous avions donc le choix entre le Java et le Python.
-	Pour des raisons de simplicité nous avons choisit le Python. Une fois % TODO : à suivre
+	Pour l'implémentation nous avons décidé de commencer par réfléchir au découpage du jeu
+	en différent modules ainsi que du design de l'interface.
+
+	Nous avons conclus que l'arborescence des fichiers serait:
+	\begin{itemize}
+		\item \item Un dossier "interface\_graphique" contenant tous les fichiers utiles pour l'interface graphique, c'est-à
+		-dire :
+		\begin{itemize}
+			\item Un dossier "ressources" avec toutes les images (cartes, merveilles, jetons, plateau, \ldots). Mais
+			aussi les musiques.
+			\item Un dossier "src" contenant les fichiers sources de l'interface, c'est-à-dire :
+			\begin{itemize}
+				\item Boutons.py
+				\item Constantes.py
+				\item Fenetre.py
+				\item MonSprite.py
+				\item SpriteCarte.py
+				\item SpriteJetonMilitaire.py
+				\item SpriteJetonProgre.py
+				\item SpriteMerveille.py
+			\end{itemize}
+		\end{itemize}
+		\item Un dossier "utils" contenant tous les fichiers utiles au jeu, c'est-à-dire :
+		\begin{itemize}
+			\item Carte.py
+			\item CarteGuilde.py
+			\item Merveille.py
+			\item JetonMilitaire.py
+			\item JetonProgres.py
+			\item Joueur.py
+			\item notation\_carte.cvs (un fichier stockant les "poids" des cartes)
+			\item Outils.py
+			\item Plateau.py
+			\item Stratégie.py
+		\end{itemize}
+		\item Un dossier "test" contenant tous les fichiers tests, c'est-à-dire :
+		\begin{itemize}
+			\item TestCarteJeton.py
+			\item TestJoueur.py
+			\item TestMerveille.py
+			\item TestPlateau.py
+			\item TestStratégie.py
+		\end{itemize}
+	\end{itemize}
+
+	Comme vous pouvez le constater les extensions de fichiers sont en ".py" cela signifie que se sont des fichiers
+	Python. En effet lorsque nous avons discuté au sujet du langage à utiliser nous avions remarqué qu'ils nous fallait un
+	langage orienté objet et que nous maîtrisons. Nous avions donc le choix entre le Java et le Python.
+	Pour des raisons de simplicité nous avons choisi le Python. Une fois tous les préparatifs terminés nous avons
+	commencé l'implémentation à proprement parlé. Nous avons suivi plusieurs phases, nous travaillons sur
+	un module, une fois fini nous le testons à travers différentes batteries de tests, puis nous passons
+	au module suivant. Une fois le jeu fini nous avons testé le jeu en 1vs1 via le terminal.
+
+	Voici les méthodes constituant les différentes classes :
+	\begin{lstlisting}
+	class Carte:
+		def __init__(self, nom, effets, couts, nom_carte_chainage, couleur, age):
+			pass
+		def constructeur_par_copie(self):
+			pass
+		def __eq__(self, other):
+			pass
+		def __str__(self):
+			pass
+		def devoiler(self):
+			pass
+		def cacher(self):
+			pass
+	\end{lstlisting}
+
+	A partir de ce moment
+	l'équipe se sépare en deux groupes, l'un crée l'interface pendant que l'autre fait l'algorithme minimax,
+	d'alpha beta ainsi que la fonction d'évaluation.
+
+	Nous avons utilisé les propriétés du Python facilitant la manipulation de chaîne de caractères et nous avons
+	défini un penis
 
 	\subsection{Interface}
 	\subsection{Résultat obtenu}
@@ -373,10 +512,12 @@
 	\subsection{Objectif(s) atteint/ non atteint}
 	\subsection{Suggestion d'amélioration(s)}
 	\subsection{Difficultée(s) rencontrée(s)}
-	Nous sommes rapidement tomber sur une première difficultée lors que nous rédigions les schémas de classe pour le
-	découpage du jeu en module. Les cartes du jeu comportent beacoup d'effets pouvant avoir un impact sur le joueur,
+	Nous sommes rapidement tombés sur une première difficultée lorsque nous rédigions le schéma de classe du jeu.
+	Par exemple, les cartes comportent beaucoup d'effets pouvant avoir un impact sur le joueur,
 	comme un gain de ressource, mais aussi sur le jeu, comme le fait du pouvoir rejouer. L'application d'un effet
-	doit être effectué par le jeu et non dans le module "Carte". % TODO : à suivre
+	doit être effectué par le jeu et non dans le module "Carte". Ensuite nous voulions créer des classes (plus
+	précisément des interfaces) pour les effets mais cela rendait compliqué la création de carte avec les effets.
+	% TODO : idée : constructeur par copie
 
 	\section{Annexe}
 	\subsection{Code}
