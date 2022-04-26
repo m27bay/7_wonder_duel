@@ -1,23 +1,39 @@
 \documentclass[a4paper, 12pt, french]{article}
+\usepackage{ae,lmodern}
+\usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{xcolor}
-\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{hyphenat}
-\usepackage[left=20mm, right=20mm]{geometry}
+\usepackage[left=15mm, right=15mm]{geometry}
+\usepackage{csquotes}
+\usepackage{bookmark}
 \usepackage{biblatex}
-\usepackage[T1]{fontenc}
-\addbibresource{Bibliographie.bib}
+\addbibresource{rapport.bib}
+\usepackage{hyperref}
 
-\title{TER
-\\\includegraphics[width=5cm]{images/UVSQ-logo}\\
-\author{Cambresy Florian \\ Chalaud Jean-Christophe \\ Le Denmat Mickael}
-\date{(date)MM YYYY}
+\title{
+	\Huge
+	\textbf{Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs:
+		application au jeu 7 Wonder-Duel}
+	\vspace{0.4cm}
+
+	\LARGE
+	TER
+}
+
+\author{
+	Cambresy Florian \\
+	Chalaud Jean-Christophe \\
+	Le Denmat Mickael
+}
 
 \begin{document}
-	\maketitle
-	\renewcommand{\contentsname}{Table des matières}
+	\input{pageDeGarde.tex}
+
 	\newpage
+	\renewcommand{\contentsname}{Table des matières}
 	\tableofcontents
 
 	\newpage
@@ -36,16 +52,17 @@
 	pertinentes des positions de jeu.
 
 	\subsection{Description du travail attendu}
-	L'objectif du projet est d'implémenter une méthode alpha-bêta pour faire en sorte que notre algorithme puisse
-	jouer, en proposant des coups pertinents et dignes d'intérêts. Nous expliquerons bien evidement qu'est ce que
-	nous considérons comme étant un coup digne d'intérêt et sur quels critères ce base notre algorithme.
+	L'objectif du projet est d'implémenter une fonction d'évaluation ainsi que la méthode alpha-bêta pour
+	faire en sorte que qu'un algorithme puisse jouer. Ce dernier va donc prendre en entrée une situation de départ,
+	les cartes de chaque joueur, leurs monnaies, ect et va fournir un coup à faire. De plus ce coups doit
+	être pertinent et digne d'intérêt. Nous discuterons de cette définition par la suite.
 
 	Afin d'apporter une solution à ce sujet, nous découperons le projet en trois parties.
 
 	La première sera une partie descriptive concernant les notions contenues dans la méthode alpha-bêta pour
 	le programme joue correctement en insistant sur les points qui devront être étudiés afin d'appliquer la méthode
 	à notre exemple précis. Ensuite, nous expliquerons les règles du jeu et évoquerons le déroulement d'une partie.
-	Nous développerons sur le système de victoire et, afin de faire une transition sur la partie qui suivra, nous
+	Nous développerons le système de victoire et, afin de faire une transition sur la partie qui suivra, nous
 	débattrons concernant la force des "positions" au cours d'une partie.
 
 	La deuxième partie montrera le chemin de pensée que nous avons eu afin d'arriver à une ou des solutions pour
@@ -55,22 +72,21 @@
 	Enfin la dernière sera une présentation des solutions techniques que nous avons mis en place.
 
 	\subsection{Description du jeu : 7 wonders-Duel}
-	7 Wonder est un jeu de plateau sorti dans les années 2010, créé Antoine Bauza et publié par Repos Production en
-	Belgique. Le nombre de joueur est entre 3 et 7. On y joue une ancienne
-	civilisation avec ses conflits milaitaires mais aussi ses activites commerciales. Il est connu et très apprécié
+	7 Wonder est un jeu de plateau sorti dans les années 2010, créé par Antoine Bauza et publié par Repos Production en
+	Belgique. Le nombre de joueurs est entre 3 et 7. On y joue une ancienne
+	civilisation avec ses conflits militaires mais aussi ses activites commerciales. Il est connu et très apprécié
 	par la communauté ayant remporté plus de 30 prix et souvent cité comme l'un des jeux de société les plus influents
 	de la dernière décennie\cite{wiki_7_wonder}.
-	Le jeu choisit afin d'appliquer l'algorithme min-max est une variante de celui-ci, le 7 wonders - Duel.
+	Le jeu choisi afin d'appliquer l'algorithme min-max est une variante de celui-ci, le 7 wonders - Duel.
 
 	\subsubsection{7 wonders - Duel}
-	Le jeu 7 wonders - Duel est comme son nom l'indique un 7 wonders mais à deux joueur. Un jeu sortie en 2015
-	par la même société. \textcolor{red}{A DVP ?}
+	Le jeu 7 wonders - Duel est comme son nom l'indique un 7 wonders mais à deux joueurs. Un jeu sorti en 2015
+	par la même société.
 
 	\subsubsection{Règles du jeu}
 	Le jeu se présente comme suit dans le livret des règles\cite{regle_7_wonder_duel}.
-	 \\
-	 \includegraphics[width=15cm]{images/PlateauDebut.png}
-	 \\
+
+	 \includegraphics[width=15cm]{images/PlateauDebut}
 
 	Il est constitué de:
 	\begin{itemize}
@@ -95,9 +111,9 @@
 		\item 1 carnet de scores.
 	\end{itemize}
 
-	Les cartes Âge et Guilde sont des bâtiments. Elles peuvent avoir un coût (monnetaire) afin d'être
-	utilisée, qui est placé en haut à gauche. Elles peuvent donner des effets, placé en haut au centre.
-	Les effets sont multiple comme par exemple une production de matière, une réduction de coût de construction
+	Les cartes Âge et Guilde sont des bâtiments. Elles peuvent avoir un coût (monetaire) afin d'être
+	utilisées, qui est placé en haut à gauche. Elles peuvent donner des effets, placé en haut au centre.
+	Les effets sont multiples comme par exemple une production de matière, une réduction de coût de construction
 	d'un bâtiment ou d'une merveille, ainsi que d'autres. Enfin elles ont aussi un nom, placé en bas. Les cartes
 	ont des couleurs différentes indiquant à quel type de bâtiment elles appartiennent.
 	\begin{itemize}
@@ -116,20 +132,20 @@
 
 	De plus le joueur peut acheter des ressources à la "banque" via le commerce comme par exemple si le joueur souhaite
 	construire un bâtiment mais ne dispose pas de toutes les ressouces. Pour acheter cette ressource il faut prendre
-	en compte les ressources produite par le joueur adverse (carte marron et grise) y ajouter 2 et remettre la somme
+	en compte les ressources produites par le joueur adverse (carte marron et grise) y ajouter 2 et remettre la somme
 	dans la banque puis construire le bâtiment. Concernant les bâtiments, certains octroient un symbole de chaînage
 	(en blanc en haut de la carte). Si le joueur souhaite construire un bâtiment et si il possède une carte
 	donnant le symbole de chaînage il peut alors le construire gratuitement, dans le cas contraire
-	il doit payer son coût en ressources et/ou monnetaire.
+	il doit payer son coût en ressources et/ou monetaire.
 
 	Une fois la présentation faite, nous allons pouvoir parler de la préparation du jeu avant de débuter une partie.
-	La préparation du plateau de se fait ainsi:
+	La préparation du plateau se fait ainsi:
 	\begin{enumerate}
 		\item Placez le plateau entre les deux joueurs.
 		\item Placez le pion Conflit sur la case neutre au milieu du plateau.
 		\item Placez les quatres jetons Militaire sur leurs emplacements.
 		\item Mélangez les jetons Progrès et placez-en cinqs au hasard sur la plateau.
-		\item Chaque joueur prend 7 pièce à la banque.
+		\item Chaque joueur prend 7 pièces à la banque.
 	\end{enumerate}
 
 	Puis vient la selection des Merveilles, pour cela il faut désigner le premier joueur et mélanger les Merveilles,
@@ -142,22 +158,23 @@
 		\item Disposez les quatres autres Merveilles.
 		\item Le deuxième joueur choisit une Merveille.
 		\item Le premier joueur en choisit deux.
-		\item Le deuxime joueur prend la dernière.
+		\item Le deuxième joueur prend la dernière.
 	\end{itemize}
-	Pour construire une Merveille, le joueur doit mettre une carte face cachée sous la Merveille (peut importe
-	la carte, elle sert juste a indiquer que la Merveille est construite) et doit payer le coût de la construction.
-	Il y a un maximum de 7 Merveilles construitent par partie, le joueur dont la dernière Merveille n'est pas construite
-	doit la remettre dans la boite.
+	Pour construire une Merveille, le joueur doit mettre une carte face cachée sous la Merveille (peu importe la
+	carte, elle sert juste a indiquer que la Merveille est construite) et doit payer le coût de la construction.
+	Il y a un maximum de sept Merveilles construit par partie, le joueur dont la dernière Merveille n'est pas
+	construite doit la remettre dans la boite.
 
 	Enfin il faut placer les cartes d'Âge dans une structure particulière en fonction de l'âge. Les cartes face
 	cachées sont retournées lorsque les cartes visibles posées dessus sont enlevées par les joueurs. Les joueurs
 	peuvent choisir aussi de défausser une carte en échange de 2 pièces et d'un bonus d'une pièce pour chaque carte
 	jaune qu'il possède.
 
-	Il y a deux manières de gagner, la première est la victoire militaire, l'un des joueur aura avancé le pion
+	Il y a trois manières de gagner, la première est la victoire militaire, l'un des joueur aura avancé le pion
 	Conflit dans la case capitale de son adversaire. La deuxième étant la victoire par suprémactie scientifique,
-	l'un des joueur réunit 6 symboles scientifiques différents. Si aucun des joueur n'a gagner à la fin de l'Âge III,
-	il faut alors faire la sommes des points de victoire acquis durant la partie, celui qui en possde le plus l'emporte.
+	l'un des joueurs réunit 6 symboles scientifiques différents. Enfin, si aucun des joueurs n'a gagné à la fin de
+	l'Âge III, il faut alors faire la sommes des points de victoire acquis durant la partie,
+	celui qui en possde le plus l'emporte.
 
 	\section{Rappels généraux}
 	\subsection{Théorie des jeux}
@@ -208,7 +225,7 @@
 	noeud est une situation produite au cours d'une partie (pas nécessairement le début de la partie) et les fils de
 	ce noeud sont les coups que peut faire le joueur suivant. Par exemple dans les échecs, la racine sera l'état du
 	plateau de jeu à la fin du tour d'un joueur (la position des pions de chaque joueur) et les fils de cette racine
-	seront les déplacements des pions de l'adversaire. Dans cet exemple, ainsi que dans tous les joueurs à deux joueurs,
+	seront les déplacements des pions de l'adversaire. Dans cet exemple, ainsi que dans tous les jeux à deux joueurs,
 	les hauteurs paires sont les coups du joueur A tandis que les hauteurs impaires sont les coups du joueur B.
 	De plus, les feuilles de cet arbre sont des noeuds indiquant la fin de la partie, soit il y a victoire d'un des
 	deux joueurs, soit plus aucun coup n'est possible.
@@ -218,7 +235,7 @@
 	\subsubsection{forme normale}
 	La forme normale (ou stratégique) est définie par:
 	\begin{itemize}
-		\item L'ensemble des joueurs (de taille fini).
+		\item L'ensemble des joueurs (de taille finie).
 		\item L'ensemble des stratégies possibles pour chacun des joueurs (fini ou infini).
 		\item Les préférences de chacun des joueurs, soit un sous-ensemble de stratégies parmi l'ensemble des
 		\item combinaisons stratégiques possibles soit via une fonction d'utilité ou un fonction de gain.
@@ -264,11 +281,11 @@
 			O$_1$, \ldots, O$_n$.
 	\end{itemize}
 
-	Le soucis de cette méthode est le nombre de cas à étudier. En effet comme la simulation
+	Le souci de cette méthode est le nombre de cas à étudier. En effet comme la simulation
 	produit un arbre que nous devons parcourir en entier afin de choisir le meilleur coup à jouer
 	nous devons faire un parcours de cet arbre. Cependant comme cela passe soit par un algorithme récursif,
 	qui doit simuler un nombre important de coups et de réponses ce qui fait augmenter la profondeur de l'arbre.
-	En plus de faire augementer le nombre d'appel récursif cela surcharge le tas d'appel. Soit, dans l'autre cas,
+	En plus de faire augementer le nombre d'appels récursifs cela surcharge le tas d'appel. Soit, dans l'autre cas,
 	nous pouvons passer par un algorithme itératif avec une file ou une pile. Or si le nombre de réponses possibles
 	à un coup du joueur devient trop important cela nous oblige à utiliser beaucoup de mémoire. Enfin, même si nous
 	prévoyons le fait que le programme utilise beaucoup de mémoire, nous ne voulons pas que le programme continue de
@@ -277,7 +294,7 @@
 
 	\subsubsection{Amélioration alpha-bêta}
 	L'élagage alpha-bêta est comme son nom l'indique une méthode qui vise à "supprimer" les branches de l'arbre qui
-	ne sont pas utile, qui ne change rien au résultat final. Pour élager les branches, nous disposons de deux types de
+	ne sont pas utiles, qui ne change rien au résultat final. Pour élager les branches, nous disposons de deux types de
 	coupures, la coupure alpha et la coupure bêta, d'où le nom de la méthode\cite{elagage_alpha_beta}
 	Cette méthode s'applique uniquement sur des arbres au moins de profondeur trois
 	(la racine ayant un profondeur de un). Une fois que la méthode min-max à construit l'arbre
@@ -285,8 +302,8 @@
 	"remonter" des valeurs à la racine.
 
 	\subsubsection{Coupure Alpha}
+	% TODO : Dessin à refaire
 	\includegraphics[width=12cm]{images/elagageAlpha.JPG}
-	\textcolor{red}{A FAIRE PROPRE}
 
 	Prenons l'exemple ci-dessus pour expliquer la coupure alpha, elle se place du point de vue du joueur.
 	Une fois que la valeur du noeud B à été initialisé avec le minimum de ces fils (D, F) cette valeur va nous
@@ -297,8 +314,8 @@
 	utiliser pour initialiser la valeur de A pusique A=max(B,C). Nous pouvons donc élaguer H (et tous les autres fils
 	de C s'ils existent) comme sur l'image ci-dessous.
 
+	% TODO : Dessin à refaire
 	\includegraphics[width=12cm]{images/elagageAlphaSuite.JPG}
-	\textcolor{red}{A FAIRE PROPRE}
 
 	\subsubsection{Coupure Bêta}
 	La coupure bêta est similaire mais se base du point de vue de l'ordinateur, on élague donc les
@@ -306,30 +323,50 @@
 
 	\section{Travail effectué}
 	\subsection{La fonction d'évaluation}
-	La fonction nous permet de donner un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
+	La fonction nous permet d'associer un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
 	des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
-	présent sur le plateau. Pour cela nous avons commencé par réduire le nombre d'élément lors d'une partie et nous
-	avons travaillé uniquement avec les cartes. Après quelques brain storming nous avons conclu que la solution la
+	présents sur le plateau. Pour cela nous avons commencé par réduire le nombre d'éléments que nous prenons en
+	compte lors d'une partie et nous avons travaillé uniquement avec les cartes. De plus nous avons considéré
+	uniquement le carte de l'age I. Après quelques brain storming nous avons conclu que la solution la
 	plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier ce poids
 	en fonction de la situation.
 
-	Nous avons défini un intervalle de valeur pour donner nos notes (entre 0 et 20) et nous avons aussi attribué
-	un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
+	Nous avons défini un intervalle de valeur arbitraire pour donner nos notes (entre 0 et 20) et nous avons
+	aussi attribué un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
 	inférieure à 10, il est préférable de tenter de prendre face cachée, avec une chance de 50 \% d'avoir une meilleure
 	carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie. Par exemple, à
-	l'âge un, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à une carte attaque.
-	Et nous avons inversé cette tendance à l'âge deux et trois.
+	l'âge I, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à une carte attaque.
+	Et nous avons inversé cette tendance à l'âge II et III car nous estimons qu'il est préférable de commencer par
+	récupèrer des ressources lors de l'age I afin de construire facilement des merveilles et des bâtiments complexes
+	dans l'age II et III. Cette solution nous permet aussi de prendre en compte le cout des cartes, par exemple les
+	cartes "Chantier" et "Exploitation" donne toutes les deux du bois mais "Exploitation" coute une pièces, si nous
+	avons le choix entre les deux il est préférable de prendre "Chantier" et d'utiliser la monnaie pour acheter des
+	ressources que nous ne possedons pas.
+
+	% TODO : détail à ajouter
+	% TODO : mettre image du tableau
 
 	Après plusieurs parties contre l'ordinateur, nous avons ajouté la possibilité de construire des merveilles.
-	Nous avons utilisé la même méthode évoquée précédemment. \textcolor{red}{EN COURS D'IMPLEMENTATION}
+	Nous avons utilisé la même méthode évoquée précédemment.
+
 	\subsection{Implémentation}
+	Pour l'implémentation nous avons décidé de commencer par s'intéréser au jeu et à réfléchir au découpage du jeu
+	en différent module ainsi que du desing de l'interface,	sans ce soucier de la partie "stratégie". Puis nous avons
+	créer l'arborescence des fichiers et nous avons discuter concernant le langage à utiliser. Il nous fallait un
+	langage orienté objet et que nous maîtrisions. Nous avions donc le choix entre le Java et le Python.
+	Pour des raisons de simplicité nous avons choisit le Python. Une fois % TODO : à suivre
+
 	\subsection{Interface}
-	\subsection{Résultat obtenue}
+	\subsection{Résultat obtenu}
 
 	\section{Conclusion}
 	\subsection{Objectif(s) atteint/ non atteint}
 	\subsection{Suggestion d'amélioration(s)}
 	\subsection{Difficultée(s) rencontrée(s)}
+	Nous sommes rapidement tomber sur une première difficultée lors que nous rédigions les schémas de classe pour le
+	découpage du jeu en module. Les cartes du jeu comportent beacoup d'effets pouvant avoir un impact sur le joueur,
+	comme un gain de ressource, mais aussi sur le jeu, comme le fait du pouvoir rejouer. L'application d'un effet
+	doit être effectué par le jeu et non dans le module "Carte". % TODO : à suivre
 
 	\section{Annexe}
 	\subsection{Code}
