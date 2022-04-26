@@ -109,7 +109,7 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.assertEqual("bassin argileux", carte_a_prendre.nom)
 		self.assertEqual(37, nbr_noeuds)
 		
-	def test_alha_beta_profondeur_2(self):
+	def test_alpha_beta_profondeur_2(self):
 		self.plateau.joueur_qui_joue = self.plateau.joueur2
 		nbr_noeuds = 0
 		eval_minimax, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, 2, -math.inf, math.inf, True, nbr_noeuds)
@@ -138,28 +138,25 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 	# 	print(f"temps execution minimax : {fin_minimax - deb_minimax}")
 	# 	print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
 	# 	self.assertNotEqual(nbr_noeuds_minimax, nbr_noeuds_alpha_beta)
-		
-	def test_elagage_merveille(self):
+	
+	def test_alpha_beta_avec_merveille(self):
+		self.plateau.cartes_plateau[4][8] = Carte("mine", ["ressource pierre 1"], ["monnaie 1"], None, "marron", age=1)
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 7
 		self.plateau.joueur_qui_joue = self.plateau.joueur2
-		self.plateau.age = 2
-		profondeur = 5
-
-		nbr_noeuds_alpha_beta = 0
-		deb_alpha_beta = time.time()
-		_, _, nbr_noeuds_alpha_beta = alpha_beta(self.plateau, profondeur, -math.inf, math.inf, True, nbr_noeuds_alpha_beta)
-		fin_alpha_beta = time.time()
-
+		self.plateau.joueur2.ressources["pierre"] = 2
+		self.plateau.joueur2.ressources["argile"] = 2
+		self.plateau.joueur2.ressources["papyrus"] = 1
+		# print(self.plateau)
+		
 		nbr_noeuds_alpha_beta_merveille = 0
-		deb_alpha_beta_merveille = time.time()
-		_, _, nbr_noeuds_alpha_beta_merveille = alpha_beta_avec_merveille(self.plateau, profondeur,
-			-math.inf, math.inf, True, nbr_noeuds_alpha_beta_merveille)
-		fin_alpha_beta_merveille = time.time()
-
-		print(f"nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}")
-		print(f"nbr_noeuds_alpha_beta_merveille : {nbr_noeuds_alpha_beta_merveille}")
-		print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
-		print(f"temps execution alpha_beta_merveille : {fin_alpha_beta_merveille - deb_alpha_beta_merveille}")
-		self.assertTrue(True)
+		evaluation_alpha_beta_merveille, carte, merveille, nbr_noeuds_alpha_beta_merveille = \
+			alpha_beta_avec_merveille(self.plateau, 2, -math.inf, math.inf,
+				True, nbr_noeuds_alpha_beta_merveille)
+		
+		print(f"carte : {carte}\neval : {evaluation_alpha_beta_merveille}\nmerveille : {merveille}")
+		self.assertIsNotNone(merveille)
+		self.assertEqual(merveille.nom, "via appia")
+		
 	
 class TestFonctionEvaluationDurantPartie2(unittest.TestCase):
 	def setUp(self) -> None:

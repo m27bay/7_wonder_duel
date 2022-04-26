@@ -6,7 +6,7 @@ import unittest
 
 from src.utils.Carte import Carte
 from src.utils.Joueur import Joueur
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import SYMBOLE_SCIENTIFIQUES
 
@@ -158,13 +158,13 @@ class TestJoueur(unittest.TestCase):
 	
 	def test_compter_point_victoire_avec_les_merveilles(self):
 		self.joueur.merveilles.append(
-			CarteFille("circus maximus",
+			Merveille("circus maximus",
 				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
 				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
 			)
 		)
 		self.joueur.merveilles.append(
-			CarteFille("colosse",
+			Merveille("colosse",
 				["attaquer 2", "point_victoire 3"],
 				["ressource argile 3", "ressource verre 1"]
 			)

@@ -98,6 +98,18 @@ class TestConstructionPlateau(unittest.TestCase):
 		
 		self.assertTrue(carte_presente)
 		self.assertFalse(copie.reste_des_cartes())
+		
+	def test_copie_merveilles(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur_qui_joue = self.plateau.joueur2
+		self.plateau.joueur2.ressources["pierre"] = 2
+		self.plateau.joueur2.ressources["bois"] = 1
+		self.plateau.joueur2.ressources["verre"] = 1
+		
+		copie = self.plateau.constructeur_par_copie()
+		copie.construire_merveille(copie.joueur2.merveilles[0])
+		
+		self.assertFalse(self.plateau.merveilles[0].est_construite)
 	
 	def test_preparation_merveilles(self):
 		self.plateau.preparation_plateau()

@@ -167,7 +167,6 @@ class Joueur:
 			return liste_couts_manquants
 		
 	# TODO : code a refaire avec choix via interface (JC)
-	# TODO : il faut de même pour les meilleurs
 	# def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list, liste_choix: list):
 	def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list):
 		copy_liste_couts_manquants = liste_couts_manquants.copy()
@@ -429,5 +428,13 @@ class Joueur:
 			if not merveilles.est_construite:
 				liste.append(merveilles)
 				
+		return liste
+	
+	def liste_merveilles_construite(self):
+		liste = []
+		for merveilles in self.merveilles:
+			if merveilles.est_construite:
+				liste.append(merveilles)
+		
 		return liste
 	

@@ -9,7 +9,8 @@
 \usepackage[T1]{fontenc}
 \addbibresource{Bibliographie.bib}
 
-\title{TER (Titre ? mise en forme première page ? Logo UVSQ ? Tête et pied de page ?)}
+\title{TER
+\\\includegraphics[width=5cm]{images/UVSQ-logo}\\
 \author{Cambresy Florian \\ Chalaud Jean-Christophe \\ Le Denmat Mickael}
 \date{(date)MM YYYY}
 
@@ -20,24 +21,24 @@
 	\tableofcontents
 
 	\newpage
-	\section{Développement d'une méthode e recherche arborescence pour Développement d'une méthode de recherche
-	arborescence pour un jeu à deux joueurs: application au jeu 7 Wonder-Duel}
+	\section{Développement d'une méthode de recherche arborescence pour un jeu à deux joueurs:
+	application au jeu 7 Wonder-Duel}
 	\subsection{Sujet}
 	Il s’agira tout d’abord pour les étudiants de se familiariser avec les méthodes de recherche arborescente
 	appliquées aux jeux, en particulier la méthode alpha-bêta.
 
-	Dans un second temps, il conviendra d'implémenter une telle méthode pour un jeu intitulé 7wonders - Duel.
+	Dans un second temps, il conviendra d'implémenter une telle méthode pour le jeu intitulé 7wonders - Duel.
 	Ce jeu est décrit sur de nombreux sites, certains proposent même une petite vidéo tutorielle expliquant
 	les règles de ce jeu. Il est à noter que l’encadrant offrira ce jeu aux étudiants qui
-	choisiront ce sujet (oh, le beau cadeau).
+	choisiront ce sujet.
 
 	Pour que le programme “joue bien”, il conviendra en particulier de réfléchir à des fonctions d'évaluation
 	pertinentes des positions de jeu.
 
 	\subsection{Description du travail attendu}
 	L'objectif du projet est d'implémenter une méthode alpha-bêta pour faire en sorte que notre algorithme puisse
-	jouer, en proposant des coups "intelligents", dignes d'intérêts. Nous expliquerons bien evidement qu'est ce que
-	nous considérons comme étant un coup digne d'intérêts et sur quels critères ce base notre algorithme.
+	jouer, en proposant des coups pertinents et dignes d'intérêts. Nous expliquerons bien evidement qu'est ce que
+	nous considérons comme étant un coup digne d'intérêt et sur quels critères ce base notre algorithme.
 
 	Afin d'apporter une solution à ce sujet, nous découperons le projet en trois parties.
 
@@ -49,17 +50,17 @@
 
 	La deuxième partie montrera le chemin de pensée que nous avons eu afin d'arriver à une ou des solutions pour
 	appliquer la méthode alpha-beta sur notre jeu. Plus particulièrement nous décrirons la fonction d'évaluation
-	que nous avons trouvé afin que l'algorithme suggère des coups "intelligents".
+	que nous avons trouvé afin que l'algorithme suggère des coups pertinents.
 
-	Enfin la dernière sera une présentation des solutions techniques que nous avons du mettre en place.
+	Enfin la dernière sera une présentation des solutions techniques que nous avons mis en place.
 
 	\subsection{Description du jeu : 7 wonders-Duel}
-	7 Wonder est un jeu de plateau sorti dans les années 2010 créé Antoine Bauza et publier par Repos Production en
-	Belgique. Le nombre de joueur est entre 3 et 7. Un jeu où l'on joue une ancienne
-	civilisation avec ces conflits milaitaires mais aussi ces activites de commerce. Il est connu et très apprécié
+	7 Wonder est un jeu de plateau sorti dans les années 2010, créé Antoine Bauza et publié par Repos Production en
+	Belgique. Le nombre de joueur est entre 3 et 7. On y joue une ancienne
+	civilisation avec ses conflits milaitaires mais aussi ses activites commerciales. Il est connu et très apprécié
 	par la communauté ayant remporté plus de 30 prix et souvent cité comme l'un des jeux de société les plus influents
 	de la dernière décennie\cite{wiki_7_wonder}.
-	Le choisit afin d'appliquer l'algorithme min-max est une variante de ce jeu, le 7 wonders - Duel.
+	Le jeu choisit afin d'appliquer l'algorithme min-max est une variante de celui-ci, le 7 wonders - Duel.
 
 	\subsubsection{7 wonders - Duel}
 	Le jeu 7 wonders - Duel est comme son nom l'indique un 7 wonders mais à deux joueur. Un jeu sortie en 2015
@@ -67,7 +68,9 @@
 
 	\subsubsection{Règles du jeu}
 	Le jeu se présente comme suit dans le livret des règles\cite{regle_7_wonder_duel}.
-	\textcolor{red}{PRENDRE EN PHOTO LE JEU AU DEBUT DE LA PARTIE}.
+	 \\
+	 \includegraphics[width=15cm]{images/PlateauDebut.png}
+	 \\
 
 	Il est constitué de:
 	\begin{itemize}
@@ -93,33 +96,33 @@
 	\end{itemize}
 
 	Les cartes Âge et Guilde sont des bâtiments. Elles peuvent avoir un coût (monnetaire) afin d'être
-	utilisée, qui placé en haut à gauche. Elles peuvent donner des effets, placé en haut au centre.
+	utilisée, qui est placé en haut à gauche. Elles peuvent donner des effets, placé en haut au centre.
 	Les effets sont multiple comme par exemple une production de matière, une réduction de coût de construction
 	d'un bâtiment ou d'une merveille, ainsi que d'autres. Enfin elles ont aussi un nom, placé en bas. Les cartes
 	ont des couleurs différentes indiquant à quel type de bâtiment elles appartiennent.
 	\begin{itemize}
 		\item Les Cartes marrons sont des bâtiments de matière première.
 		\item Les Cartes grises sont des bâtiments de produit manufacturé.
-		\item Les cartes bleues sont des bâtiments civils, ils donnent des points de victoire.
-		\item Les cartes vertes sont des bâtiments scientifiques, ils donnent aussi des points de victoire et
-		\item un symbole scientifique. Lorsqu'un joueur a deux symbole scientifique identique
-		\item il peut prendre un jeton Progres.
-		\item Les cartes oranges sont des bâtiments commerciaux, ils ont des objectifs multiples comme donner
-		\item des pièces au joueur, produire des ressources, modifier les règles de commerce.
-		\item Les cartes rouges sont des bâtiments militaires, ils augmentent la puissance.
-		\item Les cartes violettes sont des bâtiment de Guilde, ils donnent des points de victoire en fonction
-		\item de certains critères.
+		\item Les cartes bleues sont des bâtiments civils, elles donnent des points de victoire.
+		\item Les cartes vertes sont des bâtiments scientifiques, elles donnent aussi des points de victoire et
+		\item Un symbole scientifique. Lorsqu'un joueur a deux symboles scientifique identique
+		il peut prendre un jeton Progres.
+		\item Les cartes oranges sont des bâtiments commerciaux, elles ont des objectifs multiples comme donner
+		des pièces au joueur, produire des ressources, modifier les règles de commerce.
+		\item Les cartes rouges sont des bâtiments militaires, elles augmentent la puissance.
+		\item Les cartes violettes sont des bâtiment de Guilde, elles donnent des points de victoire en fonction
+		de certains critères.
 	\end{itemize}
 
-	De plus le joueur peut acheter des ressources à la "banque" via le commerce. Par exemple si le joueur souhaite
-	construire un bâtiment mais il ne dispose pas de toutes les ressouces. Pour acheter cette ressource il faut prendre
-	en compte les ressources produite par le joueur advairse (carte marron et grise) et ajouter 2 et remettre la somme
-	à la banque puis construire le bâtiment. Concernant les bâtiments, certains octroient un symbole de chaînage
-	(en blanc en haut de la carte). Si le joueur prend souhaite construire un bâtiment et si il possède une carte
-	donnant le symbole de chaînage il peut alors construire gratuitement le bâtiment, dans le cas contraire
-	il devrait payer son coût en ressources et/ou monnetaire.
+	De plus le joueur peut acheter des ressources à la "banque" via le commerce comme par exemple si le joueur souhaite
+	construire un bâtiment mais ne dispose pas de toutes les ressouces. Pour acheter cette ressource il faut prendre
+	en compte les ressources produite par le joueur adverse (carte marron et grise) y ajouter 2 et remettre la somme
+	dans la banque puis construire le bâtiment. Concernant les bâtiments, certains octroient un symbole de chaînage
+	(en blanc en haut de la carte). Si le joueur souhaite construire un bâtiment et si il possède une carte
+	donnant le symbole de chaînage il peut alors le construire gratuitement, dans le cas contraire
+	il doit payer son coût en ressources et/ou monnetaire.
 
-	Une fois la présentation fait, nous allons pouvoir parler de la préparation du jeu avant de débuter une partie.
+	Une fois la présentation faite, nous allons pouvoir parler de la préparation du jeu avant de débuter une partie.
 	La préparation du plateau de se fait ainsi:
 	\begin{enumerate}
 		\item Placez le plateau entre les deux joueurs.
@@ -129,7 +132,7 @@
 		\item Chaque joueur prend 7 pièce à la banque.
 	\end{enumerate}
 
-	Puis vient la selection des Merveilles, pour cela il faut désinger le premier joueur et mélanger les Merveilles,
+	Puis vient la selection des Merveilles, pour cela il faut désigner le premier joueur et mélanger les Merveilles,
 	ensuite:
 	\begin{itemize}
 		\item Disposez 4 Merveilles aléatoires entre les joueurs.
@@ -141,12 +144,12 @@
 		\item Le premier joueur en choisit deux.
 		\item Le deuxime joueur prend la dernière.
 	\end{itemize}
-	Pour construire une Merveille, le joueur doit mettre une carte face caché sous la Merveille (peut importe
-	la carte, elle sert juste a indiquer qque la Mereveille est construite) et doit payé le coup de la construction.
-	Il y a un maximum de 7 Merveille construite par partie, le joueur dont la dernière Merveille n'est pas construite
+	Pour construire une Merveille, le joueur doit mettre une carte face cachée sous la Merveille (peut importe
+	la carte, elle sert juste a indiquer que la Merveille est construite) et doit payer le coût de la construction.
+	Il y a un maximum de 7 Merveilles construitent par partie, le joueur dont la dernière Merveille n'est pas construite
 	doit la remettre dans la boite.
 
-	Enfin il faut placer les cartes d'Âge dans une structure particulière en fonction de l'âge. Les cartes facent
+	Enfin il faut placer les cartes d'Âge dans une structure particulière en fonction de l'âge. Les cartes face
 	cachées sont retournées lorsque les cartes visibles posées dessus sont enlevées par les joueurs. Les joueurs
 	peuvent choisir aussi de défausser une carte en échange de 2 pièces et d'un bonus d'une pièce pour chaque carte
 	jaune qu'il possède.
@@ -158,7 +161,7 @@
 
 	\section{Rappels généraux}
 	\subsection{Théorie des jeux}
-	Dans le monde des mathématiques il existe un domaine qui s'intéresse aux interactions stratégiques qui existent
+	Dans le monde des mathématiques il y a un domaine qui s'intéresse aux interactions stratégiques qui existent
 	entre plusieurs agents. Ces interactions peuvent se faire dans un jeu, dans les sciences sociales, politiques
 	ainsi que dans d'autres exemples. Ce domaine est la théorie des jeux\cite{wiki_theorie_jeux}.
 	Il faut noter que ici le mot "jeu" a un sens plus large qu'un jeu de société ou autre.
@@ -181,7 +184,7 @@
 	\end{enumerate}
 	(1) Un jeu coopératif permet d'analyser la formation de coalitions afin d'améliorer le gain potentiel. \\
 	(2) Un jeu à somme nulle (ou jeu strictement compétitif) est un jeu dont les gains de certains joueurs
-	sont les pertes des autres afin d'avoir la somme des gains et des pertes nulles, comme dans les échecs,
+	sont les pertes des autres afin d'avoir la somme des gains et des pertes nulle, comme dans les échecs,
 	dans le poker ou dans d'autres. A l'inverse dans un jeu à somme non nulle, tous les joueurs peuvent perdre,
 	ou gagner, voir même certains peuvent gagner un gain moins (réciproquement plus) important que la perte totale
 	d'autres joueurs.\\
@@ -303,6 +306,22 @@
 
 	\section{Travail effectué}
 	\subsection{La fonction d'évaluation}
+	La fonction nous permet de donner un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
+	des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
+	présent sur le plateau. Pour cela nous avons commencé par réduire le nombre d'élément lors d'une partie et nous
+	avons travaillé uniquement avec les cartes. Après quelques brain storming nous avons conclu que la solution la
+	plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier ce poids
+	en fonction de la situation.
+
+	Nous avons défini un intervalle de valeur pour donner nos notes (entre 0 et 20) et nous avons aussi attribué
+	un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
+	inférieure à 10, il est préférable de tenter de prendre face cachée, avec une chance de 50 \% d'avoir une meilleure
+	carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie. Par exemple, à
+	l'âge un, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à une carte attaque.
+	Et nous avons inversé cette tendance à l'âge deux et trois.
+
+	Après plusieurs parties contre l'ordinateur, nous avons ajouté la possibilité de construire des merveilles.
+	Nous avons utilisé la même méthode évoquée précédemment. \textcolor{red}{EN COURS D'IMPLEMENTATION}
 	\subsection{Implémentation}
 	\subsection{Interface}
 	\subsection{Résultat obtenue}

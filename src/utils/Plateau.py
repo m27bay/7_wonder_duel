@@ -4,8 +4,9 @@ Fichier classe Plateau
 import random
 
 from src.utils.Carte import Carte
+from src.utils.CarteGuilde import CarteGuilde
 from src.utils.JetonMilitaire import JetonMilitaire
-from src.utils.CarteFille import CarteFille
+from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
 
@@ -41,7 +42,7 @@ class Plateau:
 			self.joueur1 = joueur1
 			self.joueur2 = joueur2
 			self.joueur_qui_joue = None
-			self.joueur_gagnant = None
+			self.victoire = None
 			
 			#
 			self.choix_auto_merveilles = choix_auto_merveilles
@@ -183,32 +184,32 @@ class Plateau:
 			]
 			
 			self.cartes_guilde = [
-				CarteFille("guilde des commercants",
+				CarteGuilde("guilde des commercants",
 					["effet_guild_commercants 1"],
 					["ressource argile 1", "ressource bois 1", "ressource verre 1", "ressource papyrus 1"]
 				),
-				CarteFille("guilde des armateurs",
+				CarteGuilde("guilde des armateurs",
 					["effet_guild_armateurs 1"],
 					["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
 				),
-				CarteFille("guilde des batisseurs",
+				CarteGuilde("guilde des batisseurs",
 					["effet_guild_batisseurs 1"],
 					["ressource pierre 2", "ressource argile 1", "ressource bois 1",
 						"ressource papyrus 1", "ressource verre 1"]
 				),
-				CarteFille("guilde des magistrats",
+				CarteGuilde("guilde des magistrats",
 					["effet_guild_magistrats 1"],
 					["ressource bois 2", "ressource argile 1", "ressource papyrus 1"]
 				),
-				CarteFille("guilde des scientifiques",
+				CarteGuilde("guilde des scientifiques",
 					["effet_guild_scientifiques 1"],
 					["ressource argile 2", "ressource bois 2"]
 				),
-				CarteFille("guilde des usuriers",
+				CarteGuilde("guilde des usuriers",
 					["effet_guild_usuriers 1"],
 					["ressource pierre 2", "ressource bois 2"]
 				),
-				CarteFille("guilde des tacticiens",
+				CarteGuilde("guilde des tacticiens",
 					["effet_guild_tacticiens 1"],
 					["ressource pierre 2", "ressource argile 1", "ressource papyrus 1"]
 				)
@@ -216,53 +217,53 @@ class Plateau:
 			
 			# constructeur : CarteFille(nom, chemin_image, effets)
 			self.merveilles = [
-				CarteFille("circus maximus",
+				Merveille("circus maximus",
 					["defausse_carte_adversaire gris", "attaquer 1", "point_victoire 3"],
 					["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
 				),
-				CarteFille("colosse",
+				Merveille("colosse",
 					["attaquer 2", "point_victoire 3"],
 					["ressource argile 3", "ressource verre 1"]
 				),
-				CarteFille("grand phare",
+				Merveille("grand phare",
 					["ressource_au_choix bois argile pierre", "point_victoire 4"],
 					["ressource bois 1", "ressource pierre 1", "ressource papyrus 2"]
 				),
-				CarteFille("jardin suspendus",
+				Merveille("jardin suspendus",
 					["monnaie 6", "rejouer", "point_victoire 3"],
 					["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
 				),
-				CarteFille("grande bibliotheque",
+				Merveille("grande bibliotheque",
 					["jeton_progres_aleatoire", "point_victoire 4"],
 					["ressource bois 3", "ressource verre 1", "ressource papyrus 1"]
 				),
-				CarteFille("mausolee",
+				Merveille("mausolee",
 					["construction_fausse_gratuite", "point_victoire 2"],
 					["ressource argile 2", "ressource verre 2", "ressource papyrus 1"]
 				),
-				CarteFille("piree",
+				Merveille("piree",
 					["ressource_au_choix papyrus verre", "rejouer", "point_victoire 2"],
 					["ressource bois 2", "ressource pierre 1", "ressource argile 1"]
 				),
-				CarteFille("pyramides",
+				Merveille("pyramides",
 					["point_victoire 9"],
 					["ressource pierre 3", "ressource papyrus 1"]
 				),
-				CarteFille("sphinx",
+				Merveille("sphinx",
 					["rejouer", "point_victoire 6"],
 					["ressource pierre 1", "ressource argile 1", "ressource verre 2"]
 				),
-				CarteFille("statue de zeus",
+				Merveille("statue de zeus",
 					["defausse_carte_adversaire marron", "attaquer 1", "point_victoire 3"],
 					["ressource pierre 1", "ressource bois 1",
 						"ressource argile 1", "ressource papyrus 2"]
 				),
-				CarteFille("temple d artemis",
+				Merveille("temple d artemis",
 					["monnaie 12", "rejouer"],
 					["ressource bois 1", "ressource pierre 1",
 						"ressource verre 1", "ressource papyrus 1"]
 				),
-				CarteFille("via appia",
+				Merveille("via appia",
 					["monnaie 3", "adversaire_perd_monnaie 3", "rejouer", "point_victoire 3"],
 					["ressource pierre 2", "ressource argile 2", "ressource papyrus 1"]
 				)
@@ -285,7 +286,7 @@ class Plateau:
 			self.joueur1 = None
 			self.joueur2 = None
 			self.joueur_qui_joue = None
-			self.joueur_gagnant = None
+			self.victoire = None
 			self.choix_auto_merveilles = None
 			self.monnaie_banque = None
 			self.age = None
@@ -308,8 +309,8 @@ class Plateau:
 		plateau.joueur1 = self.joueur1.constructeur_par_copie()
 		plateau.joueur2 = self.joueur2.constructeur_par_copie()
 		
-		if self.joueur_gagnant is not None:
-			plateau.joueur_gagnant = self.joueur_gagnant.constructeur_par_copie()
+		if self.victoire is not None:
+			plateau.victoire = self.victoire
 		
 		if self.joueur_qui_joue == self.joueur1:
 			plateau.joueur_qui_joue = plateau.joueur1
@@ -609,13 +610,13 @@ class Plateau:
 	
 	def fin_de_partie(self):
 		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
-			self.joueur_gagnant = self.joueur2
+			self.victoire = (self.joueur2.nom, "militaire")
 		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
-			self.joueur_gagnant = self.joueur1
+			self.victoire = (self.joueur1.nom, "militaire")
 		elif self.joueur1.monnaie < 0:
-			self.joueur_gagnant = self.joueur2
+			self.victoire = (self.joueur2.nom, "monnaie")
 		elif self.joueur2.monnaie < 0:
-			self.joueur_gagnant = self.joueur1
+			self.victoire = (self.joueur1.nom, "monnaie")
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
@@ -628,11 +629,11 @@ class Plateau:
 				self.joueur2.points_victoire += jeton.points_victoire
 			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
-				self.joueur_gagnant = self.joueur1
+				self.victoire = (self.joueur1.nom, "points victoire")
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-				self.joueur_gagnant = self.joueur2
+				self.victoire = (self.joueur2.nom, "points victoire")
 			else:
-				self.joueur_gagnant = -1
+				self.victoire = (None, "égalité")
 				
 	def action_banque(self, monnaies: int):
 		if monnaies == 0:
@@ -807,7 +808,7 @@ class Plateau:
 		self.cartes_defaussees.append(carte_prenable)
 		self.enlever_carte(carte_prenable)
 		
-	def construire_merveille(self, merveille_a_construire: CarteFille):
+	def construire_merveille(self, merveille_a_construire: Merveille):
 		if merveille_a_construire.est_construite:
 			return -1
 		
@@ -837,7 +838,10 @@ class Plateau:
 				if cout_split[0] == "monnaie":
 					self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
 			
-		merveille_a_construire.est_construite = True
+		for merveille in self.joueur_qui_joue.merveilles:
+			if merveille == merveille_a_construire:
+				merveille.est_construite = True
+				
 		self.appliquer_effets_merveille(merveille_a_construire)
 			
 	def numero_jeton_militaire(self):
@@ -924,7 +928,7 @@ class Plateau:
 						self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[2]))
 		return 1
 	
-	def appliquer_effets_merveille(self, merveille: CarteFille):
+	def appliquer_effets_merveille(self, merveille: Merveille):
 		for effet in merveille.effets:
 			
 			effet_split = effet.split(" ")

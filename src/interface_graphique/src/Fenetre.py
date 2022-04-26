@@ -9,7 +9,8 @@ from src.interface_graphique.src.SpriteJetonsMilitaire import SpriteJetonsMilita
 from src.interface_graphique.src.SpriteJetonsProgres import SpriteJetonsProgres
 from src.interface_graphique.src.SpriteMerveille import SpriteMerveille
 from src.utils.Carte import Carte
-from src.utils.CarteFille import CarteFille
+from src.utils.CarteGuilde import CarteGuilde
+from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Plateau import Plateau
 from src.utils.Stategie import alpha_beta, alpha_beta_avec_merveille
@@ -46,7 +47,7 @@ class Fenetre:
 		self.default_hauteur_sprite = default_sprite_image.rect.height
 		self.default_largeur_sprite = default_sprite_image.rect.width
 		
-		default_sprite_merveille = SpriteMerveille(CarteFille("piree", None, None), 0, 0, RATIO_MERVEILLE)
+		default_sprite_merveille = SpriteMerveille(Merveille("piree", None, None), 0, 0, RATIO_MERVEILLE)
 		self.default_hauteur_merveille = default_sprite_merveille.rect.height
 		self.default_largeur_merveille = default_sprite_merveille.rect.width
 		
@@ -278,6 +279,10 @@ class Fenetre:
 			compteur += 1
 			
 	def __dessiner_merveille_sacrifier(self, merveille_a_construire: SpriteMerveille, carte_a_sacrifier: SpriteCarte):
+		self.plateau.joueur_qui_joue.merveilles.append(merveille_a_construire.merveille)
+		self.plateau.enlever_carte(carte_a_sacrifier.carte)
+		self.plateau.merveilles.remove(merveille_a_construire.merveille)
+		
 		for merveille_j1 in self.merveille_j1:
 			
 			if isinstance(merveille_j1, SpriteMerveille) \
@@ -467,13 +472,12 @@ class Fenetre:
 			SpriteJetonsMilitaire(self.plateau.jetons_militaire[0], top_x, top_y, RATIO_JETONS_MILITAIRE5))
 	
 	def __position_type_carte(self, carte: Carte):
-		if not isinstance(carte, CarteFille):
+		if not isinstance(carte, CarteGuilde):
 			liste_couleur = ["marron", "gris", "bleu", "vert", "jaune", "rouge"]
 			if carte.couleur in liste_couleur:
 				return liste_couleur.index(carte.couleur)
 		else:
-			if carte.nom.__contains__("guilde"):
-				return 6
+			return 6
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.piocher(sprite_carte.carte)
@@ -530,7 +534,7 @@ class Fenetre:
 	def boucle_principale(self):
 		en_cours = True
 		while en_cours:
-			if self.plateau.joueur_gagnant is not None:
+			if self.plateau.victoire is not None:
 				en_cours = False
 			
 			# PARTIE Process input (events)
@@ -670,8 +674,11 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					_, carte_a_prendre, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					# _, carte, merveille, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					# 	-math.inf, math.inf, True, nbr_noeuds)
+					_, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 						-math.inf, math.inf, True, nbr_noeuds)
+					# print(f"carte : {carte}\nmerveille : {merveille}\nnbr_noeuds : {nbr_noeuds}")
 					
 					for sprite_carte in self.sprite_cartes_plateau:
 						
@@ -693,11 +700,11 @@ class Fenetre:
 										clic_x, clic_y = event.pos
 										
 										if sprite_carte.rect.collidepoint(clic_x, clic_y):
-										
 											self.sprite_carte_j2_zoomer.dezoomer()
 											self.sprite_carte_j2_zoomer = None
 											self.__dessiner_piocher(sprite_carte)
 											self.plateau.joueur_qui_joue = self.plateau.adversaire()
+								
 											
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
@@ -705,7 +712,6 @@ class Fenetre:
 			
 			for group_sprit in self.sprite_j1:
 				group_sprit.update()
-			# TODO : superposition inversé avec j2
 			for group_sprit in self.sprite_j2:
 				group_sprit.update()
 			
@@ -776,4 +782,4 @@ class Fenetre:
 			pygame.display.flip()
 		
 		pygame.quit()
-		
+		print("victoire : ", self.plateau.victoire)
