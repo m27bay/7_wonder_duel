@@ -34,28 +34,33 @@ def musique():
     pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
     pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
     pygame.mixer.music.play()  # Play the music
+    pygame.mixer.music.set_volume(0.1)
 
     if len(playlist) > 0:  # If there are more tracks in the queue...
         pygame.mixer.music.queue(playlist.pop())  # Q
 
 
+tab_image = [
+    "src/interface_graphique/ressources/images/image_menu/Titre.png",
+    "src/interface_graphique/ressources/images/image_menu/Jouer.png",
+    "src/interface_graphique/ressources/images/image_menu/Options.png",
+    "src/interface_graphique/ressources/images/image_menu/Quitter.png",
+    "src/interface_graphique/ressources/images/image_menu/Musique.png",
+    "src/interface_graphique/ressources/images/image_menu/Musique_off.png",
+    "src/interface_graphique/ressources/images/image_menu/P1contreOrdi.png",
+    "src/interface_graphique/ressources/images/image_menu/P1contreP2.png",
+    "src/interface_graphique/ressources/images/image_menu/Retour.xcf",
+    "src/interface_graphique/ressources/images/image_menu/TypedeDifficulte.png",
+    "src/interface_graphique/ressources/images/image_menu/Facile.png",
+    "src/interface_graphique/ressources/images/image_menu/Normale.png",
+    "src/interface_graphique/ressources/images/image_menu/Difficile.png",
+    "src/interface_graphique/ressources/images/image_menu/Argiles.jpg",
+    "src/interface_graphique/ressources/images/image_menu/Pierre.jpg",
+    "src/interface_graphique/ressources/images/image_menu/Bois.jpg",
+    "src/interface_graphique/ressources/images/image_menu/Papier.jpg",
+    "src/interface_graphique/ressources/images/image_menu/Verre.jpg"
+]
 def tableau_image():
-    tab_image = [
-        "src/interface_graphique/ressources/images/image_menu/Titre.png",
-        "src/interface_graphique/ressources/images/image_menu/Jouer.png",
-        "src/interface_graphique/ressources/images/image_menu/Options.png",
-        "src/interface_graphique/ressources/images/image_menu/Quitter.png",
-        "src/interface_graphique/ressources/images/image_menu/Musique.png",
-        "src/interface_graphique/ressources/images/image_menu/Musique_off.png",
-        "src/interface_graphique/ressources/images/image_menu/P1contreOrdi.png",
-        "src/interface_graphique/ressources/images/image_menu/P1contreP2.png",
-        "src/interface_graphique/ressources/images/image_menu/Retour.xcf",
-        "src/interface_graphique/ressources/images/image_menu/TypedeDifficulte.png",
-        "src/interface_graphique/ressources/images/image_menu/Facile.png",
-        "src/interface_graphique/ressources/images/image_menu/Normale.png",
-        "src/interface_graphique/ressources/images/image_menu/Difficile.png"
-
-    ]
     return tab_image
 
 
@@ -118,14 +123,14 @@ def affichage_menu_accueille():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 0:
                     bouton_son_off.affichage_du_bouton(window_tempo)
-                    pygame.mixer.pause()
+                    pygame.mixer.music.pause()
                     MUTE_SOUND = 1
                     status_son = 1
                     break
                 elif event.button == 1 and bouton_son_on.rectangle.collidepoint(event.pos) and status_son == 1:
                     MUTE_SOUND = 0
                     bouton_son_on.affichage_du_bouton(window_tempo)
-                    pygame.mixer.unpause()
+                    pygame.mixer.music.unpause()
                     status_son = 0
                     break
                 elif event.button == 1 and bouton_quitter.rectangle.collidepoint(event.pos):
@@ -272,7 +277,7 @@ def affichage_menu_difficulter():
 
 def choix_ressources1():
     pygame.init()
-    color = (255, 255, 255)
+    color = (105, 105, 105)
     couleur_texte = (0, 0, 0)
     image_choix = tableau_image()
     ecran = pygame.display.set_mode((300, 200))
@@ -282,13 +287,13 @@ def choix_ressources1():
     texte = format_texte.render("choisi tes ressources", True, couleur_texte)
     ecran.blit(texte, [50, 40])
 
-    button_argiles = Boutton.Button(image_choix[1], image_choix[1],60,80,50,50)
+    button_argiles = Boutton.Button(image_choix[13], image_choix[13],60,80,50,50)
     button_argiles.affichage_du_bouton(ecran)
 
-    button_pierre = Boutton.Button(image_choix[1], image_choix[1],120,80,50,50)
+    button_pierre = Boutton.Button(image_choix[14], image_choix[14],120,80,50,50)
     button_pierre.affichage_du_bouton(ecran)
 
-    button_bois = Boutton.Button(image_choix[1], image_choix[1],180,80,50,50)
+    button_bois = Boutton.Button(image_choix[15], image_choix[15],180,80,50,50)
     button_bois.affichage_du_bouton(ecran)
 
     pygame.display.flip()
@@ -313,7 +318,7 @@ def choix_ressources1():
 
 def choix_ressources2():
     pygame.init()
-    color = (255, 255, 255)
+    color = (105, 105, 105)
     couleur_texte = (0, 0, 0)
     image_choix = tableau_image()
     ecran = pygame.display.set_mode((300, 200))
@@ -323,10 +328,10 @@ def choix_ressources2():
     texte = format_texte.render("choisi tes ressources", True, couleur_texte)
     ecran.blit(texte, [50, 40])
 
-    button_papier = Boutton.Button(image_choix[1], image_choix[1], 80, 80, 50, 50)
+    button_papier = Boutton.Button(image_choix[16], image_choix[16], 80, 80, 50, 50)
     button_papier.affichage_du_bouton(ecran)
 
-    button_verre = Boutton.Button(image_choix[1], image_choix[1], 160, 80, 50, 50)
+    button_verre = Boutton.Button(image_choix[17], image_choix[17], 160, 80, 50, 50)
     button_verre.affichage_du_bouton(ecran)
 
     pygame.display.flip()
@@ -380,5 +385,6 @@ def affichage_enssemble():
 
 '#affichage_mode_jouer()'
 if __name__ == '__main__':
-    affichage_enssemble()
-
+    #affichage_enssemble()
+    # choix_ressources1()
+    choix_ressources2()

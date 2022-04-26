@@ -572,7 +572,7 @@ class Fenetre:
 												self.sprite_carte_j1_zoomer = sprit
 												self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 												self.sprite_cartes_plateau.add(self.sprite_carte_j1_zoomer)
-											
+
 											else:
 												if sprit == self.sprite_carte_j1_zoomer:
 													

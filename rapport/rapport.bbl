@@ -1,0 +1,232 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{min_max}{online}{}
+      \name{author}{1}{}{%
+        {{hash=75baa376309485966b6c4166608b6090}{%
+           family={123dak},
+           familyi={1\bibinitperiod}}}%
+      }
+      \strng{namehash}{75baa376309485966b6c4166608b6090}
+      \strng{fullhash}{75baa376309485966b6c4166608b6090}
+      \strng{bibnamehash}{75baa376309485966b6c4166608b6090}
+      \strng{authorbibnamehash}{75baa376309485966b6c4166608b6090}
+      \strng{authornamehash}{75baa376309485966b6c4166608b6090}
+      \strng{authorfullhash}{75baa376309485966b6c4166608b6090}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Recherche arborescente dans les jeux}
+      \verb{urlraw}
+      \verb https://123dok.net/article/recherche-arborescente-jeux-contrôle-raisonnement-hypothétique- environnement.qvlo0jgy
+      \endverb
+      \verb{url}
+      \verb https://123dok.net/article/recherche-arborescente-jeux-contr%C3%B4le-raisonnement-hypoth%C3%A9tique-%20environnement.qvlo0jgy
+      \endverb
+    \endentry
+    \entry{cours_arbre_decision}{online}{}
+      \name{author}{1}{}{%
+        {{hash=14eaed815200bcf42952671dbee5b1dc}{%
+           family={Lille},
+           familyi={L\bibinitperiod},
+           prefix={université\bibnamedelima de},
+           prefixi={u\bibinitperiod\bibinitdelim d\bibinitperiod}}}%
+      }
+      \strng{namehash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{fullhash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{bibnamehash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{authorbibnamehash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{authornamehash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{authorfullhash}{14eaed815200bcf42952671dbee5b1dc}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Arbre de jeu}
+      \verb{urlraw}
+      \verb https://www.fil.univ-lille1.fr/~L2S3API/CoursTP/Projets/minmax/algo_minmax.html#arbre-de-jeu
+      \endverb
+      \verb{url}
+      \verb https://www.fil.univ-lille1.fr/~L2S3API/CoursTP/Projets/minmax/algo_minmax.html#arbre-de-jeu
+      \endverb
+    \endentry
+    \entry{regle_7_wonder_duel}{manual}{}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{https://cdn.1j1ju.com/medias/bd/ad/a7-7-wonders-duel-regles.pdf}}
+      \field{title}{Regles du jeux 7 wonder duel}
+    \endentry
+    \entry{minimax_alog}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{1}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Algorithme minimax - principe}
+      \verb{urlraw}
+      \verb https://fr.wikipedia.org/wiki/Algorithme_minimax#Principe
+      \endverb
+      \verb{url}
+      \verb https://fr.wikipedia.org/wiki/Algorithme_minimax#Principe
+      \endverb
+    \endentry
+    \entry{elagage_alpha_beta}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{2}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Elagege alpha_bêta}
+      \verb{urlraw}
+      \verb https://fr.wikipedia.org/wiki/Élagage_alpha-bêta
+      \endverb
+      \verb{url}
+      \verb https://fr.wikipedia.org/wiki/%C3%89lagage_alpha-b%C3%AAta
+      \endverb
+    \endentry
+    \entry{wiki_representation_theorie_jeux}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{3}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{representation theories des jeux}
+      \verb{urlraw}
+      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux#Représentations_des_jeux}
+      \endverb
+      \verb{url}
+      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Repr%C3%A9sentations_des_jeux%7D
+      \endverb
+    \endentry
+    \entry{wiki_theorie_jeux}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{4}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{theorie des jeux}
+      \verb{urlraw}
+      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux}
+      \endverb
+      \verb{url}
+      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux%7D
+      \endverb
+    \endentry
+    \entry{wiki_typo_theorie_jeux}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{5}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{typologie theorie des jeux}
+      \verb{urlraw}
+      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux#Typologie}
+      \endverb
+      \verb{url}
+      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Typologie%7D
+      \endverb
+    \endentry
+    \entry{wiki_7_wonder}{online}{}
+      \name{author}{1}{}{%
+        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
+           family={wikipedia},
+           familyi={w\bibinitperiod}}}%
+      }
+      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \field{extraname}{6}
+      \field{sortinit}{w}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Wonder}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/7_Wonders_(board_game)
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/7_Wonders_(board_game)
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
