@@ -12,19 +12,20 @@
 \usepackage{biblatex}
 \usepackage{listings}
 \usepackage{hyperref}
+\usepackage{eurosym}
 
 \addbibresource{rapport.bib}
 
 \lstset{
   aboveskip=3mm,
   belowskip=-2mm,
-  backgroundcolor=\color{darkWhite},
+  backgroundcolor=\color{lightgray},
   basicstyle=\footnotesize,
   breakatwhitespace=false,
   breaklines=true,
   captionpos=b,
   commentstyle=\color{green},
-  deletekeywords={...},
+  deletekeywords={\ldots},
   escapeinside={\%*}{*)},
   extendedchars=true,
   framexleftmargin=16pt,
@@ -40,7 +41,7 @@
   {⁶}{{\textsuperscript{6}}}1
   {⁸}{{\textsuperscript{8}}}1
   {€}{{\euro{}}}1
-  {é}{{\'e}}1
+  {é}{{\'{e}}}1
   {è}{{\`{e}}}1
   {ê}{{\^{e}}}1
   {ë}{{\¨{e}}}1
@@ -67,7 +68,7 @@
   {Î}{{\^{I}}}1
   {í}{{\'{i}}}1
   {Í}{{\~{Í}}}1,
-  morekeywords={*,...},
+  morekeywords={*,self, \_\_init\_\_, \_\_eq\_\_, \_\_str\_\_},
   numbers=left,
   numbersep=10pt,
   numberstyle=\tiny\color{black},
@@ -399,24 +400,17 @@
 	plus simple était de donner un "poids" aux cartes en fonction de notre manière de jouer, puis de modifier ce poids
 	en fonction de la situation.
 
-	% TODO : version JC
-	% Nous avons choisi pour l'intervalle des valeurs pour notée nos cartes de 0 a 20, pour choisir les notes des differentes cartes
-	% nous nous sommes tous reunis afin de nous concerter pour trouver la note la plus adequate pour la carte. Les cartes sont
-	% notées en fonction de l'âge à laquelle elles appartiennent et aussi en fonction de l'importance de la carte. Nous avons
-	% donc décidé de prioriser les cartes ressources pour le premier, pour le second âge nous avons décidé de prioriser les ressources
-	% rares et nous commençons a mettre en évidence les cartes militaires et scientifiques. Enfin pour le dernier âge se sont
-	% les cartes militaires ainsi que les cartes qui rapportent des points de victoires. Nous avons décidé d'un accort commun de
-	% mettre l'ensemble des cartes face cachées à une valeur neutre de 10. Suite à ce choix de notation nous avons réalisé
-	% la notation des différentes merveilles du jeux, ainsi que des jetons scientifiques.
-
-	Nous avons défini un intervalle de valeur arbitraire pour donner nos notes (entre 0 et 20) et nous avons
-	aussi attribué un "poids" à une carte face cachée (la moyenne de l'intervalle donc 10). Pour les cartes avec une valeur
-	inférieure à 10, il est préférable de tenter de prendre la carte face cachée, avec une chance de 50 \% d'avoir
+	Pour définir ce poids, nous nous sommes tous reunis afin de nous concerter pour trouver la note la plus adequate
+	pour chacune des cartes. Premièrement nous avons défini un intervalle de valeur arbitraire (entre 0 et 20)
+	et nous avons aussi attribué un poids à une carte face cachée (la moyenne de l'intervalle donc 10).
+	Pour les cartes avec une valeur	inférieure à 10, il est préférable de tenter de prendre la carte face cachée,
+	avec une chance de 50 \% d'avoir
 	une meilleure carte. De cette manière nous avons pu prendre en compte l'évolution des âges au cours d'une partie.
-	Par exemple, à l'âge I, nous avons donné un "poids" élevé à une carte ressource, mais un "poids" faible à
-	une carte attaque. Et nous avons inversé cette tendance à l'âge II et III car nous estimons qu'il est
-	préférable de commencer par	récupèrer des ressources lors de l'âge I afin de construire facilement
-	des merveilles et des bâtiments complexes dans l'âge II et III. Cette solution nous permet aussi de prendre
+	Nous avons défini un objectif par âge, le premier doit permettre au joueur de collecter des ressources simples
+	donc du bois, de la pierre et de l'argile. L'âge II doit permettre au joueur de collecter des ressources rares, donc
+	verre et papyrus mais aussi attaquer et obtenir des symboles scientifiques et construire des merveilles. Durant
+	le dernier âge le joueur doit viser les cartes donnant des points militaires.
+	Cette solution nous permet aussi de prendre
 	en compte le coût des cartes, par exemple les cartes "Chantier" et "Exploitation" donnent toutes les deux du bois
 	mais "Exploitation" coûte une pièce, si nous avons le choix entre les deux il est préférable de prendre "Chantier"
 	et d'utiliser la monnaie pour acheter des ressources que nous ne possédons pas.
@@ -427,13 +421,15 @@
 	Après plusieurs parties contre l'ordinateur, nous avons ajouté la possibilité de construire des merveilles.
 	Nous avons utilisé la même méthode évoquée précédemment.
 
+	% TODO : à finir
+
 	\subsection{Implémentation}
 	Pour l'implémentation nous avons décidé de commencer par réfléchir au découpage du jeu
 	en différent modules ainsi que du design de l'interface.
 
 	Nous avons conclus que l'arborescence des fichiers serait:
 	\begin{itemize}
-		\item \item Un dossier "interface\_graphique" contenant tous les fichiers utiles pour l'interface graphique, c'est-à
+		\item Un dossier "interface\_graphique" contenant tous les fichiers utiles pour l'interface graphique, c'est-à
 		-dire :
 		\begin{itemize}
 			\item Un dossier "ressources" avec toutes les images (cartes, merveilles, jetons, plateau, \ldots). Mais
@@ -481,29 +477,112 @@
 	un module, une fois fini nous le testons à travers différentes batteries de tests, puis nous passons
 	au module suivant. Une fois le jeu fini nous avons testé le jeu en 1vs1 via le terminal.
 
-	Voici les méthodes constituant les différentes classes :
+	Commençons par la classe carte.
+	Une carte est composé d'un nom, d'un effet, d'un cout, d'un nom de carte de chainage (none si la carte n'en possède
+	pas), une couleur, et elle appartient à un age.
+	Concernant les effets et les couts, nous avons utilisé les propriétés du Python en définissant les effets
+	comme des chaînes de caractère respectant un pattern précis. Elle commencent par le type d'effet
+	comme "ressource", "monnaie", "attaquer", "symbole\_scientifique" puis les paramètres comme
+	"ressource bois 1", "attaquer 3".
+	Les classe "CarteGuilde" et "Merveille" sont des classes filles de la classe "Cartes". Les cartes guildes
+	et les merveilles sont des cartes
+	mais sans carte de chaînage sans couleur et sans âge (elles appatiennent toutes à l'âge III). Les merveilles
+	possèdent un attribut pour savoir si elles sont construit ou non.
+
+	Passons maintenant aux jetons. Il en existe deux types, le jeton militaire qui possède un nom, un nombre de pièces
+	que perd l'adversaire lorsque le jeton est pris et un nombre de points de victoire que gagne le joueur.
+	Le deuxième type est le jeton progrès qui possède un nom et des effets.
+
+	Nous avons aussi une classe joueur. Le joueur est définit par un nom mais possèdent un liste de cartes dans sa main,
+	une liste de meveille, % TODO : a finir
 	\begin{lstlisting}
-	class Carte:
-		def __init__(self, nom, effets, couts, nom_carte_chainage, couleur, age):
-			pass
-		def constructeur_par_copie(self):
-			pass
+	class Joueur:
+		def __init__(self, nom):
+			"""
+			Constructeur de la classe Joueur.
+
+			:param nom: nom du nom_joueur.
+			"""
+			self.nom = nom
+
+			#
+			self.cartes = []  # liste des cartes construites
+			self.merveilles = []  # liste des merveilles construites
+			self.jetons_progres = []  # liste des jetons_progres gagnes
+
+			#
+			self.ressources = {
+				"bois": 0,
+				"pierre": 0,
+				"argile": 0,
+				"verre": 0,
+				"papyrus": 0
+			}
+
+			#
+			self.monnaie = 0
+			self.points_victoire = 0
+			self.symb_scientifique = {
+				"sphere_armillaire": 0,
+				"roue": 0,
+				"cadran_solaire": 0,
+				"pilon": 0,
+				"pendule": 0,
+				"plume": 0
+			}
+
+			self.nbr_symb_scientifique_diff = 0
+
 		def __eq__(self, other):
 			pass
+
 		def __str__(self):
 			pass
-		def devoiler(self):
+
+		def constructeur_par_copie(self):
 			pass
-		def cacher(self):
+
+		def compter_symb_scientifique(self):
 			pass
+
+		def couts_manquants(self, carte: Carte):
+			pass
+
+		def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list):
+			pass
+
+		def possede_carte_chainage(self, carte: Carte):
+			pass
+
+		def production_type_ressources(self, ressource: str):
+			pass
+
+		def possede_carte_reduction(self, ressource: str):
+			pass
+
+		def possede_cartes_couleur(self, couleur: str):
+			pass
+
+		def possede_jeton_scientifique(self, nom_jetons_progres: str):
+			pass
+
+		def compter_point_victoire(self):
+			pass
+
+		def trouver_repartition_monnaies(self):
+			pass
+
+		def liste_merveilles_non_construite(self):
+			pass
+
+		def liste_merveilles_construite(self):
+			pass
+
 	\end{lstlisting}
 
-	A partir de ce moment
-	l'équipe se sépare en deux groupes, l'un crée l'interface pendant que l'autre fait l'algorithme minimax,
-	d'alpha beta ainsi que la fonction d'évaluation.
+	Après tout cela, l'équipe se sépare en deux groupes, l'un crée l'interface pendant que l'autre fait
+	l'algorithme minimax, d'alpha beta ainsi que la fonction d'évaluation.
 
-	Nous avons utilisé les propriétés du Python facilitant la manipulation de chaîne de caractères et nous avons
-	défini un penis
 
 	\subsection{Interface}
 	\subsection{Résultat obtenu}

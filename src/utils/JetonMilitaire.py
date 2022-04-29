@@ -1,8 +1,3 @@
-"""
-Fichier de la classe JetonMilitaire.
-"""
-
-
 class JetonMilitaire:
 	"""
 	Classe representant un jeton militaire.

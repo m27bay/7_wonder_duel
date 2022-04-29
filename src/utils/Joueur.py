@@ -117,13 +117,6 @@ class Joueur:
 		for nom_symb_scientifique, qte in self.symb_scientifique.items():
 			if qte != 0:
 				self.nbr_symb_scientifique_diff += 1
-		
-	def retirer_monnaie(self, monnaie: int):
-		if self.monnaie - monnaie < 0:
-			return False
-		else:
-			self.monnaie -= monnaie
-			return True
 	
 	def couts_manquants(self, carte: Carte):
 		if carte.couts is None or len(carte.couts) == 0:
@@ -206,96 +199,6 @@ class Joueur:
 								return liste_couts_manquants
 		
 		return liste_couts_manquants
-								
-	# TODO : bug
-	def couts_manquants2(self, carte: Carte):
-		"""
-		Renvoie une liste des ressources_manquantes (monnaie ou matiere premiere/ produit manufacture)
-		que le nom_joueur ne possede pas pour construire une carte.
-
-		:param carte: carte a construire.
-		:return: une liste avec les ressources_manquantes manquantes.
-		"""
-		
-		if carte.couts is None or len(carte.couts) == 0:
-			return []
-		
-		# Cout ou Effet
-		# "monnaie prix"
-		# "ressource type quantite"
-		couts_manquants_carte = carte.couts.copy()
-		for cout_manquant in carte.couts:
-			
-			# decoupage couts de la carte
-			cout_manquant_split = cout_manquant.split(" ")
-			
-			# cout monnetaire
-			if cout_manquant_split[0] == "monnaie":
-				
-				if self.monnaie < int(cout_manquant_split[1]):
-					# changement du cout avec le cout manquant
-					prix_manquant = str(int(cout_manquant_split[1]) - self.monnaie)
-					monnaie_manquante = "monnaie " + prix_manquant
-					couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = monnaie_manquante
-				
-				else:
-					# ce n'est pas un cout manquant
-					try:
-						couts_manquants_carte.remove(cout_manquant)
-					except ValueError:
-						exit(-2)
-			
-			# cout ressource
-			else:
-				for ma_carte in self.cartes:
-					
-					for effet in ma_carte.effets:
-						
-						# decoupage effets
-						effet_split = effet.split(" ")
-						if effet_split[0] == "ressource":
-							
-							# si c'est la même ressource
-							if cout_manquant_split[1] == effet_split[1]:
-								
-								if int(effet_split[2]) < int(cout_manquant_split[2]):
-									# changement du cout avec le cout manquant
-									quantite_manquante = str(int(cout_manquant_split[2]) - int(effet_split[2]))
-									ressource_manquante = effet_split[0] + " " + effet_split[1] + " " + quantite_manquante
-									couts_manquants_carte[couts_manquants_carte.index(cout_manquant)] = ressource_manquante
-								
-								else:
-									# ce n'est pas un cout manquant
-									try:
-										couts_manquants_carte.remove(cout_manquant)
-									except ValueError:
-										# TODO : parfois couts_manquants_carte est vide, pourquoi
-										print(f"couts_manquants({carte.nom})\n{mon_str_liste(self.cartes)}")
-										print(f"Erreur : couts_manquants()\n{couts_manquants_carte}.remove({cout_manquant})")
-										exit(-2)
-						
-						elif effet_split[0] == "ressource_au_choix":
-							
-							for i in range(len(effet_split) - 2):
-								
-								if cout_manquant_split[1] == effet_split[i]:
-									
-									if int(cout_manquant_split[2]) > 1:
-										
-										quantite_manquante = str(int(cout_manquant_split[2]) - 1)
-										ressource_manquante = "ressource " + effet_split[
-											i] + " " + quantite_manquante
-										couts_manquants_carte[
-											couts_manquants_carte.index(cout_manquant)] = ressource_manquante
-									
-									else:
-										
-										try:
-											couts_manquants_carte.remove(cout_manquant)
-										except ValueError:
-											exit(-2)
-		
-		return couts_manquants_carte
 	
 	def possede_carte_chainage(self, carte: Carte):
 		# si la carte ne possede pas de carte de chainage
