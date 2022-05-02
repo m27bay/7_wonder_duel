@@ -19,44 +19,48 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global}
-    \entry{min_max}{online}{}
+    \entry{implementation_minimax_alpha_beta}{online}{}
       \name{author}{1}{}{%
-        {{hash=75baa376309485966b6c4166608b6090}{%
-           family={123dak},
-           familyi={1\bibinitperiod}}}%
+        {{hash=082f0a20a5ae96d82e2f5df24e0fac8e}{%
+           family={Lague},
+           familyi={L\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod}}}%
       }
-      \strng{namehash}{75baa376309485966b6c4166608b6090}
-      \strng{fullhash}{75baa376309485966b6c4166608b6090}
-      \strng{bibnamehash}{75baa376309485966b6c4166608b6090}
-      \strng{authorbibnamehash}{75baa376309485966b6c4166608b6090}
-      \strng{authornamehash}{75baa376309485966b6c4166608b6090}
-      \strng{authorfullhash}{75baa376309485966b6c4166608b6090}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \strng{namehash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \strng{fullhash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \strng{bibnamehash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \strng{authorbibnamehash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \strng{authornamehash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \strng{authorfullhash}{082f0a20a5ae96d82e2f5df24e0fac8e}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Recherche arborescente dans les jeux}
+      \field{title}{Algorithms Explained – minimax and alpha-beta pruning}
       \verb{urlraw}
-      \verb https://123dok.net/article/recherche-arborescente-jeux-contrôle-raisonnement-hypothétique- environnement.qvlo0jgy
+      \verb https://youtu.be/l-hh51ncgDI
       \endverb
       \verb{url}
-      \verb https://123dok.net/article/recherche-arborescente-jeux-contr%C3%B4le-raisonnement-hypoth%C3%A9tique-%20environnement.qvlo0jgy
+      \verb https://youtu.be/l-hh51ncgDI
       \endverb
     \endentry
     \entry{cours_arbre_decision}{online}{}
       \name{author}{1}{}{%
-        {{hash=14eaed815200bcf42952671dbee5b1dc}{%
+        {{hash=ab07b68369b60fb6ea7aa551d4198726}{%
            family={Lille},
            familyi={L\bibinitperiod},
-           prefix={université\bibnamedelima de},
-           prefixi={u\bibinitperiod\bibinitdelim d\bibinitperiod}}}%
+           given={Université},
+           giveni={U\bibinitperiod},
+           prefix={de},
+           prefixi={d\bibinitperiod}}}%
       }
-      \strng{namehash}{14eaed815200bcf42952671dbee5b1dc}
-      \strng{fullhash}{14eaed815200bcf42952671dbee5b1dc}
-      \strng{bibnamehash}{14eaed815200bcf42952671dbee5b1dc}
-      \strng{authorbibnamehash}{14eaed815200bcf42952671dbee5b1dc}
-      \strng{authornamehash}{14eaed815200bcf42952671dbee5b1dc}
-      \strng{authorfullhash}{14eaed815200bcf42952671dbee5b1dc}
+      \strng{namehash}{ab07b68369b60fb6ea7aa551d4198726}
+      \strng{fullhash}{ab07b68369b60fb6ea7aa551d4198726}
+      \strng{bibnamehash}{ab07b68369b60fb6ea7aa551d4198726}
+      \strng{authorbibnamehash}{ab07b68369b60fb6ea7aa551d4198726}
+      \strng{authornamehash}{ab07b68369b60fb6ea7aa551d4198726}
+      \strng{authorfullhash}{ab07b68369b60fb6ea7aa551d4198726}
       \field{sortinit}{L}
       \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
       \field{labelnamesource}{author}
@@ -69,6 +73,18 @@
       \verb https://www.fil.univ-lille1.fr/~L2S3API/CoursTP/Projets/minmax/algo_minmax.html#arbre-de-jeu
       \endverb
     \endentry
+    \entry{min_max}{online}{}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labeltitlesource}{title}
+      \field{title}{Recherche arborescente dans les jeux}
+      \verb{urlraw}
+      \verb https://123dok.net/article/recherche-arborescente-jeux-contrôle-raisonnement-hypothétique- environnement.qvlo0jgy
+      \endverb
+      \verb{url}
+      \verb https://123dok.net/article/recherche-arborescente-jeux-contr%C3%B4le-raisonnement-hypoth%C3%A9tique-%20environnement.qvlo0jgy
+      \endverb
+    \endentry
     \entry{regle_7_wonder_duel}{manual}{}
       \field{sortinit}{R}
       \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
@@ -78,18 +94,18 @@
     \endentry
     \entry{minimax_alog}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{1}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -103,22 +119,22 @@
     \endentry
     \entry{elagage_alpha_beta}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{2}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Elagege alpha_bêta}
+      \field{title}{Elagege alpha_beta}
       \verb{urlraw}
       \verb https://fr.wikipedia.org/wiki/Élagage_alpha-bêta
       \endverb
@@ -128,93 +144,93 @@
     \endentry
     \entry{wiki_representation_theorie_jeux}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{3}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{representation theories des jeux}
       \verb{urlraw}
-      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux#Représentations_des_jeux}
+      \verb https://fr.wikipedia.org/wiki/Théorie_des_jeux#Représentations_des_jeux
       \endverb
       \verb{url}
-      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Repr%C3%A9sentations_des_jeux%7D
+      \verb https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Repr%C3%A9sentations_des_jeux
       \endverb
     \endentry
     \entry{wiki_theorie_jeux}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{4}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{theorie des jeux}
       \verb{urlraw}
-      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux}
+      \verb https://fr.wikipedia.org/wiki/Théorie_des_jeux
       \endverb
       \verb{url}
-      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux%7D
+      \verb https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux
       \endverb
     \endentry
     \entry{wiki_typo_theorie_jeux}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{5}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{typologie theorie des jeux}
       \verb{urlraw}
-      \verb \url{https://fr.wikipedia.org/wiki/Théorie_des_jeux#Typologie}
+      \verb https://fr.wikipedia.org/wiki/Théorie_des_jeux#Typologie
       \endverb
       \verb{url}
-      \verb %5Curl%7Bhttps://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Typologie%7D
+      \verb https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_jeux#Typologie
       \endverb
     \endentry
     \entry{wiki_7_wonder}{online}{}
       \name{author}{1}{}{%
-        {{hash=12672e79b01e9ca7018105efb0ef871c}{%
-           family={wikipedia},
-           familyi={w\bibinitperiod}}}%
+        {{hash=9c677286866aad38f8e9b660f5411814}{%
+           family={Wikipedia},
+           familyi={W\bibinitperiod}}}%
       }
-      \strng{namehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{fullhash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{bibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorbibnamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authornamehash}{12672e79b01e9ca7018105efb0ef871c}
-      \strng{authorfullhash}{12672e79b01e9ca7018105efb0ef871c}
+      \strng{namehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{fullhash}{9c677286866aad38f8e9b660f5411814}
+      \strng{bibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorbibnamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authornamehash}{9c677286866aad38f8e9b660f5411814}
+      \strng{authorfullhash}{9c677286866aad38f8e9b660f5411814}
       \field{extraname}{6}
-      \field{sortinit}{w}
+      \field{sortinit}{W}
       \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}

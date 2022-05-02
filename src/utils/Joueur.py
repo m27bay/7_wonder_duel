@@ -18,10 +18,11 @@ class Joueur:
 		"""
 		self.nom = nom
 		
-		#
-		self.cartes = []  # liste des cartes construites
-		self.merveilles = []  # liste des merveilles construites
-		self.jetons_progres = []  # liste des jetons_progres gagnes
+		# Informations visible sur le plateau.
+		self.cartes = []
+		self.merveilles = []
+		self.jetons_progres = []
+		self.monnaie = 0
 		
 		#
 		self.ressources = {
@@ -31,9 +32,6 @@ class Joueur:
 			"verre": 0,
 			"papyrus": 0
 		}
-		
-		#
-		self.monnaie = 0
 		self.points_victoire = 0
 		self.symb_scientifique = {
 			"sphere_armillaire": 0,
@@ -114,7 +112,7 @@ class Joueur:
 	
 	def compter_symb_scientifique(self):
 		self.nbr_symb_scientifique_diff = 0
-		for nom_symb_scientifique, qte in self.symb_scientifique.items():
+		for _, qte in self.symb_scientifique.items():
 			if qte != 0:
 				self.nbr_symb_scientifique_diff += 1
 	
@@ -218,6 +216,7 @@ class Joueur:
 		:param ressource: la ressource dont on veut la carte.
 		:return: une carte si elle existe, None sinon.
 		"""
+		# TODO : a refaire avec le dicionnaire
 		ressource_split = ressource.split(" ")
 		for carte in self.cartes:
 			for effet in carte.effets:

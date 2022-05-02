@@ -3,7 +3,7 @@
 \usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{hyphenat}
 \usepackage[left=15mm, right=15mm]{geometry}
@@ -24,7 +24,7 @@
   breakatwhitespace=false,
   breaklines=true,
   captionpos=b,
-  commentstyle=\color{green},
+  commentstyle=\color{ForestGreen},
   deletekeywords={\ldots},
   escapeinside={\%*}{*)},
   extendedchars=true,
@@ -77,7 +77,7 @@
   showstringspaces=false,
   showtabs=false,
   stepnumber=1,
-  stringstyle=\color{green},
+  stringstyle=\color{ForestGreen},
   tabsize=4,
   title=\lstname,
 }
@@ -159,19 +159,19 @@
 
 	Il est constitué de:
 	\begin{itemize}
-		\item 1 plateau de jeu. \textcolor{red}{IMAGE ?}
-		\item 66 cartes Âge. \textcolor{red}{IMAGE ?}
+		\item 1 plateau de jeu.
+		\item 66 cartes Âge.
 		\begin{itemize}
 			\item 23 cartes pour l'Âge I.
 			\item 23 cartes pour l'Âge II.
 			\item 20 cartes pour l'Âge III.
 		\end{itemize}
 		\item 7 cartes Guilde.
-		\item 12 cartes Merveille, avec un nom, un coût en ressource et un effet (un bonus). \textcolor{red}{IMAGE ?}
-		\item 4 jetons Militaire, donnant une certaine somme de monnaie. \textcolor{red}{IMAGE ?}
-		\item 10 jetons Progrès. \textcolor{red}{IMAGE ?}
-		\item 1 Pion Conflit, indiquant quel joueur a l'avantage militaire. \textcolor{red}{IMAGE ?}
-		\item 31 pièces de monnaie \textcolor{red}{IMAGE ?}
+		\item 12 cartes Merveille, avec un nom, un coût en ressource et un effet (un bonus).
+		\item 4 jetons Militaire, donnant une certaine somme de monnaie.
+		\item 10 jetons Progrès.
+		\item 1 Pion Conflit, indiquant quel joueur a l'avantage militaire.
+		\item 31 pièces de monnaie
 		\begin{itemize}
 			\item 14 de valeur 1.
 			\item 10 de valeur 3.
@@ -309,13 +309,12 @@
 		\item Les préférences de chacun des joueurs, soit un sous-ensemble de stratégies parmi l'ensemble des
 		\item combinaisons stratégiques possibles soit via une fonction d'utilité ou un fonction de gain.
 	\end{itemize}
-	\textcolor{red}{A CREUSER ?}
 
 	\subsubsection{forme caractéristique}
 	La forme caractéristique est utilisée, comme dit précédememnt, pour les jeux coopératifs. Elle est représentée
 	sous forme d'un graphe G=(N,v) avec N l'ensemble des joueurs et v la fonction caractéristique. Cette dernière
 	associe à chaque sous-ensemble de joueurs (noté S) qui forme une coalition, la valeur v(S), la gain obtenu
-	par la coalition. \textcolor{red}{A CREUSER ?}
+	par la coalition.
 
 	\subsection{Recherche arborescente et intelligence artificielle}
 	La recherche arborescente est une recherche qui se base sur la forme extensive afin d'utiliser l'arbre de
@@ -392,7 +391,8 @@
 
 	\section{Travail effectué}
 	\subsection{La fonction d'évaluation}
-	La fonction nous permet d'associer un nombre à une situation lors d'une partie. C'est-à-dire l'ensemble
+	Comme expliqué précédememnt la fonction d'évaluation nous permet d'associer un nombre à une situation 
+	lors d'une partie. C'est-à-dire l'ensemble
 	des éléments (cartes, merveilles, monnaies, position du jeton conflit, jetons militaires, jetons progrès)
 	présents sur le plateau. Pour cela nous avons commencé par réduire le nombre d'éléments que nous prenons en
 	compte lors d'une partie et nous avons travaillé uniquement avec les cartes. De plus nous avons considéré
@@ -477,112 +477,192 @@
 	un module, une fois fini nous le testons à travers différentes batteries de tests, puis nous passons
 	au module suivant. Une fois le jeu fini nous avons testé le jeu en 1vs1 via le terminal.
 
-	Commençons par la classe carte.
-	Une carte est composé d'un nom, d'un effet, d'un cout, d'un nom de carte de chainage (none si la carte n'en possède
-	pas), une couleur, et elle appartient à un age.
-	Concernant les effets et les couts, nous avons utilisé les propriétés du Python en définissant les effets
-	comme des chaînes de caractère respectant un pattern précis. Elle commencent par le type d'effet
-	comme "ressource", "monnaie", "attaquer", "symbole\_scientifique" puis les paramètres comme
-	"ressource bois 1", "attaquer 3".
-	Les classe "CarteGuilde" et "Merveille" sont des classes filles de la classe "Cartes". Les cartes guildes
-	et les merveilles sont des cartes
-	mais sans carte de chaînage sans couleur et sans âge (elles appatiennent toutes à l'âge III). Les merveilles
-	possèdent un attribut pour savoir si elles sont construit ou non.
+	Nous allons maintenant expliquer brièvement le contenue des différentes classes 
+	constituant le projet et nous detaillerons le contenue de la classe "Stratégie" qui 
+	est le coeur du projet.
 
-	Passons maintenant aux jetons. Il en existe deux types, le jeton militaire qui possède un nom, un nombre de pièces
-	que perd l'adversaire lorsque le jeton est pris et un nombre de points de victoire que gagne le joueur.
-	Le deuxième type est le jeton progrès qui possède un nom et des effets.
+	\subsubsection{Carte}
+		Commençons par la classe carte.
+		Une carte est composé d'un nom, d'un effet, d'un cout, d'un nom de carte de chainage (none si la carte n'en possède
+		pas), une couleur, et elle appartient à un age.
+		Concernant les effets et les couts, nous avons utilisé les propriétés du Python en définissant les effets
+		comme des chaînes de caractère respectant un pattern précis. Elle commencent par le type d'effet
+		comme "ressource", "monnaie", "attaquer", "symbole\_scientifique" puis les paramètres comme
+		"ressource bois 1", "attaquer 3".
+		Les classe "CarteGuilde" et "Merveille" sont des classes filles de la classe "Cartes". Les cartes guildes
+		et les merveilles sont des cartes
+		mais sans carte de chaînage sans couleur et sans âge (elles appatiennent toutes à l'âge III). Les merveilles
+		possèdent un attribut pour savoir si elles sont construit ou non.
 
-	Nous avons aussi une classe joueur. Le joueur est définit par un nom mais possèdent un liste de cartes dans sa main,
-	une liste de meveille, % TODO : a finir
-	\begin{lstlisting}
-	class Joueur:
-		def __init__(self, nom):
-			"""
-			Constructeur de la classe Joueur.
+	\subsubsection{Jetons}
+		Passons maintenant aux jetons. Il en existe deux types, le jeton militaire qui possède un nom, un nombre de pièces
+		que perd l'adversaire lorsque le jeton est pris et un nombre de points de victoire que gagne le joueur.
+		Le deuxième type est le jeton progrès qui possède un nom et des effets.
 
-			:param nom: nom du nom_joueur.
-			"""
-			self.nom = nom
+	\subsubsection{Joueur}
+		Nous avons aussi une classe joueur. Le joueur est définit par un nom, et possède plusieurs listes
+		d'objets visible sur le plateau, c'est-à-dire ces cartes, ces meveilles, et ces jetons progrès, ainsi 
+		que de la monnaie. Mais aussi d'autre informations comme un dicionnaire de ressource, des points de victoires
+		un dicionnaire de symbole scientifiques et le nombre de symbole scientifiques différent. Cette classe
+		implémente certaines méthodes qui le jeu utilise pour avoir des informations comme par exemple
+		les coûts manquants pour construire une carte, dans ce cas il faut regarder dans le dicionnaire de ressource
+		du joueur, mais aussi ces monnaies ainsi que dans ces merveilles ou cartes la présence de carte donnant des
+		ressources au choix ou d'autre effet impliquant la construction de carte ou de merveille. 
+		Il existe aussi d'autres méthodes comme savoir si le joueur possède une carte pour faire du chaînage
+		, s'il produit un type de ressources en particulier, ect\ldots.
 
-			#
-			self.cartes = []  # liste des cartes construites
-			self.merveilles = []  # liste des merveilles construites
-			self.jetons_progres = []  # liste des jetons_progres gagnes
+	\subsubsection{Plateau}
+		Toutes les différentes fonctionnalitées du jeu sont dans le fichier Plateau.py. Cette classe
+		représente le jeu dans sa globalité c'est-à-dire le plateau avec les jetons progrès choisit,
+		les cartes présentent en dessous du plateau, les deux joueurs, la fausse et la banque.
+		Elle s'occupe aussi des effets des cartes ainsi que des effets des merveilles.
+		C'est aussi la première classe que nous avons developpé durant le projet, elle a donc connue
+		plusieurs évolutions.
+		La classe Plateau contient toutes les méthodes faisant fonctionner le jeu. Elle 
+		implémente une méthode pour préparer le plateau, c'est-à-dire
+		tirer aléatoirement les jetons, les cartes, ainsi que les merveilles (si le jeu
+		est en mode choix automatique). Elle contient aussi des méthodes pour piocher, 
+		pour enlever une carte, pour obtenir la liste des cartes prenables, pour intéragir
+		avec la banque, ect \ldots.
 
-			#
-			self.ressources = {
-				"bois": 0,
-				"pierre": 0,
-				"argile": 0,
-				"verre": 0,
-				"papyrus": 0
-			}
+		Après tout cela, l'équipe se sépare en deux groupes, l'un crée l'interface pendant que l'autre fait
+		l'algorithme minimax, d'alpha beta ainsi que la fonction d'évaluation.
 
-			#
-			self.monnaie = 0
-			self.points_victoire = 0
-			self.symb_scientifique = {
-				"sphere_armillaire": 0,
-				"roue": 0,
-				"cadran_solaire": 0,
-				"pilon": 0,
-				"pendule": 0,
-				"plume": 0
-			}
+	\subsubsection{Stratégie}
+		Concernant la classe "Stratégie", elle contient la fonction d'évaluation, la fonction
+		minimax ainsi que son amélioration la fonction alpha-beta.
+		Elle commence d'abord par lire le fichier contenant le poids des cartes, des merveilles, et des jetons progrès.
+		
+		\begin{lstlisting}
+			notation_carte = {}
+			with open("src/utils/notation_cartes.csv", mode='r') as file:
+				fichier_cvs = csv.reader(file)
+				for lignes in fichier_cvs:
+					notation_carte[lignes[0]] = int(lignes[1])
+		\end{lstlisting}
+		
+		Nous avons rempli un fichier Google Sheet avec le nom de la carte puis son poids. Puis nous l'avons importé
+		sous un format rapide et simple à lire, le format csv. Le Python nous a permit d'éxecuter ceci en seulement
+		quelques lignes de code.
 
-			self.nbr_symb_scientifique_diff = 0
+		Nous avons ensuite la fonction d'évaluation, elle prend en entrée
+		la partie à un instant donné et va renvoyé une valeur, la différence
+		entre l'évalution du joueur 2, donc de l'ordinateur, et du joueur 1.
 
-		def __eq__(self, other):
-			pass
+		\begin{lstlisting}
+			def fonction_evaluation(partie):
+				evaluation_j2 = 0
+				for carte in partie.joueur2.cartes:
+					if carte.est_face_cachee:
+						evaluation_j2 += 10
+					else:
+						evaluation_j2 += notation_carte[carte.nom]
+				
+				for merveille in partie.joueur2.liste_merveilles_construite():
+					evaluation_j2 += notation_carte[merveille.nom]
+				
+				if partie.joueur1.monnaie == 0:
+					evaluation_j2 += 10
+								
+				if partie.position_jeton_conflit == 0:
+					evaluation_j2 += 10
+				
+				evaluation_j1 = 0
+				for carte in partie.joueur1.cartes:
+					if carte.est_face_cachee:
+						evaluation_j1 += 10
+					else:
+						evaluation_j1 += notation_carte[carte.nom]
+				
+				for merveille in partie.joueur1.liste_merveilles_construite():
+					evaluation_j1 += notation_carte[merveille.nom]
+				
+				if partie.joueur2.monnaie == 0:
+					evaluation_j1 += 10
+				
+				if partie.position_jeton_conflit == 18:
+					evaluation_j1 += 10
+				return evaluation_j2 - evaluation_j1
+		\end{lstlisting}
 
-		def __str__(self):
-			pass
+		Comme nous l'avons expliqué plutôt la fonction va partir courir les cartes du joueur deuxième
+		et va faire la somme de leur poids. Puis elle va faire
+		la somme du poids des merveilles construites. Elle va de même pour le joueur un.
+		Nous avons ajouté deux trois modifications, notamment si la position du jeton militaire
+		est à 0, donc dans la ville du joueur 1, la situation est très favorable pour l'ordinateur
+		est inversement.
 
-		def constructeur_par_copie(self):
-			pass
+		Enfin nous avons la fonction minimax et alpha-beta, nous sommes parties d'un tutorielle
+		sur Youtube \cite{implementation_minimax_alpha_beta} que nous avons adpté avec notre jeu.
+		La fonction minimax est une fonction récursive qui prend en paramètre la partie, 
+		la profondeur a calculé, un booléen indiquant si c'est à l'ordinateur de joueur et le nombre
+		de noeuds. Elle renvoie l'évaluation du meilleur coup, la carte à prendre, 
+		et le nombre de noeuds évalué.
 
-		def compter_symb_scientifique(self):
-			pass
+		Nous allons commencer par expliquer l'implémentation avec la version 
+		qui ne prend pas en compte les merveilles et les jetons progrès.
+		\begin{lstlisting}
+			def minimax(partie, profondeur, coup_bot, nbr_noeuds):
+				if profondeur == 0 or partie_fini(partie):
+					return fonction_evaluation(partie), None, nbr_noeuds+1
+				
+				carte_a_prendre = None
+				
+				if coup_bot:
+					partie.joueur_qui_joue = partie.joueur2
+					max_eval = -math.inf
+					
+					for carte in partie.liste_cartes_prenables():
+						
+						copie_partie: Plateau = partie.constructeur_par_copie()
+						ret = copie_partie.piocher(carte)
+						
+						if ret == -1:
+							copie_partie.defausser(carte)
+						else:
+							copie_partie.joueur_qui_joue.cartes.append(carte)
+							copie_partie.enlever_carte(carte)
+						
+						evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, False, nbr_noeuds)
+						
+						if evaluation > max_eval:
+							max_eval = evaluation
+							carte_a_prendre = carte
+							
+					return max_eval, carte_a_prendre, nbr_noeuds+1
+				
+				else:
+					partie.joueur_qui_joue = partie.joueur1
+					min_eval = math.inf
+					
+					for carte in partie.liste_cartes_prenables():
+						
+						copie_partie: Plateau = partie.constructeur_par_copie()
+						copie_partie.piocher(carte)
+						copie_partie.joueur_qui_joue.cartes.append(carte)
+						copie_partie.enlever_carte(carte)
+					
+						evaluation, _, nbr_noeuds = minimax(copie_partie, profondeur - 1, True, nbr_noeuds)
+						
+						if evaluation < min_eval:
+							min_eval = evaluation
+							carte_a_prendre = carte
+					
+					return min_eval, carte_a_prendre, nbr_noeuds+1
+		\end{lstlisting}
 
-		def couts_manquants(self, carte: Carte):
-			pass
+		Cette fonction permet de simuler le coup de l'ordinateur et le coup du joueur.
+		Pour cela elle parcourt toutes la carte prenable de la partie passée en paramètre,
+		pour chacune la fonction créer une copie de la partie. Dans cette copie
+		de la partie le joueur qui joue pioche la carte, ce qui applique les effets 
+		de cette dernière. Puis nous appelons recursivement la fonction avec la partie
+		copie en paramètre. Dans cettee copie nous regardons a nouveau les cartes prenables
+		et ainsi de suite nous construisons l'arbre de décision.
 
-		def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list):
-			pass
-
-		def possede_carte_chainage(self, carte: Carte):
-			pass
-
-		def production_type_ressources(self, ressource: str):
-			pass
-
-		def possede_carte_reduction(self, ressource: str):
-			pass
-
-		def possede_cartes_couleur(self, couleur: str):
-			pass
-
-		def possede_jeton_scientifique(self, nom_jetons_progres: str):
-			pass
-
-		def compter_point_victoire(self):
-			pass
-
-		def trouver_repartition_monnaies(self):
-			pass
-
-		def liste_merveilles_non_construite(self):
-			pass
-
-		def liste_merveilles_construite(self):
-			pass
-
-	\end{lstlisting}
-
-	Après tout cela, l'équipe se sépare en deux groupes, l'un crée l'interface pendant que l'autre fait
-	l'algorithme minimax, d'alpha beta ainsi que la fonction d'évaluation.
-
+		Passons maintenant à la version alpha-beta de la fonction.
+		\begin{lstlisting}
+			
+		\end{lstlisting}
 
 	\subsection{Interface}
 	\subsection{Résultat obtenu}

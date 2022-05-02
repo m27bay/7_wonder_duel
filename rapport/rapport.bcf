@@ -2354,15 +2354,17 @@
     <bcf:citekey order="8">minimax_alog</bcf:citekey>
     <bcf:citekey order="9">elagage_alpha_beta</bcf:citekey>
     <bcf:citekey order="10">wiki_7_wonder</bcf:citekey>
-    <bcf:citekey order="11">wiki_7_wonder</bcf:citekey>
-    <bcf:citekey order="12">regle_7_wonder_duel</bcf:citekey>
-    <bcf:citekey order="13">wiki_theorie_jeux</bcf:citekey>
-    <bcf:citekey order="14">wiki_typo_theorie_jeux</bcf:citekey>
-    <bcf:citekey order="15">wiki_representation_theorie_jeux</bcf:citekey>
-    <bcf:citekey order="16">cours_arbre_decision</bcf:citekey>
-    <bcf:citekey order="17">min_max</bcf:citekey>
-    <bcf:citekey order="18">minimax_alog</bcf:citekey>
-    <bcf:citekey order="19">elagage_alpha_beta</bcf:citekey>
+    <bcf:citekey order="11">implementation_minimax_alpha_beta</bcf:citekey>
+    <bcf:citekey order="12">wiki_7_wonder</bcf:citekey>
+    <bcf:citekey order="13">regle_7_wonder_duel</bcf:citekey>
+    <bcf:citekey order="14">wiki_theorie_jeux</bcf:citekey>
+    <bcf:citekey order="15">wiki_typo_theorie_jeux</bcf:citekey>
+    <bcf:citekey order="16">wiki_representation_theorie_jeux</bcf:citekey>
+    <bcf:citekey order="17">cours_arbre_decision</bcf:citekey>
+    <bcf:citekey order="18">min_max</bcf:citekey>
+    <bcf:citekey order="19">minimax_alog</bcf:citekey>
+    <bcf:citekey order="20">elagage_alpha_beta</bcf:citekey>
+    <bcf:citekey order="21">implementation_minimax_alpha_beta</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

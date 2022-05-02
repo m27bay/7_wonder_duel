@@ -524,12 +524,6 @@ class Plateau:
 			self.joueur2.merveilles.append(self.merveilles[11])
 			self.joueur2.merveilles.append(self.merveilles[1])
 	
-	#
-	#
-	# Partie outils
-	#
-	#
-	
 	def adversaire(self):
 		if self.joueur_qui_joue == self.joueur1:
 			return self.joueur2
