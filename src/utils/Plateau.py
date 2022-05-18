@@ -15,11 +15,11 @@ from src.utils.Outils import mon_str_liste2D
 
 SYMBOLE_SCIENTIFIQUES = [
 	"sphere_armillaire",
-	"roue",
 	"cadran_solaire",
 	"pilon",
-	"pendule",
-	"plume"
+	"compas_maconniques",
+	"plume",
+	"roue"
 ]
 
 
@@ -61,7 +61,7 @@ class Plateau:
 				JetonMilitaire("0piecesJ2", 0, 2),
 				JetonMilitaire("2piecesJ2", 2, 5),
 				JetonMilitaire("5piecesJ2", 5, 10)]
-
+			
 			# matrice de 0 et Carte
 			self.cartes_plateau = []
 			self.cartes_defaussees = []
@@ -80,10 +80,10 @@ class Plateau:
 				Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1),
 				Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1),
 				Carte("atelier",
-					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papyrus 1"],
+					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papyrus 1"],
 					None, "vert", age=1),
 				Carte("apothicaire",
-					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"], ["ressource verre 1"],
+					[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 1"], ["ressource verre 1"],
 					None, "vert", age=1),
 				Carte("depot de pierre", ["reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1),
 				Carte("depot d argile", ["reduc_ressource argile 1"], ["monnaie 3"], None, "jaune", age=1),
@@ -92,7 +92,7 @@ class Plateau:
 				Carte("caserne", ["attaquer 1"], ["ressource argile 1"], None, "rouge", age=1),
 				Carte("palissade", ["attaquer 1"], ["monnaie 2"], None, "rouge", age=1),
 				Carte("scriptorium", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1),
-				Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"], ["monnaie 2"], None, "vert", age=1),
+				Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}"], ["monnaie 2"], None, "vert", age=1),
 				Carte("theatre", ["point_victoire 3"], None, None, "bleu", age=1),
 				Carte("autel", ["point_victoire 3"], None, None, "bleu", age=1),
 				Carte("bains", ["point_victoire 3"], ["ressource pierre 1"], None, "bleu", age=1),
@@ -121,13 +121,13 @@ class Plateau:
 					None, "rouge", age=2),
 				Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
 					age=2),
-				Carte("bibliotheque", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 2"],
+				Carte("bibliotheque", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 2"],
 					["ressource pierre 1", "ressource bois 1", "ressource verre 1"], "scriptorium", "vert", age=2),
-				Carte("dispensaire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 2"],
+				Carte("dispensaire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 2"],
 					["ressource argile 2", "ressource verre 1"], "officine", "vert", age=2),
-				Carte("ecole", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+				Carte("ecole", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 1"],
 					["ressource papyrus 2", "ressource bois 1"], None, "vert", age=2),
-				Carte("laboratoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"],
+				Carte("laboratoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"],
 					["ressource verre 2", "ressource bois 1"], None, "vert", age=2),
 				Carte("statue", ["point_victoire 4"], ["ressource argile 2"], "theatre", "bleu", age=2),
 				Carte("temple", ["point_victoire 4"], ["ressource papyrus 1", "ressource bois 1"], "autel",
@@ -141,9 +141,9 @@ class Plateau:
 			self.cartes_age_III = [
 				Carte("arsenal", ["attaquer 3"], ["ressource argile 3", "ressource bois 2"], None, "rouge", age=3),
 				Carte("pretoire", ["attaquer 3"], ["monnaie 8"], None, "rouge", age=3),
-				Carte("academie", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
+				Carte("academie", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 3"],
 					["ressource pierre 1", "ressource bois 1", "ressource verre 2"], None, "vert", age=3),
-				Carte("etude", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}", "point_victoire 3"],
+				Carte("etude", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 3"],
 					["ressource papyrus 1", "ressource bois 2", "ressource verre 1"], None, "vert", age=3),
 				Carte("chambre de commerce", ["monnaie_par_carte gris 3", "point_victoire 3"],
 					["ressource papyrus 2"], None, "jaune", age=3),
@@ -281,7 +281,7 @@ class Plateau:
 				JetonProgres("theologie", ["rejouer"]),
 				JetonProgres("urbanisme", ["monnaie 6", "bonus_monnaie_chainage 4"]),
 			]
-			
+		
 		else:
 			self.joueur1 = None
 			self.joueur2 = None
@@ -302,7 +302,7 @@ class Plateau:
 			self.merveilles = []
 			self.jetons_progres = []
 			self.jetons_progres_plateau = []
-		
+	
 	def constructeur_par_copie(self):
 		plateau = Plateau(None, None)
 		
@@ -324,7 +324,7 @@ class Plateau:
 		
 		for jetons_militaire in self.jetons_militaire:
 			plateau.jetons_militaire.append(jetons_militaire.constructeur_par_copie())
-			
+		
 		for carte in self.cartes_age_I:
 			plateau.cartes_age_I.append(carte.constructeur_par_copie())
 		for carte in self.cartes_age_II:
@@ -342,18 +342,18 @@ class Plateau:
 				else:
 					copie_ligne.append(0)
 			plateau.cartes_plateau.append(copie_ligne)
-					
+		
 		for carte in self.cartes_defaussees:
 			plateau.cartes_defaussees.append(carte.constructeur_par_copie())
 		
 		for merveille in self.merveilles:
 			plateau.merveilles.append(merveille.constructeur_par_copie())
-			
+		
 		plateau.jetons_progres = self.jetons_progres.copy()
 		plateau.jetons_progres_plateau = self.jetons_progres_plateau.copy()
 		
 		return plateau
-		
+	
 	def __eq__(self, other):
 		if isinstance(other, Plateau):
 			return self.joueur1 == other.joueur1 \
@@ -375,7 +375,7 @@ class Plateau:
 				and self.jetons_progres_plateau == other.jetons_progres_plateau
 		else:
 			return False
-		
+	
 	def __str__(self):
 		return f"cartes_plateau : {mon_str_liste2D(self.cartes_plateau)}" \
 			f"j1 : {str(self.joueur1)}\n" \
@@ -552,6 +552,7 @@ class Plateau:
 					carte_trouvee = True
 		
 		if not carte_trouvee:
+			print(f"ERREUR enlever_carte {carte_a_enlever.nom} : introuvble")
 			exit(-1)
 		
 		for carte in self.liste_cartes_prenables():
@@ -567,7 +568,7 @@ class Plateau:
 			for carte in ligne_carte:
 				if carte != 0:
 					return True
-				
+		
 		return False
 	
 	def cartes_prenable(self, ligne: int, colonne: int) -> bool:
@@ -583,7 +584,7 @@ class Plateau:
 		# milieu de la matrice
 		else:
 			return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) and (
-						self.cartes_plateau[ligne + 1][colonne + 1] == 0)
+					self.cartes_plateau[ligne + 1][colonne + 1] == 0)
 	
 	def liste_cartes_prenables(self):
 		cartes_prenable = []
@@ -605,7 +606,7 @@ class Plateau:
 				self.age += 1
 				self.__preparation_cartes()
 				return 1
-			
+		
 		return 0
 	
 	def fin_de_partie(self):
@@ -634,13 +635,14 @@ class Plateau:
 				self.victoire = (self.joueur2.nom, "points victoire")
 			else:
 				self.victoire = (None, "égalité")
-				
+	
 	def action_banque(self, monnaies: int):
 		if monnaies == 0:
 			return 0
 		
 		if self.monnaie_banque == 0:
 			gain = 0
+			print("ERREUR : la banque n'a plus d'argent")
 			exit(-2)
 		
 		elif self.monnaie_banque < monnaies:
@@ -719,10 +721,10 @@ class Plateau:
 							if prix_reduc != 0:
 								# (prix_reduc * quantite_ressource_necessaire pour le nom_joueur)
 								prix_commerce += (
-									(prix_reduc + int(ressource_adversaire_split[2])) *
-									int(ressource_manquante_split[2])
+										(prix_reduc + int(ressource_adversaire_split[2])) *
+										int(ressource_manquante_split[2])
 								)
-								
+							
 							else:
 								# (2 + quantite_ressource_adversaire) * quantite_ressource_necessaire pour le nom_joueur
 								prix_commerce += (
@@ -745,8 +747,8 @@ class Plateau:
 			
 			# TODO : faire reduction construction avec jeton maconnerie
 			# if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-				# self.reduction_couts_construction_carte(carte_prenable)
-				# print("fonction \"reduction_couts_construction_carte\" à faire")
+			# self.reduction_couts_construction_carte(carte_prenable)
+			# print("fonction \"reduction_couts_construction_carte\" à faire")
 			
 			# verification ressources nom_joueur
 			# print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
@@ -764,7 +766,7 @@ class Plateau:
 					cout_split = cout.split(" ")
 					if cout_split[0] == "monnaie":
 						self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
-						
+				
 				return self.appliquer_effets_carte(carte_prenable)
 			
 			else:
@@ -794,20 +796,20 @@ class Plateau:
 			# application effet jeton "urbanisme"
 			if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
 				self.joueur_qui_joue.monnaie += self.action_banque(4)
-				
+			
 			return self.appliquer_effets_carte(carte_prenable)
-		
-	def defausser(self, carte_prenable: Carte,):
+	
+	def defausser(self, carte_prenable: Carte):
 		self.joueur_qui_joue.monnaie += self.action_banque(2)
 		
 		# gain de une piece par carte jaune
 		for carte_joueur in self.joueur_qui_joue.cartes:
 			if carte_joueur.couleur == "jaune":
 				self.joueur_qui_joue.monnaie += self.action_banque(1)
-				
+		
 		self.cartes_defaussees.append(carte_prenable)
 		self.enlever_carte(carte_prenable)
-		
+	
 	def construire_merveille(self, merveille_a_construire: Merveille):
 		if merveille_a_construire.est_construite:
 			return -1
@@ -830,8 +832,7 @@ class Plateau:
 				return -1
 			else:
 				self.joueur_qui_joue.monnaie += self.action_banque(-prix)
-				print(f"{self.joueur_qui_joue.nom} paie {prix}")
-			
+		
 		else:
 			# on retire uniquement la monnaie
 			for cout in merveille_a_construire.couts:
@@ -840,13 +841,13 @@ class Plateau:
 				cout_split = cout.split(" ")
 				if cout_split[0] == "monnaie":
 					self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
-			
+		
 		for merveille in self.joueur_qui_joue.merveilles:
 			if merveille == merveille_a_construire:
 				merveille.est_construite = True
-				
+		
 		return self.appliquer_effets_merveille(merveille_a_construire)
-			
+	
 	def numero_jeton_militaire(self):
 		"""
 		Renvoie le numero du jeton militaire dans le tableau en fonction de la postion
@@ -894,7 +895,7 @@ class Plateau:
 						self.adversaire().monnaie -= jeton.pieces
 						if self.adversaire().monnaie < 0:
 							self.fin_de_partie()
-							return -1
+							return -2
 						self.monnaie_banque += jeton.pieces
 						self.joueur_qui_joue.points_victoire += jeton.points_victoire
 						
@@ -913,9 +914,9 @@ class Plateau:
 				nbr_bouclier = int(effet_split[1])
 				if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
 					nbr_bouclier += 1
-
-				self.deplacer_pion_miltaire(nbr_bouclier)
 				
+				return self.deplacer_pion_miltaire(nbr_bouclier)
+			
 			elif effet_split[0] == "symbole_scientifique":
 				self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
 				self.joueur_qui_joue.compter_symb_scientifique()
@@ -940,13 +941,13 @@ class Plateau:
 			# effet commun avec certaines cartes
 			if type in ["monnaie", "monnaie_par_carte"]:
 				self.appliquer_effets_carte(merveille)
-				
+			
 			elif type == "attaquer":
 				self.deplacer_pion_miltaire(int(effet_split[1]))
 			
 			elif type == "adversaire_perd_monnaie":
 				self.adversaire().monnaie -= self.action_banque(-int(effet_split[1]))
-				
+			
 			elif type == "rejouer":
 				return 1
 			
@@ -957,16 +958,23 @@ class Plateau:
 					return 20
 				elif couleur == "marron":
 					return 21
-				
-		return 0
 		
+		return 0
+	
 	def appliquer_effets_jeton(self, jeton: JetonProgres):
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			self.joueur_qui_joue.monnaie += self.action_banque(6)
 		
 		elif jeton.nom == "philosophie":
 			self.joueur_qui_joue.points_victoire += 7
-			
-		# elif jeton.nom == "loi":
-			# TODO : demander symbole scientifque
-			
+		
+		elif jeton.nom == "loi":
+			while True:
+				num_symb = random.randint(0, 6)
+				list_symb = ["sphere_armillaire", "roue", "cadran_solaire", "pilon",
+				"compas_maconniques", "plume"]
+				
+				if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] != 2:
+					self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] += 1
+					break
+					
