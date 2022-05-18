@@ -9,7 +9,10 @@ from src.utils.Joueur import Joueur
 from src.utils.Plateau import Plateau
 
 if __name__ == '__main__':
-	plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
+	plateau = Plateau(Joueur("joueur"), Joueur("ordi"), False)
+	
+	# choix auto merveille
+	# plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
 	plateau.preparation_plateau()
 	
 	# facile = 5

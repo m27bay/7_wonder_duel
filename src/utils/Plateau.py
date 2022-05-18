@@ -42,7 +42,8 @@ class Plateau:
 			self.joueur1 = joueur1
 			self.joueur2 = joueur2
 			self.joueur_qui_joue = None
-			self.victoire = None
+			self.victoire = None #(nom du joueur, motif)
+			# motif : militaire, monnaie, points victoire, scientifique, égalité
 			
 			#
 			self.choix_auto_merveilles = choix_auto_merveilles
@@ -509,9 +510,15 @@ class Plateau:
 		enfin le joueur2 prend la derniere.
 		"""
 		
-		# TODO: Choix merveille à faire
 		if not self.choix_auto_merveilles:
-			pass
+			# choix de 4 merveilles pour j1 (sans replacement)
+			self.joueur1.merveilles.extend(random.sample(self.merveilles, k=4))
+			# suppression des merveilles dans j1
+			self.merveilles = [merv for merv in self.merveilles if merv not in self.joueur1.merveilles]
+			# choix de 4 merveilles pour j2 (sans replacement)
+			self.joueur2.merveilles.extend(random.sample(self.merveilles, k=4))
+			# suppression des merveilles dans j2
+			self.merveilles = [merv for merv in self.merveilles if merv not in self.joueur2.merveilles]
 		
 		else:  # choix automatique des merveilles (d'apres les regles)
 			self.joueur1.merveilles.append(self.merveilles[7]) # pyramides
@@ -604,14 +611,18 @@ class Plateau:
 		return 0
 	
 	def fin_de_partie(self):
-		if self.position_jeton_conflit == 0 or self.joueur2.nbr_symb_scientifique_diff == 6:
+		if self.position_jeton_conflit == 0:
 			self.victoire = (self.joueur2.nom, "militaire")
-		elif self.position_jeton_conflit == 18 or self.joueur1.nbr_symb_scientifique_diff == 6:
+		elif self.position_jeton_conflit == 18:
 			self.victoire = (self.joueur1.nom, "militaire")
 		elif self.joueur1.monnaie < 0:
 			self.victoire = (self.joueur2.nom, "monnaie")
 		elif self.joueur2.monnaie < 0:
 			self.victoire = (self.joueur1.nom, "monnaie")
+		elif self.joueur1.nbr_symb_scientifique_diff == 6:
+			self.victoire = (self.joueur1.nom, "scientifique")
+		elif self.joueur2.nbr_symb_scientifique_diff == 6:
+			self.victoire = (self.joueur2.nom, "scientifique")
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
@@ -737,7 +748,7 @@ class Plateau:
 			
 			# la carte ne coute rien
 			if carte_prenable.couts is None or len(carte_prenable.couts) == 0:
-				return self.appliquer_effets_carte(carte_prenable)
+				return 0
 			
 			# TODO : faire reduction construction avec jeton maconnerie
 			# if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
@@ -745,11 +756,8 @@ class Plateau:
 			# print("fonction \"reduction_couts_construction_carte\" à faire")
 			
 			# verification ressources nom_joueur
-			# print(f"{self.joueur_qui_joue.nom} pioche {carte_prenable.nom} couts : {carte_prenable.couts}")
-			# print(self)
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
 			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
-			# print(f"liste_ressource_necessaire : {liste_ressource_necessaire}")
 			
 			# le nom_joueur possede toutes les ressouces
 			if len(liste_ressource_necessaire) == 0:
@@ -761,7 +769,7 @@ class Plateau:
 					if cout_split[0] == "monnaie":
 						self.joueur_qui_joue.monnaie += self.action_banque(-int(cout_split[1]))
 				
-				return self.appliquer_effets_carte(carte_prenable)
+				return 0
 			
 			else:
 				# manque des ressouces
@@ -784,14 +792,14 @@ class Plateau:
 						self.monnaie_banque += prix
 					self.joueur_qui_joue.monnaie -= prix
 					
-					return self.appliquer_effets_carte(carte_prenable)
+					return 0
 		
 		else:  # le nom_joueur possde la carte chainage, construction gratuite
 			# application effet jeton "urbanisme"
 			if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
 				self.joueur_qui_joue.monnaie += self.action_banque(4)
 			
-			return self.appliquer_effets_carte(carte_prenable)
+			return 0
 	
 	def defausser(self, carte_prenable: Carte):
 		self.joueur_qui_joue.monnaie += self.action_banque(2)
@@ -948,10 +956,29 @@ class Plateau:
 			elif type == "defausse_carte_adversaire":
 				couleur = effet_split[1]
 				
-				if couleur == "gris":
-					return 20
-				elif couleur == "marron":
-					return 21
+				if couleur == "gris" or couleur == "marron":
+					while True:
+						num_carte = random.randint(0, len(self.adversaire().cartes) - 1)
+						carte = self.adversaire().cartes[num_carte]
+						if carte.couleur == couleur:
+							self.adversaire().cartes.remove(carte)
+							self.cartes_defaussees.append(carte)
+							break
+					return type, carte
+							
+			elif type == "jeton_progres_aleatoire":
+				num_jeton = random.randint(0, len(self.jetons_progres_plateau) - 1)
+				jeton = self.jetons_progres_plateau[num_jeton]
+				self.joueur_qui_joue.jetons_progres.append(jeton)
+				self.jetons_progres_plateau.remove(jeton)
+				return type, jeton
+				
+			elif type == "construction_fausse_gratuite":
+				num_carte = random.randint(0, len(self.cartes_defaussees) - 1)
+				carte = self.cartes_defaussees[num_carte]
+				self.joueur_qui_joue.cartes.append(carte)
+				self.cartes_defaussees.remove(carte)
+				return type, carte
 		
 		return 0
 	
@@ -971,4 +998,3 @@ class Plateau:
 				if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] != 2:
 					self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] += 1
 					break
-					

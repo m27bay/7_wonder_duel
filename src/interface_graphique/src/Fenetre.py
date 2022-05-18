@@ -489,18 +489,38 @@ class Fenetre:
 				return liste_couleur.index(carte.couleur)
 		else:
 			return 6
-			
-	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
-		ret = self.plateau.piocher(sprite_carte.carte)
-		# print(sprite_carte.carte.nom, self.plateau.joueur_qui_joue.symb_scientifique)
 		
-		if ret == -1:
-			# print("défaussée")
+	def __piocher_plateau(self, sprite_carte: SpriteCarte):
+		ret = self.plateau.piocher(sprite_carte.carte)
+		if ret == 0:
+			
+			ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
+			
+			if ret2 == -2:
+				return -2
+		
+			else:
+				if ret2 == 2:
+					sprite_jeton = None
+					sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
+						if num == sprite_num:
+							sprite_jeton = sprite
+					self.__deplacer_jeton_scientifique(sprite_jeton)
+				
+				self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
+				self.plateau.enlever_carte(sprite_carte.carte)
+				
+				self.__dessiner_piocher(sprite_carte)
+		
+		elif ret == -1:
 			self.__dessiner_defausser(sprite_carte)
 			
-		elif ret == -2:
+	def __piocher_fausse(self, sprite_carte: SpriteCarte):
+		ret = self.plateau.appliquer_effets_carte(sprite_carte.carte)
+		if ret == -2:
 			return -2
-			
+		
 		else:
 			if ret == 2:
 				sprite_jeton = None
@@ -510,39 +530,39 @@ class Fenetre:
 						sprite_jeton = sprite
 				self.__deplacer_jeton_scientifique(sprite_jeton)
 			
-			self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
-			self.plateau.enlever_carte(sprite_carte.carte)
-				
-			type_carte = self.__position_type_carte(sprite_carte.carte)
+			self.__dessiner_piocher(sprite_carte)
 			
-			sprite_carte.angle = 90
-			
-			if self.plateau.joueur_qui_joue == self.plateau.joueur1:
-				sprite_joueur_qui_joue = self.sprite_j1
-				sprite_carte.angle = -sprite_carte.angle
-				coord_x, _ = self.rect_image_plateau.bottomleft
-				coord_x -= self.espace_entre_carte
-				coord_x -= self.default_hauteur_sprite
-				decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
-			else:
-				sprite_joueur_qui_joue = self.sprite_j2
-				coord_x, _ = self.rect_image_plateau.bottomright
-				coord_x += self.espace_entre_carte
-				decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
-			
-			if type_carte == 0:
-				coord_y = type_carte * self.default_largeur_sprite
-			else:
-				coord_y = type_carte * (
-						self.default_largeur_sprite + self.espace_entre_carte
-				)
-			
-			coord_y -= self.rect_image_plateau.height*1/4
-			coord_y += self.default_largeur_sprite
-			coord_x += decalage_x
-			
-			sprite_joueur_qui_joue[type_carte].add(sprite_carte)
-			sprite_carte.changer_coords(coord_x, coord_y)
+	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
+		type_carte = self.__position_type_carte(sprite_carte.carte)
+		
+		sprite_carte.angle = 90
+		
+		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+			sprite_joueur_qui_joue = self.sprite_j1
+			sprite_carte.angle = -sprite_carte.angle
+			coord_x, _ = self.rect_image_plateau.bottomleft
+			coord_x -= self.espace_entre_carte
+			coord_x -= self.default_hauteur_sprite
+			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
+		else:
+			sprite_joueur_qui_joue = self.sprite_j2
+			coord_x, _ = self.rect_image_plateau.bottomright
+			coord_x += self.espace_entre_carte
+			decalage_x = len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4)
+		
+		if type_carte == 0:
+			coord_y = type_carte * self.default_largeur_sprite
+		else:
+			coord_y = type_carte * (
+					self.default_largeur_sprite + self.espace_entre_carte
+			)
+		
+		coord_y -= self.rect_image_plateau.height*1/4
+		coord_y += self.default_largeur_sprite
+		coord_x += decalage_x
+		
+		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
+		sprite_carte.changer_coords(coord_x, coord_y)
 			
 	def __dessiner_defausser(self, carte_prenable: SpriteCarte):
 		self.plateau.defausser(carte_prenable.carte)
@@ -614,7 +634,7 @@ class Fenetre:
 								if self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
 									
 									self.sprite_carte_j1_zoomer.dezoomer()
-									ret = self.__dessiner_piocher(self.sprite_carte_j1_zoomer)
+									ret = self.__piocher_plateau(self.sprite_carte_j1_zoomer)
 									if ret == -2:
 										en_cours = False
 									self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
@@ -690,15 +710,50 @@ class Fenetre:
 										if merveille.rect.collidepoint(clic_x, clic_y) \
 											and isinstance(merveille, SpriteMerveille):
 											
-											ret = self.plateau.construire_merveille(merveille.merveille)
+											ret, obj = self.plateau.construire_merveille(merveille.merveille)
 											if ret != -1:
 												self.sprite_carte_j1_zoomer.dezoomer()
 												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
 												self.sprite_carte_j1_zoomer = None
-												if ret == 1:
+												
+												if ret != 1:
 													self.plateau.joueur_qui_joue = self.plateau.adversaire()
-												# if ret ==
-												# 	pass
+													
+												elif ret == "defausse_carte_adversaire":
+													if isinstance(obj, Carte):
+														type_carte = self.__position_type_carte(obj)
+														sprite_carte_remove = None
+														for sprite_carte in self.sprite_j2[type_carte]:
+															if isinstance(sprite_carte, SpriteCarte):
+																if sprite_carte.carte == obj:
+																	sprite_carte_remove = sprite_carte
+														if sprite_carte_remove is not None:
+															self.sprite_j2[type_carte].remove(sprite_carte_remove)
+														
+												elif ret == "jeton_progres_aleatoire":
+													if isinstance(obj, JetonProgres):
+														sprite_jeton_a_prendre = None
+														for sprite_jeton in self.sprite_jetons_progres_plateau:
+															if isinstance(sprite_jeton, SpriteJetonsProgres):
+																if sprite_jeton.jeton == obj:
+																	sprite_jeton_a_prendre = sprite_jeton
+														self.__deplacer_jeton_scientifique(sprite_jeton_a_prendre)
+														
+												elif ret == "construction_fausse_gratuite":
+													if isinstance(obj, Carte):
+														if len(self.sprite_cartes_defaussees) != 0:
+															carte_defausee_a_construire = None
+															found = False
+															while not found:
+																num_carte = random.randint(0, len(self.sprite_cartes_defaussees) - 1)
+																for num_sprite, sprite_carte in enumerate (self.sprite_cartes_defaussees):
+																	if isinstance(sprite_carte, SpriteCarte):
+																		if num_sprite == num_carte:
+																			ret = self.plateau.piocher(sprite_carte.carte)
+																			if ret == 0:
+																				carte_defausee_a_construire = sprite_carte
+																				found = True
+															self.__piocher_fausse(carte_defausee_a_construire)
 												
 				else:
 					if not simu_bot:
@@ -743,7 +798,7 @@ class Fenetre:
 											if sprite_carte.rect.collidepoint(clic_x, clic_y):
 												self.sprite_carte_j2_zoomer.dezoomer()
 												self.sprite_carte_j2_zoomer = None
-												ret = self.__dessiner_piocher(sprite_carte)
+												ret = self.__piocher_plateau(sprite_carte)
 												if ret == -2:
 													en_cours = False
 												self.plateau.joueur_qui_joue = self.plateau.adversaire()
@@ -778,11 +833,11 @@ class Fenetre:
 																self.sprite_carte_j2_zoomer.dezoomer()
 																self.sprite_carte_j2_zoomer = None
 																self.__dessiner_merveille_sacrifier(merveille, sprite_carte)
-																if ret == 20:
-																	pass
-																	
+																
 																if ret != 1:
 																	self.plateau.joueur_qui_joue = self.plateau.adversaire()
+																else:
+																	print("rejouer")
 																
 															simu_bot = False
 												
