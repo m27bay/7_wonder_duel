@@ -92,11 +92,6 @@ class TestJetonMilitaire(unittest.TestCase):
 		self.assertEqual(copie.points_victoire, 9)
 		self.assertEqual(self.jeton_militaire.points_victoire, 10)
 		
-		
-class TestJetonProgres(unittest.TestCase):
-	def setUp(self) -> None:
-		self.jeton_progres = JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"])
-
 
 if __name__ == '__main__':
 	unittest.main()

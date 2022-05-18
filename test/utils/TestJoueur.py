@@ -44,7 +44,7 @@ class TestJoueur(unittest.TestCase):
 			"roue": 0,
 			"cadran_solaire": 0,
 			"pilon": 1,
-			"pendule": 0,
+			"compas_maconniques": 0,
 			"plume": 0
 		}
 		self.assertEqual(copie.symb_scientifique, symb_scientifique_copie)
@@ -64,7 +64,7 @@ class TestJoueur(unittest.TestCase):
 		
 	def test_une_ressources_manquantes(self):
 		carte = Carte("atelier",
-			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papyrus 1"],
+			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papyrus 1"],
 			None, "vert", age=1)
 		self.assertEqual(["ressource papyrus 1"], self.joueur.couts_manquants(carte))
 		
@@ -194,6 +194,7 @@ class TestJoueur(unittest.TestCase):
 		)
 		self.joueur.compter_point_victoire()
 		self.assertEqual(4+3*2+3, self.joueur.points_victoire)
+
 
 if __name__ == '__main__':
 	unittest.main()

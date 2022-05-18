@@ -7,7 +7,7 @@ import unittest
 from src.utils.Carte import Carte
 from src.utils.Merveille import Merveille
 
-from src.utils.Outils import trouver_element_avec_nom, mon_str_liste
+from src.utils.Outils import mon_str_liste
 from src.utils.Outils import trouver_ressource_avec_nom
 
 
@@ -28,36 +28,6 @@ class TestOutils(unittest.TestCase):
 			Merveille("merveille3", None, None),
 			Merveille("merveille4", None, None)
 		]
-
-	def test_trouver_carte_avec_nom(self):
-		self.assertEqual(
-			self.liste_cartes[4],
-			trouver_element_avec_nom(
-				"carte4",
-				self.liste_cartes)
-		)
-		
-		self.assertEqual(
-			None,
-			trouver_element_avec_nom(
-				"erreur",
-				self.liste_cartes)
-		)
-
-	def test_trouver_merveille_avec_nom(self):
-		self.assertEqual(
-			self.liste_merveilles[2],
-			trouver_element_avec_nom(
-				"merveille2",
-				self.liste_merveilles)
-		)
-		
-		self.assertEqual(
-			None,
-			trouver_element_avec_nom(
-				"erreur",
-				self.liste_merveilles)
-		)
 
 	def test_trouver_ressource_avec_nom(self):
 		self.assertEqual(
