@@ -157,8 +157,6 @@ class Joueur:
 				
 			return liste_couts_manquants
 		
-	# TODO : code a refaire avec choix via interface (JC)
-	# def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list, liste_choix: list):
 	def cout_manquant_ressource_au_choix(self, liste_couts_manquants: list):
 		copy_liste_couts_manquants = liste_couts_manquants.copy()
 		for ma_carte in self.cartes:
@@ -216,7 +214,7 @@ class Joueur:
 		:param ressource: la ressource dont on veut la carte.
 		:return: une carte si elle existe, None sinon.
 		"""
-		# TODO : a refaire avec le dicionnaire
+		
 		ressource_split = ressource.split(" ")
 		for carte in self.cartes:
 			for effet in carte.effets:
@@ -251,12 +249,7 @@ class Joueur:
 		:param couleur: la couleur a rechercher.
 		:return: une liste de carte.
 		"""
-		liste_cartes_couleur = []
-		for carte in self.cartes:
-			if carte.couleur == couleur:
-				liste_cartes_couleur.append(carte)
-		
-		return liste_cartes_couleur
+		return [carte for carte in self.cartes if carte.couleur == couleur]
 	
 	def possede_jeton_scientifique(self, nom_jetons_progres: str):
 		"""
@@ -306,7 +299,7 @@ class Joueur:
 				
 				elif effet_split[0] == "point_victoire_fin_partie":
 					self.points_victoire += int(effet_split[1])
-	
+					
 	def trouver_repartition_monnaies(self):
 		repartition = {6: 0, 3: 0, 1: 0}
 		
@@ -325,18 +318,8 @@ class Joueur:
 		return repartition
 	
 	def liste_merveilles_non_construite(self):
-		liste = []
-		for merveilles in self.merveilles:
-			if not merveilles.est_construite:
-				liste.append(merveilles)
-				
-		return liste
+		return [merveille for merveille in self.merveilles if not merveille.est_construite]
 	
 	def liste_merveilles_construite(self):
-		liste = []
-		for merveilles in self.merveilles:
-			if merveilles.est_construite:
-				liste.append(merveilles)
-		
-		return liste
+		return [merveille for merveille in self.merveilles if merveille.est_construite]
 	
