@@ -613,31 +613,83 @@ class Plateau:
 	def fin_de_partie(self):
 		if self.position_jeton_conflit == 0:
 			self.victoire = (self.joueur2.nom, "militaire")
+			
 		elif self.position_jeton_conflit == 18:
 			self.victoire = (self.joueur1.nom, "militaire")
+			
 		elif self.joueur1.monnaie < 0:
 			self.victoire = (self.joueur2.nom, "monnaie")
+			
 		elif self.joueur2.monnaie < 0:
 			self.victoire = (self.joueur1.nom, "monnaie")
+			
 		elif self.joueur1.nbr_symb_scientifique_diff == 6:
 			self.victoire = (self.joueur1.nom, "scientifique")
+			
 		elif self.joueur2.nbr_symb_scientifique_diff == 6:
 			self.victoire = (self.joueur2.nom, "scientifique")
+			
 		else:
 			self.joueur1.compter_point_victoire()
 			self.joueur2.compter_point_victoire()
 			
 			numero_jeton = self.numero_jeton_militaire()
 			jeton = self.jetons_militaire[numero_jeton]
+			
 			if self.position_jeton_conflit > 9:
 				self.joueur1.points_victoire += jeton.points_victoire
+				
 			elif self.position_jeton_conflit < 9:
 				self.joueur2.points_victoire += jeton.points_victoire
 			
+			for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
+				"guilde des tacticiens", "guilde des scientifiques"]:
+				
+				j1_possede_carte = [carte_joueur for carte_joueur in self.joueur1.cartes if
+					carte_joueur.nom == nom_carte]
+				j2_possede_carte = [carte_joueur for carte_joueur in self.joueur2.cartes if
+					carte_joueur.nom == nom_carte]
+				
+				if len(j1_possede_carte) != 0 or len(j2_possede_carte) != 0:
+					if nom_carte == "guilde des armateurs":
+						recherche = ["gris", "marron"]
+					elif nom_carte == "guilde des commercants":
+						recherche = ["jaune"]
+					elif nom_carte == "guilde des magistrats":
+						recherche = ["bleu"]
+					elif nom_carte == "guilde des tacticiens":
+						recherche = ["rouge"]
+					else:
+						recherche = ["vert"]
+					
+					nbr_carte_recherche_j1 = len([carte for carte in self.joueur1.cartes if carte.couleur in recherche])
+					nbr_carte_recherche_j2 = len([carte for carte in self.joueur2.cartes if carte.couleur in recherche])
+					
+					if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
+						maxi = max(nbr_carte_recherche_j1, nbr_carte_recherche_j2)
+						joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
+						joueur.points_victoire += maxi
+			
+			j1_possede_usuriers = [carte_joueur for carte_joueur in self.joueur1.cartes
+				if carte_joueur.nom == "guilde des usuriers"]
+			j2_possede_usuriers = [carte_joueur for carte_joueur in self.joueur2.cartes
+				if carte_joueur.nom == "guilde des usuriers"]
+			
+			if len(j1_possede_usuriers) != 0 or len(j2_possede_usuriers) != 0:
+				if self.joueur1.monnaie != self.joueur2.monnaie:
+					maxi = max(self.joueur1.monnaie, self.joueur2.monnaie)
+					joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
+					joueur.points_victoire += int(joueur.monnaie / 3)
+			
+			self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
+			self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
+			
 			if self.joueur1.points_victoire > self.joueur2.points_victoire:
 				self.victoire = (self.joueur1.nom, "points victoire")
+				
 			elif self.joueur1.points_victoire < self.joueur2.points_victoire:
 				self.victoire = (self.joueur2.nom, "points victoire")
+				
 			else:
 				self.victoire = (None, "égalité")
 	
@@ -907,11 +959,12 @@ class Plateau:
 		for effet in carte.effets:
 			
 			effet_split = effet.split(" ")
+			type = effet_split[0]
 			
-			if effet_split[0] == "ressource":
+			if type == "ressource":
 				self.joueur_qui_joue.ressources[effet_split[1]] += int(effet_split[2])
 			
-			elif effet_split[0] == "attaquer":
+			elif type == "attaquer":
 				
 				nbr_bouclier = int(effet_split[1])
 				if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
@@ -919,19 +972,54 @@ class Plateau:
 				
 				return self.deplacer_pion_miltaire(nbr_bouclier)
 			
-			elif effet_split[0] == "symbole_scientifique":
+			elif type == "symbole_scientifique":
 				self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
 				self.joueur_qui_joue.compter_symb_scientifique()
 				if self.joueur_qui_joue.symb_scientifique[effet_split[1]] == 2:
 					return 2
 			
-			elif effet_split[0] == "monnaie":
+			elif type == "monnaie":
 				self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[1]))
 			
-			elif effet_split[0] == "monnaie_par_carte":
+			elif type == "monnaie_par_carte":
 				for ma_carte in self.joueur_qui_joue.cartes:
 					if ma_carte.couleur == effet_split[1]:
 						self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[2]))
+						
+			elif carte.nom in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
+				"guilde des tacticiens", "guilde des scientifiques"]:
+				
+				j1_possede_carte = [carte_joueur for carte_joueur in self.joueur1.cartes if carte_joueur.nom == carte.nom]
+				j2_possede_carte = [carte_joueur for carte_joueur in self.joueur2.cartes if carte_joueur.nom == carte.nom]
+				
+				if len(j1_possede_carte) != 0 or len(j2_possede_carte) != 0:
+					if carte.nom == "guilde des armateurs":
+						recherche = ["gris", "marron"]
+					elif carte.nom == "guilde des commercants":
+						recherche = ["jaune"]
+					elif carte.nom == "guilde des magistrats":
+						recherche = ["bleu"]
+					elif carte.nom == "guilde des tacticiens":
+						recherche = ["rouge"]
+					else:
+						recherche = ["vert"]
+						
+					nbr_carte_recherche_j1 = len(
+						[carte for carte in self.joueur1.cartes if carte.couleur in recherche])
+					nbr_carte_recherche_j2 = len(
+						[carte for carte in self.joueur2.cartes if carte.couleur in recherche])
+					
+					if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
+						maxi = max(nbr_carte_recherche_j1, nbr_carte_recherche_j2)
+						joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
+						
+						if self.monnaie_banque >= maxi:
+							joueur.monnaie += maxi
+							self.monnaie_banque -= maxi
+				
+						else:
+							print("ERREUR : la banque n'a plus d'argent")
+							exit(-2)
 		return 1
 	
 	def appliquer_effets_merveille(self, merveille: Merveille):

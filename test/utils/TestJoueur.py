@@ -194,6 +194,38 @@ class TestJoueur(unittest.TestCase):
 		)
 		self.joueur.compter_point_victoire()
 		self.assertEqual(4+3*2+3, self.joueur.points_victoire)
+		
+	def test_liste_merveilles_non_construite(self):
+		merveilles = [
+			Merveille("mausolee", ["construction_fausse_gratuite", "point_victoire 2"],
+			["ressource argile 2", "ressource verre 2", "ressource papyrus 1"]),
+			Merveille("grand phare", ["ressource_au_choix bois argile pierre", "point_victoire 4"],
+			["ressource bois 1", "ressource pierre 1", "ressource papyrus 2"]),
+			Merveille("via appia", ["monnaie 3", "adversaire_perd_monnaie 3", "rejouer", "point_victoire 3"],
+			["ressource pierre 2", "ressource argile 2", "ressource papyrus 1"])
+		]
+		self.joueur.merveilles = merveilles.copy()
+		self.joueur.merveilles[0].est_construite = True
+		merveilles.remove(merveilles[0])
+		
+		self.assertEqual(merveilles, self.joueur.liste_merveilles_non_construite())
+		
+	def test_liste_merveilles_construite(self):
+		merveilles = [
+			Merveille("mausolee", ["construction_fausse_gratuite", "point_victoire 2"],
+			["ressource argile 2", "ressource verre 2", "ressource papyrus 1"]),
+			Merveille("grand phare", ["ressource_au_choix bois argile pierre", "point_victoire 4"],
+			["ressource bois 1", "ressource pierre 1", "ressource papyrus 2"]),
+			Merveille("via appia", ["monnaie 3", "adversaire_perd_monnaie 3", "rejouer", "point_victoire 3"],
+			["ressource pierre 2", "ressource argile 2", "ressource papyrus 1"])
+		]
+		self.joueur.merveilles = merveilles.copy()
+		self.joueur.merveilles[0].est_construite = True
+		self.joueur.merveilles[2].est_construite = True
+		merveilles.remove(merveilles[0])
+		merveilles.remove(merveilles[1])
+		
+		self.assertEqual(merveilles, self.joueur.liste_merveilles_non_construite())
 
 
 if __name__ == '__main__':
