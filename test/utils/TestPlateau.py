@@ -7,6 +7,7 @@ import unittest
 from src.utils.Carte import Carte
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
+from src.utils.Merveille import Merveille
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 
 
@@ -70,6 +71,29 @@ class TestConstructionPlateau(unittest.TestCase):
 		copie.cartes_age_I.clear()
 		
 		self.assertNotEqual(copie, self.plateau)
+		
+	def test_constructeur_par_copie_symb_scientifique(self):
+		copie = self.plateau.constructeur_par_copie()
+		symb_scientifique = {
+			"sphere_armillaire": 0,
+			"roue": 0,
+			"cadran_solaire": 0,
+			"pilon": 1,
+			"compas_maconniques": 0,
+			"plume": 0
+		}
+		copie.joueur1.symb_scientifique = symb_scientifique
+		
+		symb_scientifique2 = {
+			"sphere_armillaire": 0,
+			"roue": 0,
+			"cadran_solaire": 0,
+			"pilon": 0,
+			"compas_maconniques": 0,
+			"plume": 0
+		}
+		
+		self.assertEqual(symb_scientifique2, self.plateau.joueur1.symb_scientifique)
 	
 	def test_constructeur_par_copie_suppression_carte_original_dans_copie_plateau(self):
 		self.plateau.cartes_plateau = [
@@ -214,58 +238,84 @@ class TestOutilsPlateau(unittest.TestCase):
 		
 		self.assertEqual(-1, ret)
 	
-	def test_fin_partie_militaire_joueur1(self):
-		self.plateau.position_jeton_conflit = 18
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	# def test_fin_partie_militaire_joueur1(self):
+	# 	self.plateau.position_jeton_conflit = 18
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_militaire_joueur2(self):
+	# 	self.plateau.position_jeton_conflit = 0
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_scientifique_joueur1(self):
+	# 	self.j1.nbr_symb_scientifique_diff = 6
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_scientifique_joueur2(self):
+	# 	self.j2.nbr_symb_scientifique_diff = 6
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_points_victoire_joueur1(self):
+	# 	self.j1.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j1)
+	#
+	# def test_fin_partie_points_victoire_joueur2(self):
+	# 	self.j2.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, self.j2)
+	#
+	# def test_fin_partie_points_victoire_egalite(self):
+	# 	self.j1.cartes.append(
+	# 		Carte("atelier",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
+	# 			None, "vert", age=1)
+	# 	)
+	# 	self.j2.cartes.append(
+	# 		Carte("apothicaire",
+	# 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+	# 			["ressource verre 1"], None, "vert", age=1)
+	# 	)
+	# 	self.plateau.fin_de_partie()
+	# 	self.assertEqual(self.plateau.joueur_gagnant, -1)
 	
-	def test_fin_partie_militaire_joueur2(self):
-		self.plateau.position_jeton_conflit = 0
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_scientifique_joueur1(self):
-		self.j1.nbr_symb_scientifique_diff = 6
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
-	
-	def test_fin_partie_scientifique_joueur2(self):
-		self.j2.nbr_symb_scientifique_diff = 6
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_points_victoire_joueur1(self):
-		self.j1.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j1)
-	
-	def test_fin_partie_points_victoire_joueur2(self):
-		self.j2.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, self.j2)
-	
-	def test_fin_partie_points_victoire_egalite(self):
-		self.j1.cartes.append(
-			Carte("atelier",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 1"], ["ressource papurys 1"],
-				None, "vert", age=1)
-		)
-		self.j2.cartes.append(
-			Carte("apothicaire",
-				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
-				["ressource verre 1"], None, "vert", age=1)
-		)
-		self.plateau.fin_de_partie()
-		self.assertEqual(self.plateau.joueur_gagnant, -1)
+	def test_construction_merveille_deja_constuite(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.merveilles[0].est_construite = True
+		ret = self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
+		self.assertEqual(ret, -1)
 		
+	def test_construction_merveille_monnaie_manquante(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.monnaie = 0
+		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["monnaie 2"]))
+		self.assertEqual(ret, -1)
+		
+	def test_construction_merveille_prix_achat_trop_eleve(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.monnaie = 1
+		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["ressource pierre 1"]))
+		self.assertEqual(ret, -1)
+		
+	def test_construction_merveille(self):
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.ressources["pierre"] = 3
+		self.plateau.joueur1.ressources["papyrus"] = 1
+		self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
+		self.assertTrue(self.plateau.joueur1.merveilles[0].est_construite)
+		
+	# def test_appliquer_effet
 		
 class TestAcheterRessources(unittest.TestCase):
 	def setUp(self) -> None:
@@ -486,8 +536,8 @@ class testPartieComplete(unittest.TestCase):
 			"vert", age=1)
 		self.plateau.cartes_plateau[4][2] = Carte("exploitation", ["ressource bois 1"], ["monnaie 1"], None, "marron",
 			age=1)
-		self.plateau.cartes_plateau[4][4] = Carte("depot de bois", ["reduc_ressource bois 1"], ["monnaie 3"], None,
-			"jaune", age=1)
+		self.plateau.cartes_plateau[4][4] = Carte("depot de bois", ["reduc_ressource bois 1"], ["monnaie 3"],
+			None, "jaune", age=1)
 		self.plateau.cartes_plateau[4][6] = Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1)
 		self.plateau.cartes_plateau[4][8] = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron",
 			age=1)
@@ -518,40 +568,69 @@ class testPartieComplete(unittest.TestCase):
 			age=1)
 	
 	def test_partie_1(self):
-		self.plateau.piocher(self.plateau.cartes_plateau[4][8])
-		self.assertEqual(self.plateau.cartes_plateau[4][8], 0)
-		
+		# Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
+		carte = self.plateau.cartes_plateau[4][8]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		self.assertEqual(0, self.plateau.cartes_plateau[4][8])
 		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[4][2])
-		self.assertEqual(self.plateau.cartes_plateau[4][2], 0)
-		self.assertEqual(self.plateau.joueur2.monnaie, 7 - 1)
 		
+		# Carte("exploitation", ["ressource bois 1"], ["monnaie 1"], None, "marron", age=1)
+		carte = self.plateau.cartes_plateau[4][2]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		self.assertEqual(0, self.plateau.cartes_plateau[4][2])
+		self.assertEqual(7 - 1, self.plateau.joueur2.monnaie)
 		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[4][10])
-		self.assertEqual(self.plateau.cartes_plateau[4][10], 0)
-		self.assertEqual(self.plateau.joueur1.monnaie, 7 - 2)
+		
+		# Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"], ["monnaie 2"], None, "vert", age=1)
+		carte = self.plateau.cartes_plateau[4][10]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		self.assertEqual(0, self.plateau.cartes_plateau[4][10])
+		self.assertEqual(7 - 2, self.plateau.joueur1.monnaie)
 		symb_scientifique = {"sphere_armillaire": 0, "roue": 0, "cadran_solaire": 0,
-			"pilon": 1, "pendule": 0, "plume": 0}
+			"pilon": 1, "compas_maconniques": 0, "plume": 0}
 		self.assertEqual(self.plateau.joueur1.symb_scientifique, symb_scientifique)
-		
 		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[4][4])
-		self.assertEqual(self.plateau.cartes_plateau[4][4], 0)
-		self.assertEqual(self.plateau.joueur2.monnaie, 6 - 3)
 		
+		# Carte("depot de bois", ["reduc_ressource bois 1"], ["monnaie 3"], None, "jaune", age=1)
+		carte = self.plateau.cartes_plateau[4][4]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		self.assertEqual(0, self.plateau.cartes_plateau[4][4])
+		self.assertEqual(6 - 3, self.plateau.joueur2.monnaie)
 		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[3][9])
-		self.assertEqual(self.plateau.position_jeton_conflit, 10)
+		
+		# Carte("tour de garde", ["attaquer 1"], None, None, "rouge", age=1)
+		carte = self.plateau.cartes_plateau[3][9]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		self.assertEqual(10, self.plateau.position_jeton_conflit)
+		self.plateau.joueur_qui_joue = self.plateau.adversaire()
 
+		# Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1)
+		carte = self.plateau.cartes_plateau[3][3]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
 		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[3][3])
 		
-		self.plateau.joueur_qui_joue = self.plateau.adversaire()
-		self.plateau.piocher(self.plateau.cartes_plateau[4][0])
-		symb_scientifique = {"sphere_armillaire": 0, "roue": 1, "cadran_solaire": 0, "pilon": 1, "pendule": 0,
-			"plume": 0}
-		self.assertEqual(self.plateau.joueur1.symb_scientifique, symb_scientifique)
-		self.assertEqual(self.plateau.joueur1.monnaie, 5 - 2)
+		# Carte("apothicaire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"],
+		# 	["ressource verre 1"], None, "vert", age=1)
+		carte = self.plateau.cartes_plateau[4][0]
+		self.plateau.piocher(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		self.plateau.enlever_carte(carte)
+		symb_scientifique = {"sphere_armillaire": 0, "roue": 1, "cadran_solaire": 0, "pilon": 1,
+			"compas_maconniques": 0, "plume": 0}
+		self.assertEqual(symb_scientifique, self.plateau.joueur1.symb_scientifique)
+		self.assertEqual(5 - 2, self.plateau.joueur1.monnaie)
 
 
 if __name__ == '__main__':

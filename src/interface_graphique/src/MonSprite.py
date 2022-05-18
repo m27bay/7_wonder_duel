@@ -10,6 +10,9 @@ class MonSprite(pygame.sprite.Sprite):
 		self.haut_gauche_x = haut_gauche_x
 		self.haut_gauche_y = haut_gauche_y
 		
+		self.larg = 0
+		self.haut = 0
+		
 		self.ration_longeur_fenetre = ration_longeur_fenetre
 		
 		self.angle = 0
@@ -32,16 +35,15 @@ class MonSprite(pygame.sprite.Sprite):
 		pass
 	
 	def modifier_taille_image(self):
-		larg, haut = self.image.get_size()
-		ratio_image = haut / larg
+		ratio_image = self.haut / self.larg
 		
 		if self.largeur_zoom == 0:
-			larg *= self.ration_longeur_fenetre
+			self.larg *= self.ration_longeur_fenetre
 		else:
-			larg *= self.largeur_zoom
+			self.larg *= self.largeur_zoom
 		
-		haut = ratio_image * larg
-		self.image = pygame.transform.scale(self.image, (larg, haut))
+		self.haut = ratio_image * self.larg
+		self.image = pygame.transform.scale(self.image, (self.larg, self.haut))
 	
 	def deplacer_image(self):
 		self.rect = self.image.get_rect()
@@ -53,6 +55,7 @@ class MonSprite(pygame.sprite.Sprite):
 	
 	def preparer_image(self):
 		self.charger_image()
+		self.larg, self.haut = self.image.get_size()
 		self.modifier_taille_image()
 		self.deplacer_image()
 	

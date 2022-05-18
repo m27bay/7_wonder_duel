@@ -38,7 +38,7 @@ class Joueur:
 			"roue": 0,
 			"cadran_solaire": 0,
 			"pilon": 0,
-			"pendule": 0,
+			"compas_maconniques": 0,
 			"plume": 0
 		}
 		
@@ -100,7 +100,7 @@ class Joueur:
 			"roue": 0,
 			"cadran_solaire": 0,
 			"pilon": 0,
-			"pendule": 0,
+			"compas_maconniques": 0,
 			"plume": 0
 		}
 		for symb, qte in self.symb_scientifique.items():

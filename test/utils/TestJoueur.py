@@ -195,6 +195,5 @@ class TestJoueur(unittest.TestCase):
 		self.joueur.compter_point_victoire()
 		self.assertEqual(4+3*2+3, self.joueur.points_victoire)
 
-
 if __name__ == '__main__':
 	unittest.main()
