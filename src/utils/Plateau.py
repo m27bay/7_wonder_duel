@@ -958,8 +958,7 @@ class Plateau:
 				
 				if couleur == "gris" or couleur == "marron":
 					while True:
-						num_carte = random.randint(0, len(self.adversaire().cartes) - 1)
-						carte = self.adversaire().cartes[num_carte]
+						carte = random.choice(self.adversaire().cartes)
 						if carte.couleur == couleur:
 							self.adversaire().cartes.remove(carte)
 							self.cartes_defaussees.append(carte)
@@ -967,15 +966,14 @@ class Plateau:
 					return type, carte
 							
 			elif type == "jeton_progres_aleatoire":
-				num_jeton = random.randint(0, len(self.jetons_progres_plateau) - 1)
-				jeton = self.jetons_progres_plateau[num_jeton]
+				jetons = random.sample(self.jetons_progres_plateau, k=3)
+				jeton = random.choice(jetons)
 				self.joueur_qui_joue.jetons_progres.append(jeton)
 				self.jetons_progres_plateau.remove(jeton)
 				return type, jeton
 				
 			elif type == "construction_fausse_gratuite":
-				num_carte = random.randint(0, len(self.cartes_defaussees) - 1)
-				carte = self.cartes_defaussees[num_carte]
+				carte = random.choice(self.cartes_defaussees)
 				self.joueur_qui_joue.cartes.append(carte)
 				self.cartes_defaussees.remove(carte)
 				return type, carte
