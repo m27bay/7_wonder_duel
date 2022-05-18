@@ -385,6 +385,6 @@ def affichage_enssemble():
 
 '#affichage_mode_jouer()'
 if __name__ == '__main__':
-    #affichage_enssemble()
+    affichage_enssemble()
     # choix_ressources1()
-    choix_ressources2()
+    #choix_ressources2()

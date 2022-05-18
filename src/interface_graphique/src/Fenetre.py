@@ -1,5 +1,6 @@
 # TODO : optimiser affichage pour avoir moins de lattence
 import math
+import random
 
 import pygame
 
@@ -490,7 +491,7 @@ class Fenetre:
 			self.plateau.enlever_carte(sprite_carte.carte)
 			
 			if ret == 2:
-				self.choix_jeton = True
+				self.__deplacer_jeton_scientifique(self.jetons_progres_plateau[random.randint(0, len(self.jetons_progres_plateau))])
 				
 			type_carte = self.__position_type_carte(sprite_carte.carte)
 			
@@ -674,7 +675,7 @@ class Fenetre:
 												
 				else:
 					nbr_noeuds = 0
-					# _, carte, merveille, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
+					# _, carte_a_prendre, merveille, nbr_noeuds = alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
 					# 	-math.inf, math.inf, True, nbr_noeuds)
 					_, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 						-math.inf, math.inf, True, nbr_noeuds)
