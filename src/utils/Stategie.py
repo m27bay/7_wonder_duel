@@ -38,14 +38,14 @@ def fonction_evaluation(partie):
 	# print(f"evaluation_j2 merveilles : {evaluation_j2}")
 	
 	if partie.joueur1.monnaie == 0:
-		evaluation_j2 += 10
+		evaluation_j2 += 20
 	# else:
 	# 	evaluation_j2 += partie.joueur2.monnaie
 	
 	# print(f"evaluation_j2 monnaies : {evaluation_j2}")
 	
 	if partie.position_jeton_conflit == 0:
-		evaluation_j2 += 10
+		evaluation_j2 += 20
 	
 	# print(f"evaluation_j2 conflit : {evaluation_j2}")
 	
@@ -64,14 +64,14 @@ def fonction_evaluation(partie):
 	# print(f"evaluation_j1 merveilles : {evaluation_j1}")
 	
 	if partie.joueur2.monnaie == 0:
-		evaluation_j1 += 10
+		evaluation_j1 += 20
 	# else:
 	# 	evaluation_j1 += partie.joueur1.monnaie
 	
 	# print(f"evaluation_j1 monnaies : {evaluation_j1}")
 	
 	if partie.position_jeton_conflit == 18:
-		evaluation_j1 += 10
+		evaluation_j1 += 20
 	
 	# print(f"evaluation_j1 conflit : {evaluation_j1}")
 	
@@ -244,7 +244,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 					
 					alpha = max(alpha, evaluation_piocher)
 					if beta <= alpha:
-							break
+						break
 				
 		return max_eval, carte_a_sacrifier, merveille_a_construire, nbr_noeuds+1
 	
