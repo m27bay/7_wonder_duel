@@ -206,14 +206,17 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 				ret = copie_partie.construire_merveille(carte)
 				# print(f"ALLO : {mon_str_liste(copie_partie.joueur_qui_joue.merveilles)}")
 				
-				if ret != -1:
-					# print("ret != -1")
+				if isinstance(ret, list):
 					carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
 					copie_partie.joueur_qui_joue.merveilles.append(carte)
 					copie_partie.enlever_carte(carte_random)
 					
-					evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
-						profondeur - 1, alpha, beta, False, nbr_noeuds)
+					if "rejouer" in ret:
+						evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
+							profondeur - 1, alpha, beta, True, nbr_noeuds)
+					else:
+						evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie, profondeur - 1,
+							alpha, beta, False, nbr_noeuds)
 					
 					# print(f"eval {carte.nom} : {evaluation_merveille}")
 					if evaluation_merveille > max_eval:
