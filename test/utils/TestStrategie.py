@@ -56,7 +56,7 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.plateau.preparation_plateau()
 
 		self.plateau.cartes_plateau[4][0] = Carte("apothicaire",
-			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[1]}", "point_victoire 1"], ["ressource verre 1"], None,
+			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 1"], ["ressource verre 1"], None,
 			"vert", age=1)
 		self.plateau.cartes_plateau[4][2] = Carte("exploitation", ["ressource bois 1"], ["monnaie 1"], None, "marron",
 			age=1)
@@ -65,7 +65,7 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.plateau.cartes_plateau[4][6] = Carte("presse", ["ressource papyrus 1"], ["monnaie 1"], None, "gris", age=1)
 		self.plateau.cartes_plateau[4][8] = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron",
 			age=1)
-		self.plateau.cartes_plateau[4][10] = Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}"],
+		self.plateau.cartes_plateau[4][10] = Carte("officine", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}"],
 			["monnaie 2"], None, "vert", age=1)
 
 		self.plateau.cartes_plateau[3][1] = Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1)
@@ -100,57 +100,31 @@ class TestFonctionEvaluationDurantPartie1(unittest.TestCase):
 		self.assertEqual("bassin argileux", carte_a_prendre.nom)
 		self.assertEqual(7, nbr_noeuds)
 
-	def test_minimax_profondeur_2(self):
-		self.plateau.joueur_qui_joue = self.plateau.joueur2
-		nbr_noeuds = 0
-		eval_minimax, carte_a_prendre, nbr_noeuds = minimax(self.plateau, 2, True, nbr_noeuds)
-
-		self.assertEqual(20 - 16, eval_minimax)
-		self.assertEqual("bassin argileux", carte_a_prendre.nom)
-		self.assertEqual(37, nbr_noeuds)
-		
-	def test_alpha_beta_profondeur_2(self):
-		self.plateau.joueur_qui_joue = self.plateau.joueur2
-		nbr_noeuds = 0
-		eval_minimax, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, 2, -math.inf, math.inf, True, nbr_noeuds)
-
-		self.assertEqual(20 - 16, eval_minimax)
-		self.assertEqual("bassin argileux", carte_a_prendre.nom)
-		self.assertEqual(37, nbr_noeuds)
-		
-	# def test_elagage(self):
+	# TODO : mettre à jour
+	# def test_minimax_profondeur_2(self):
 	# 	self.plateau.joueur_qui_joue = self.plateau.joueur2
-	# 	profondeur = 7
+	# 	nbr_noeuds = 0
+	# 	eval_minimax, carte_a_prendre, nbr_noeuds = minimax(self.plateau, 2, True, nbr_noeuds)
 	#
-	# 	nbr_noeuds_minimax = 0
-	# 	deb_minimax = time.time()
-	# 	_, _, nbr_noeuds_minimax = minimax(self.plateau, profondeur, True, nbr_noeuds_minimax)
-	# 	fin_minimax = time.time()
+	# 	self.assertEqual(20 - 16, eval_minimax)
+	# 	self.assertEqual("bassin argileux", carte_a_prendre.nom)
+	# 	self.assertEqual(37, nbr_noeuds)
 	#
-	# 	nbr_noeuds_alpha_beta = 0
-	# 	deb_alpha_beta = time.time()
-	# 	_, _, nbr_noeuds_alpha_beta = alpha_beta(self.plateau, profondeur, -math.inf, math.inf, True, nbr_noeuds_alpha_beta)
-	# 	fin_alpha_beta = time.time()
+	# def test_alpha_beta_profondeur_2(self):
+	# 	self.plateau.joueur_qui_joue = self.plateau.joueur2
+	# 	nbr_noeuds = 0
+	# 	eval_minimax, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, 2, -math.inf, math.inf, True, nbr_noeuds)
 	#
-	# 	print(f"nbr_noeuds_minimax : {nbr_noeuds_minimax}, nbr_noeuds_alpha_beta : {nbr_noeuds_alpha_beta}")
-	# 	print(f"difference : {nbr_noeuds_minimax - nbr_noeuds_alpha_beta}")
-	# 	print(f"{((nbr_noeuds_minimax - nbr_noeuds_alpha_beta) / nbr_noeuds_minimax) * 100} % reduction")
-	# 	print(f"temps execution minimax : {fin_minimax - deb_minimax}")
-	# 	print(f"temps execution alpha_beta : {fin_alpha_beta - deb_alpha_beta}")
-	# 	self.assertNotEqual(nbr_noeuds_minimax, nbr_noeuds_alpha_beta)
+	# 	self.assertEqual(20 - 16, eval_minimax)
+	# 	self.assertEqual("bassin argileux", carte_a_prendre.nom)
+	# 	self.assertEqual(37, nbr_noeuds)
 	
-	def test_alpha_beta_avec_merveille(self):
-		self.plateau.cartes_plateau[4][8] = Carte("mine", ["ressource pierre 1"], ["monnaie 1"], None, "marron", age=1)
-		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 7
+	def test_alpha_beta_avec_merveille_profondeur_2(self):
 		self.plateau.joueur_qui_joue = self.plateau.joueur2
-		self.plateau.joueur2.ressources["pierre"] = 2
-		self.plateau.joueur2.ressources["argile"] = 2
-		self.plateau.joueur2.ressources["papyrus"] = 1
-		# print(self.plateau)
 		
 		nbr_noeuds_alpha_beta_merveille = 0
 		evaluation_alpha_beta_merveille, carte, merveille, nbr_noeuds_alpha_beta_merveille = \
-			alpha_beta_avec_merveille(self.plateau, 2, -math.inf, math.inf,
+			alpha_beta_avec_merveille(self.plateau, 3, -math.inf, math.inf,
 				True, nbr_noeuds_alpha_beta_merveille)
 		
 		print(f"carte : {carte}\neval : {evaluation_alpha_beta_merveille}\nmerveille : {merveille}")

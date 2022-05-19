@@ -9,6 +9,7 @@ from src.utils.CarteGuilde import CarteGuilde
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
 from src.utils.Merveille import Merveille
+from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 
 
@@ -240,26 +241,31 @@ class TestOutilsPlateau(unittest.TestCase):
 		self.assertEqual(-1, ret)
 	
 	def test_fin_partie_militaire_joueur1(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.plateau.position_jeton_conflit = 18
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.victoire, (self.j1.nom, "militaire"))
 
 	def test_fin_partie_militaire_joueur2(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.plateau.position_jeton_conflit = 0
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.victoire, (self.j2.nom, "militaire"))
 
 	def test_fin_partie_scientifique_joueur1(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.j1.nbr_symb_scientifique_diff = 6
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.victoire, (self.j1.nom, "scientifique"))
 
 	def test_fin_partie_scientifique_joueur2(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.j2.nbr_symb_scientifique_diff = 6
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.victoire, (self.j2.nom, "scientifique"))
 
 	def test_fin_partie_points_victoire_joueur1(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.j1.cartes.append(
 			Carte("atelier",
 				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papurys 1"],
@@ -269,6 +275,7 @@ class TestOutilsPlateau(unittest.TestCase):
 		self.assertEqual(self.plateau.victoire, (self.j1.nom, "points victoire"))
 
 	def test_fin_partie_points_victoire_joueur2(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.j2.cartes.append(
 			Carte("atelier",
 				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papurys 1"],
@@ -278,6 +285,7 @@ class TestOutilsPlateau(unittest.TestCase):
 		self.assertEqual(self.plateau.victoire, (self.j2.nom, "points victoire"))
 
 	def test_fin_partie_points_victoire_egalite(self):
+		self.plateau.joueur1.monnaie = self.plateau.joueur2.monnaie = 1
 		self.j1.cartes.append(
 			Carte("atelier",
 				[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papurys 1"],
@@ -299,66 +307,54 @@ class TestEffetsCartesGuide(unittest.TestCase):
 		self.plateau = Plateau(self.j1, self.j2)
 	
 	def test_fin_partie_j1_possede_armateurs_j1_gagne(self):
-		self.j1.cartes.append(CarteGuilde("guilde des armateurs",
+		self.plateau.preparation_plateau()
+		
+		carte = Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2)
+		self.plateau.piocher(carte)
+		self.plateau.appliquer_effets_carte(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		
+		carte = Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2)
+		self.plateau.piocher(carte)
+		self.plateau.appliquer_effets_carte(carte)
+		self.plateau.joueur_qui_joue.monnaie += 2
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		
+		self.j1.ressources["argile"] = 1
+		self.j1.ressources["verre"] = 1
+		
+		carte = CarteGuilde("guilde des armateurs",
 			["effet_guild_armateurs 1"],
 			["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
-		))
-		self.j1.cartes.append(Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2))
-		self.j1.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		self.j2.cartes.append(Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2))
+		)
+		self.plateau.piocher(carte)
+		self.plateau.appliquer_effets_carte(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		
+		self.plateau.joueur_qui_joue = self.plateau.joueur2
+		carte = Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2)
+		self.plateau.piocher(carte)
+		self.plateau.appliquer_effets_carte(carte)
+		self.plateau.joueur_qui_joue.cartes.append(carte)
+		
 		self.plateau.fin_de_partie()
 		
-		self.assertEqual(2, self.j1.points_victoire)
+		self.assertEqual(9, self.plateau.joueur1.monnaie)
+		# 2 points pour les cartes, 3 points pour les pièces (3 paquets de 3)
+		self.assertEqual(2+3, self.j1.points_victoire)
 		self.assertEqual((self.j1.nom, "points victoire"), self.plateau.victoire)
-	
-	def test_fin_partie_j1_possede_armateurs_j2_gagne(self):
-		self.j1.cartes.append(CarteGuilde("guilde des armateurs",
-			["effet_guild_armateurs 1"],
-			["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
-		))
-		self.j1.cartes.append(Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2))
-		self.j2.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		self.j2.cartes.append(Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2))
-		self.plateau.fin_de_partie()
-		
-		self.assertEqual(2, self.j2.points_victoire)
-		self.assertEqual((self.j2.nom, "points victoire"), self.plateau.victoire)
-	
-	def test_fin_partie_j2_possede_armateurs_j1_gagne(self):
-		self.j2.cartes.append(CarteGuilde("guilde des armateurs",
-			["effet_guild_armateurs 1"],
-			["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
-		))
-		self.j1.cartes.append(Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2))
-		self.j1.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		self.j2.cartes.append(Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2))
-		self.plateau.fin_de_partie()
-		
-		self.assertEqual(2, self.j1.points_victoire)
-		self.assertEqual((self.j1.nom, "points victoire"), self.plateau.victoire)
-	
-	def test_fin_partie_j2_possede_armateurs_j2_gagne(self):
-		self.j2.cartes.append(CarteGuilde("guilde des armateurs",
-			["effet_guild_armateurs 1"],
-			["ressource argile 1", "ressource pierre 1", "ressource verre 1", "ressource papyrus 1"]
-		))
-		self.j1.cartes.append(Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2))
-		self.j2.cartes.append(Carte("carriere", ["ressource pierre 2"], ["monnaie 2"], None, "marron", age=2))
-		self.j2.cartes.append(Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2))
-		self.plateau.fin_de_partie()
-		
-		self.assertEqual(2, self.j2.points_victoire)
-		self.assertEqual((self.j2.nom, "points victoire"), self.plateau.victoire)
 	
 	def test_fin_partie_j1_possede_usuriers_j1_gagne(self):
+		self.plateau.preparation_plateau()
 		self.j1.monnaie = 10
-		self.j2.monnaie = 7
 		self.j2.cartes.append(CarteGuilde("guilde des usuriers",
 			["effet_guild_usuriers 1"],
 			["ressource pierre 2", "ressource bois 2"])
 		)
 		self.plateau.fin_de_partie()
 		
+		# calcul fin de partie = j1 a 10 pièces donc 3 lot de 3 donc 3 points victoire
+		# plus effet usuriers qui donne 3 pièces par lot de 3 donc 6 points victoire
 		self.assertEqual(6, self.j1.points_victoire)
 		self.assertEqual(2, self.j2.points_victoire)
 		self.assertEqual((self.j1.nom, "points victoire"), self.plateau.victoire)
@@ -374,7 +370,7 @@ class TestEffetsMerveillesGuide(unittest.TestCase):
 		self.plateau.preparation_plateau()
 		self.plateau.joueur1.merveilles[0].est_construite = True
 		ret = self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
-		self.assertEqual((-1, None), ret)
+		self.assertEqual((-2, None), ret)
 	
 	def test_construction_merveille_monnaie_manquante(self):
 		self.plateau.preparation_plateau()
