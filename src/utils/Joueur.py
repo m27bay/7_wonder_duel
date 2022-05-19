@@ -279,11 +279,11 @@ class Joueur:
 		# compter points de victoire avec les merveilles
 		for merveille in self.merveilles:
 			for effet in merveille.effets:
-				
-				# decoupe l effet
-				effet_split = effet.split(" ")
-				if effet_split[0] == "point_victoire":
-					self.points_victoire += int(effet_split[1])
+				if merveille.est_construite:
+					# decoupe l effet
+					effet_split = effet.split(" ")
+					if effet_split[0] == "point_victoire":
+						self.points_victoire += int(effet_split[1])
 		
 		# compter points de victoire avec les jetons_progres
 		for jeton in self.jetons_progres:
