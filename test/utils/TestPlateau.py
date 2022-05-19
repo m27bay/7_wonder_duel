@@ -291,6 +291,13 @@ class TestOutilsPlateau(unittest.TestCase):
 		self.plateau.fin_de_partie()
 		self.assertEqual(self.plateau.victoire, (None, "égalité"))
 	
+	
+class TestEffetsCartesGuide(unittest.TestCase):
+	def setUp(self) -> None:
+		self.j1 = Joueur("Bruno")
+		self.j2 = Joueur("Antoine")
+		self.plateau = Plateau(self.j1, self.j2)
+	
 	def test_fin_partie_j1_possede_armateurs_j1_gagne(self):
 		self.j1.cartes.append(CarteGuilde("guilde des armateurs",
 			["effet_guild_armateurs 1"],
@@ -355,32 +362,84 @@ class TestOutilsPlateau(unittest.TestCase):
 		self.assertEqual(6, self.j1.points_victoire)
 		self.assertEqual(2, self.j2.points_victoire)
 		self.assertEqual((self.j1.nom, "points victoire"), self.plateau.victoire)
-	
+		
+
+class TestEffetsMerveillesGuide(unittest.TestCase):
+	def setUp(self) -> None:
+		self.j1 = Joueur("Bruno")
+		self.j2 = Joueur("Antoine")
+		self.plateau = Plateau(self.j1, self.j2)
+		
 	def test_construction_merveille_deja_constuite(self):
 		self.plateau.preparation_plateau()
 		self.plateau.joueur1.merveilles[0].est_construite = True
 		ret = self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
-		self.assertEqual(ret, -1)
-		
+		self.assertEqual((-1, None), ret)
+	
 	def test_construction_merveille_monnaie_manquante(self):
 		self.plateau.preparation_plateau()
 		self.plateau.joueur1.monnaie = 0
 		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["monnaie 2"]))
-		self.assertEqual(ret, -1)
-		
+		self.assertEqual((-1, None), ret)
+	
 	def test_construction_merveille_prix_achat_trop_eleve(self):
 		self.plateau.preparation_plateau()
 		self.plateau.joueur1.monnaie = 1
 		ret = self.plateau.construire_merveille(Merveille("via appia", None, ["ressource pierre 1"]))
-		self.assertEqual(ret, -1)
-		
+		self.assertEqual((-1, None), ret)
+	
 	def test_construction_merveille(self):
 		self.plateau.preparation_plateau()
 		self.plateau.joueur1.ressources["pierre"] = 3
 		self.plateau.joueur1.ressources["papyrus"] = 1
+		# Merveille("pyramides",
+		# 	["point_victoire 9"],
+		# 	["ressource pierre 3", "ressource papyrus 1"]
+		# )
 		self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
 		self.assertTrue(self.plateau.joueur1.merveilles[0].est_construite)
 		
+	def test_effets_circus_maximus(self):
+		# Merveille("circus maximus",
+		# 	["defausse_carte_adversaire gris", "attaquer 1", "point_victoire 3"],
+		# 	["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
+		# )
+		self.plateau.preparation_plateau()
+		self.plateau.joueur_qui_joue = self.plateau.joueur2
+		self.plateau.joueur2.ressources["pierre"] = 2
+		self.plateau.joueur2.ressources["bois"] = 1
+		self.plateau.joueur2.ressources["verre"] = 1
+		
+		self.plateau.joueur1.cartes.append(Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2))
+		self.plateau.joueur1.cartes.append(Carte("sechoir", ["ressource papyrus 1"], None, None, "gris", age=2))
+		
+		self.plateau.construire_merveille(self.plateau.joueur2.merveilles[0])
+		self.plateau.joueur2.compter_point_victoire()
+		
+		self.assertEqual(1, len(self.plateau.joueur1.cartes))
+		self.assertEqual(8, self.plateau.position_jeton_conflit)
+		self.assertEqual(3, self.plateau.joueur2.points_victoire)
+	
+	def test_effets_jardin_suspendus(self):
+		# Merveille("jardin suspendus",
+		# 	["monnaie 6", "rejouer", "point_victoire 3"],
+		# 	["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
+		# )
+		self.plateau.preparation_plateau()
+		self.plateau.joueur1.merveilles[0] = Merveille("jardin suspendus",
+			["monnaie 6", "rejouer", "point_victoire 3"],
+			["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
+		)
+		self.plateau.joueur1.ressources["bois"] = 2
+		self.plateau.joueur1.ressources["verre"] = 1
+		self.plateau.joueur1.ressources["papyrus"] = 1
+		
+		self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
+		self.plateau.joueur1.compter_point_victoire()
+		
+		self.assertEqual(13, self.plateau.joueur1.monnaie)
+		self.assertEqual(3, self.plateau.joueur1.points_victoire)
+	
 class TestAcheterRessources(unittest.TestCase):
 	def setUp(self) -> None:
 		self.j1 = Joueur("Bruno")
