@@ -5,6 +5,7 @@ import random
 
 from src.utils.Carte import Carte
 from src.utils.CarteGuilde import CarteGuilde
+from src.utils.Colors import Colors
 from src.utils.JetonMilitaire import JetonMilitaire
 from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
@@ -553,7 +554,7 @@ class Plateau:
 					carte_trouvee = True
 		
 		if not carte_trouvee:
-			print(f"ERREUR enlever_carte {carte_a_enlever.nom} : introuvble")
+			print(f"{Colors.FAIL} ERREUR enlever_carte {carte_a_enlever.nom} : introuvble {Colors.FAIL}")
 			exit(-1)
 		
 		for carte in self.liste_cartes_prenables():
@@ -694,7 +695,7 @@ class Plateau:
 		
 		if self.monnaie_banque == 0:
 			gain = 0
-			print("ERREUR : la banque n'a plus d'argent")
+			print(f"{Colors.FAIL} ERREUR : la banque n'a plus d'argent {Colors.FAIL}")
 			exit(-2)
 		
 		elif self.monnaie_banque < monnaies:
@@ -801,7 +802,7 @@ class Plateau:
 			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			
 			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-				print("possede maconnerie")
+				# print("possede maconnerie")
 				liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
 			
 			# verification ressources nom_joueur
@@ -888,15 +889,17 @@ class Plateau:
 		
 	
 	def construire_merveille(self, merveille_a_construire: Merveille):
+		# print("construire_merveille")
 		if merveille_a_construire.est_construite:
-			return -1, None
+			return -2, None
 		
 		# verification ressources nom_joueur
 		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
-		
-		joueur_possede_jeton_archi = [jeton for jeton in self.joueur_qui_joue.jetons_progres if jeton.nom == "architecture"]
-		if len(joueur_possede_jeton_archi) != 0:
+		# print(liste_ressource_necessaire)
+		joueur_possede_jeton_archi = any(jeton.nom == "architecture" for jeton in self.joueur_qui_joue.jetons_progres)
+		if joueur_possede_jeton_archi:
 			liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
+		# print(f"joueur_possede_jeton_archi : {joueur_possede_jeton_archi}")
 		
 		# manque des ressouces
 		if len(liste_ressource_necessaire) != 0:
@@ -927,6 +930,7 @@ class Plateau:
 			if merveille == merveille_a_construire:
 				merveille.est_construite = True
 		
+		# print("fin construire_merveille")
 		return self.appliquer_effets_merveille(merveille_a_construire)
 	
 	def numero_jeton_militaire(self):
@@ -1013,40 +1017,37 @@ class Plateau:
 			if carte.nom in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
 				"guilde des tacticiens", "guilde des scientifiques"]:
 				
-				j1_possede_carte = any(carte_joueur.nom == carte.nom for carte_joueur in self.joueur1.cartes)
-				j2_possede_carte = any(carte_joueur.nom == carte.nom for carte_joueur in self.joueur2.cartes)
-				
-				if j1_possede_carte or j2_possede_carte:
-					if carte.nom == "guilde des armateurs":
-						recherche = ["gris", "marron"]
-					elif carte.nom == "guilde des commercants":
-						recherche = ["jaune"]
-					elif carte.nom == "guilde des magistrats":
-						recherche = ["bleu"]
-					elif carte.nom == "guilde des tacticiens":
-						recherche = ["rouge"]
-					else:
-						recherche = ["vert"]
+				if carte.nom == "guilde des armateurs":
+					recherche = ["gris", "marron"]
+				elif carte.nom == "guilde des commercants":
+					recherche = ["jaune"]
+				elif carte.nom == "guilde des magistrats":
+					recherche = ["bleu"]
+				elif carte.nom == "guilde des tacticiens":
+					recherche = ["rouge"]
+				else:
+					recherche = ["vert"]
 						
-					nbr_carte_recherche_j1 = len(
-						[carte for carte in self.joueur1.cartes if carte.couleur in recherche])
-					nbr_carte_recherche_j2 = len(
-						[carte for carte in self.joueur2.cartes if carte.couleur in recherche])
+				nbr_carte_recherche_j1 = len(
+					[carte for carte in self.joueur1.cartes if carte.couleur in recherche])
+				nbr_carte_recherche_j2 = len(
+					[carte for carte in self.joueur2.cartes if carte.couleur in recherche])
+				
+				if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
+					maxi = max(nbr_carte_recherche_j1, nbr_carte_recherche_j2)
+					joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
 					
-					if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
-						maxi = max(nbr_carte_recherche_j1, nbr_carte_recherche_j2)
-						joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
-						
-						if self.monnaie_banque >= maxi:
-							joueur.monnaie += maxi
-							self.monnaie_banque -= maxi
-				
-						else:
-							print("ERREUR : la banque n'a plus d'argent")
-							exit(-2)
+					if self.monnaie_banque >= maxi:
+						joueur.monnaie += maxi
+						self.monnaie_banque -= maxi
+			
+					else:
+						print(f"{Colors.FAIL} ERREUR : la banque n'a plus d'argent {Colors.FAIL}")
+						exit(-2)
 		return 1
 	
 	def appliquer_effets_merveille(self, merveille: Merveille):
+		# print("appliquer_effets_merveille")
 		liste_effet = []
 		for effet in merveille.effets:
 			
@@ -1067,30 +1068,42 @@ class Plateau:
 				couleur = effet_split[1]
 				
 				if couleur == "gris" or couleur == "marron":
-					while True:
-						carte = random.choice(self.adversaire().cartes)
-						if carte.couleur == couleur:
-							self.adversaire().cartes.remove(carte)
-							self.cartes_defaussees.append(carte)
-							break
-					liste_effet.append((type, carte))
+					adversaire = self.adversaire()
+					cartes = adversaire.possede_cartes_couleur(couleur)
+					if len(cartes) != 0:
+						while True:
+							carte = random.choice(cartes)
+							if carte.couleur == couleur:
+								adversaire.cartes.remove(carte)
+								self.cartes_defaussees.append(carte)
+								break
+						liste_effet.append((type, carte))
 			
 			if type == "jeton_progres_aleatoire":
-				jetons = random.sample(self.jetons_progres_plateau, k=3)
-				jeton = random.choice(jetons)
-				self.joueur_qui_joue.jetons_progres.append(jeton)
-				self.jetons_progres_plateau.remove(jeton)
-				liste_effet.append((type, jeton))
+				if len(self.jetons_progres_plateau) >= 2:
+					
+					if len(self.jetons_progres_plateau) == 2:
+						jetons = random.sample(self.jetons_progres_plateau, k=2)
+						
+					else:
+						jetons = random.sample(self.jetons_progres_plateau, k=3)
+						
+					jeton = random.choice(jetons)
+					self.joueur_qui_joue.jetons_progres.append(jeton)
+					self.jetons_progres_plateau.remove(jeton)
+					liste_effet.append((type, jeton))
 			
 			if type == "construction_fausse_gratuite":
-				carte = random.choice(self.cartes_defaussees)
-				self.joueur_qui_joue.cartes.append(carte)
-				self.cartes_defaussees.remove(carte)
-				liste_effet.append((type, carte))
+				if len(self.cartes_defaussees) != 0:
+					carte = random.choice(self.cartes_defaussees)
+					self.joueur_qui_joue.cartes.append(carte)
+					self.cartes_defaussees.remove(carte)
+					liste_effet.append((type, carte))
 			
 			if type == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
 				liste_effet.append("rejouer")
 		
+		# print("fin appliquer_effets_merveille")
 		return liste_effet
 	
 	def appliquer_effets_jeton(self, jeton: JetonProgres):
