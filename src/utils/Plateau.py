@@ -5,7 +5,7 @@ import random
 
 from src.utils.Carte import Carte
 from src.utils.CarteGuilde import CarteGuilde
-from src.utils.Colors import Colors
+from src.utils.Colours import Couleurs
 from src.utils.JetonMilitaire import JetonMilitaire
 from src.utils.Merveille import Merveille
 from src.utils.JetonProgres import JetonProgres
@@ -554,7 +554,7 @@ class Plateau:
 					carte_trouvee = True
 		
 		if not carte_trouvee:
-			print(f"{Colors.FAIL} ERREUR enlever_carte {carte_a_enlever.nom} : introuvble {Colors.FAIL}")
+			print(f"{Couleurs.FAIL} ERREUR enlever_carte {carte_a_enlever.nom} : introuvble {Couleurs.FAIL}")
 			exit(-1)
 		
 		for carte in self.liste_cartes_prenables():
@@ -695,7 +695,7 @@ class Plateau:
 		
 		if self.monnaie_banque == 0:
 			gain = 0
-			print(f"{Colors.FAIL} ERREUR : la banque n'a plus d'argent {Colors.FAIL}")
+			print(f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
 			exit(-2)
 		
 		elif self.monnaie_banque < monnaies:
@@ -709,12 +709,6 @@ class Plateau:
 		return gain
 	
 	def acheter_ressources(self, ressources_manquantes: list) -> int:
-		"""
-		Permet au nom_joueur qui joue d'acheter les ressources qui lui manque pour construire sa carte.
-
-		:param ressources_manquantes: liste des ressources manquantes
-		:return prixDesRessources
-		"""
 		prix_commerce = 0
 		
 		# Verification si le nom_joueur adverse produit les ressources manquantes
@@ -889,7 +883,6 @@ class Plateau:
 		
 	
 	def construire_merveille(self, merveille_a_construire: Merveille):
-		# print("construire_merveille")
 		if merveille_a_construire.est_construite:
 			return -2, None
 		
@@ -899,7 +892,6 @@ class Plateau:
 		joueur_possede_jeton_archi = any(jeton.nom == "architecture" for jeton in self.joueur_qui_joue.jetons_progres)
 		if joueur_possede_jeton_archi:
 			liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
-		# print(f"joueur_possede_jeton_archi : {joueur_possede_jeton_archi}")
 		
 		# manque des ressouces
 		if len(liste_ressource_necessaire) != 0:
@@ -930,7 +922,6 @@ class Plateau:
 			if merveille == merveille_a_construire:
 				merveille.est_construite = True
 		
-		# print("fin construire_merveille")
 		return self.appliquer_effets_merveille(merveille_a_construire)
 	
 	def numero_jeton_militaire(self):
@@ -1042,12 +1033,11 @@ class Plateau:
 						self.monnaie_banque -= maxi
 			
 					else:
-						print(f"{Colors.FAIL} ERREUR : la banque n'a plus d'argent {Colors.FAIL}")
+						print(f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
 						exit(-2)
 		return 1
 	
 	def appliquer_effets_merveille(self, merveille: Merveille):
-		# print("appliquer_effets_merveille")
 		liste_effet = []
 		for effet in merveille.effets:
 			
@@ -1103,7 +1093,6 @@ class Plateau:
 			if type == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
 				liste_effet.append("rejouer")
 		
-		# print("fin appliquer_effets_merveille")
 		return liste_effet
 	
 	def appliquer_effets_jeton(self, jeton: JetonProgres):

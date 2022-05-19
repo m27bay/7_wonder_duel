@@ -2,6 +2,7 @@ import math
 import csv
 import random
 
+from src.utils.Colours import Couleurs
 from src.utils.Merveille import Merveille
 from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau
@@ -18,8 +19,7 @@ with open("src/utils/notation_cartes.csv", mode='r') as file:
 def partie_fini(partie: Plateau):
 	return (not partie.reste_des_cartes() and partie.age == 3) \
 		or (partie.joueur1.symb_scientifique == 6 or partie.joueur2.symb_scientifique == 6) \
-		or (partie.position_jeton_conflit in [0, 18]) \
-		or (partie.joueur1.monnaie == 0 or partie.joueur2.monnaie == 0)
+		or (partie.position_jeton_conflit in [0, 18])
 	
 	
 def fonction_evaluation(partie):
@@ -192,7 +192,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 	carte_a_sacrifier = None
 	
 	if coup_bot:
-		print("coup bot")
+		print(f"{Couleurs.WARNING}coup bot{Couleurs.RESET}")
 		partie.joueur_qui_joue = partie.joueur2
 		max_eval = -math.inf
 		
@@ -207,10 +207,10 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 				ret = copie_partie.construire_merveille(carte)
 				
 				if ret == (-1, None):
-					print(" non, ressources insuffisantes")
+					print(f" non, ressources insuffisantes")
 				
 				elif ret == (-2, None):
-					print(" non, deja construite")
+					print(f" non, deja construite")
 				
 				else:
 					carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
@@ -229,7 +229,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 						max_eval = evaluation_merveille
 						merveille_a_construire = carte
 						carte_a_sacrifier = carte_random
-						print(f"merveille : {merveille_a_construire.nom} avec carte {carte_a_sacrifier.nom} : meilleur eval")
+						print(f"merveille : {merveille_a_construire.nom} avec carte {carte_a_sacrifier.nom} : meilleur eval : {max_eval}")
 						
 						alpha = max(alpha, evaluation_merveille)
 						if beta <= alpha:
@@ -251,18 +251,19 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 					profondeur - 1, alpha, beta, False, nbr_noeuds)
 				
 				if evaluation_piocher > max_eval:
-					print(f"carte {carte.nom} : meilleur eval")
 					max_eval = evaluation_piocher
+					print(f"carte {carte.nom} : meilleur eval : {max_eval}")
 					carte_a_sacrifier = carte
 					
 					alpha = max(alpha, evaluation_piocher)
 					if beta <= alpha:
 						break
-				
+						
+		print(f"{Couleurs.WARNING}fin coup bot{Couleurs.RESET}")
 		return max_eval, carte_a_sacrifier, merveille_a_construire, nbr_noeuds+1
 	
 	else:
-		print("coup joueur")
+		print(f"{Couleurs.WARNING}coup joueur{Couleurs.RESET}")
 		partie.joueur_qui_joue = partie.joueur1
 		min_eval = math.inf
 		
@@ -277,10 +278,12 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 			
 			if evaluation < min_eval:
 				min_eval = evaluation
+				print(f"carte {carte.nom} : meilleur eval : {min_eval}")
 				carte_a_sacrifier = carte
 				
 				beta = min(beta, evaluation)
 				if beta <= alpha:
 					break
-		
+					
+		print(f"{Couleurs.WARNING}fin coup joueur{Couleurs.RESET}")
 		return min_eval, carte_a_sacrifier, None, nbr_noeuds+1
