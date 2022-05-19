@@ -18,11 +18,11 @@ with open("src/utils/notation_cartes.csv", mode='r') as file:
 def partie_fini(partie: Plateau):
 	return (not partie.reste_des_cartes() and partie.age == 3) \
 		or (partie.joueur1.symb_scientifique == 6 or partie.joueur2.symb_scientifique == 6) \
-		or (partie.position_jeton_conflit in [0, 18])
+		or (partie.position_jeton_conflit in [0, 18]) \
+		or (partie.joueur1.monnaie == 0 or partie.joueur2.monnaie == 0)
 	
 	
 def fonction_evaluation(partie):
-	# TODO : prendre en compte merveille, carte guilde
 	evaluation_j2 = 0
 	for carte in partie.joueur2.cartes:
 		if carte.est_face_cachee:
@@ -39,8 +39,8 @@ def fonction_evaluation(partie):
 	
 	if partie.joueur1.monnaie == 0:
 		evaluation_j2 += 20
-	# else:
-	# 	evaluation_j2 += partie.joueur2.monnaie
+	else:
+		evaluation_j2 += partie.joueur2.monnaie
 	
 	# print(f"evaluation_j2 monnaies : {evaluation_j2}")
 	
@@ -65,8 +65,8 @@ def fonction_evaluation(partie):
 	
 	if partie.joueur2.monnaie == 0:
 		evaluation_j1 += 20
-	# else:
-	# 	evaluation_j1 += partie.joueur1.monnaie
+	else:
+		evaluation_j1 += partie.joueur1.monnaie
 	
 	# print(f"evaluation_j1 monnaies : {evaluation_j1}")
 	
@@ -192,49 +192,58 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 	carte_a_sacrifier = None
 	
 	if coup_bot:
-		# print("coup bot")
+		print("coup bot")
 		partie.joueur_qui_joue = partie.joueur2
 		max_eval = -math.inf
 		
 		liste_cartes_prenable = partie.liste_cartes_prenables()
 		cartes = liste_cartes_prenable + partie.joueur2.liste_merveilles_non_construite()
 		for carte in cartes:
+			print(f"boucle carte : {carte.nom}", end="")
 			copie_partie: Plateau = partie.constructeur_par_copie()
 			
 			if isinstance(carte, Merveille):
-				# print(f"bot construire : {carte.nom}")
+				print(", construire ?", end="")
 				ret = copie_partie.construire_merveille(carte)
-				# print(f"ALLO : {mon_str_liste(copie_partie.joueur_qui_joue.merveilles)}")
 				
-				if isinstance(ret, list):
+				if ret == (-1, None):
+					print(" non, ressources insuffisantes")
+				
+				elif ret == (-2, None):
+					print(" non, deja construite")
+				
+				else:
 					carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
+					print(f" oui, avec la carte {carte_random.nom}")
 					copie_partie.joueur_qui_joue.merveilles.append(carte)
 					copie_partie.enlever_carte(carte_random)
 					
-					if "rejouer" in ret:
-						evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
-							profondeur - 1, alpha, beta, True, nbr_noeuds)
-					else:
-						evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie, profondeur - 1,
-							alpha, beta, False, nbr_noeuds)
+					# if "rejouer" in ret:
+					evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
+						profondeur - 1, alpha, beta, True, nbr_noeuds)
+					# else:
+					# 	evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie, profondeur - 1,
+					# 		alpha, beta, False, nbr_noeuds)
 					
-					# print(f"eval {carte.nom} : {evaluation_merveille}")
 					if evaluation_merveille > max_eval:
 						max_eval = evaluation_merveille
 						merveille_a_construire = carte
 						carte_a_sacrifier = carte_random
+						print(f"merveille : {merveille_a_construire.nom} avec carte {carte_a_sacrifier.nom} : meilleur eval")
 						
 						alpha = max(alpha, evaluation_merveille)
 						if beta <= alpha:
 							break
 			
 			else:
-				# print(f"bot piocher : {carte.nom}")
+				print(", piocher ?", end="")
 				ret = copie_partie.piocher(carte)
 				
 				if ret == -1:
+					print(" non, defausse")
 					copie_partie.defausser(carte)
 				else:
+					print(" oui")
 					copie_partie.joueur_qui_joue.cartes.append(carte)
 					copie_partie.enlever_carte(carte)
 				
@@ -242,6 +251,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 					profondeur - 1, alpha, beta, False, nbr_noeuds)
 				
 				if evaluation_piocher > max_eval:
+					print(f"carte {carte.nom} : meilleur eval")
 					max_eval = evaluation_piocher
 					carte_a_sacrifier = carte
 					
@@ -252,14 +262,13 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 		return max_eval, carte_a_sacrifier, merveille_a_construire, nbr_noeuds+1
 	
 	else:
-		# print("coup joueur")
+		print("coup joueur")
 		partie.joueur_qui_joue = partie.joueur1
 		min_eval = math.inf
 		
 		for carte in partie.liste_cartes_prenables():
-			
+			print(f"joueur piocher : {carte.nom}")
 			copie_partie: Plateau = partie.constructeur_par_copie()
-			# print(f"joueur piocher : {carte.nom}")
 			copie_partie.piocher(carte)
 			copie_partie.joueur_qui_joue.cartes.append(carte)
 			copie_partie.enlever_carte(carte)
