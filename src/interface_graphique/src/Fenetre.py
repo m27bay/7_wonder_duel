@@ -491,16 +491,17 @@ class Fenetre:
 			return 6
 		
 	def __piocher_plateau(self, sprite_carte: SpriteCarte):
+		# print("__piocher_plateau")
 		ret = self.plateau.piocher(sprite_carte.carte)
 		if ret == 0:
 			
 			ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
+			if self.plateau.victoire is not None:
+				return
 			
-			if ret2 == -2:
-				return -2
-		
 			else:
 				if ret2 == 2:
+					print("choix jeton")
 					sprite_jeton = None
 					sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
 					for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
@@ -510,16 +511,16 @@ class Fenetre:
 				
 				self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
 				self.plateau.enlever_carte(sprite_carte.carte)
-				
-				self.__dessiner_piocher(sprite_carte)
+			
+			self.__dessiner_piocher(sprite_carte)
 		
 		elif ret == -1:
 			self.__dessiner_defausser(sprite_carte)
 			
 	def __piocher_fausse(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.appliquer_effets_carte(sprite_carte.carte)
-		if ret == -2:
-			return -2
+		if self.plateau.victoire is not None:
+			return
 		
 		else:
 			if ret == 2:
@@ -533,6 +534,7 @@ class Fenetre:
 			self.__dessiner_piocher(sprite_carte)
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
+		# print("__dessiner_piocher")
 		type_carte = self.__position_type_carte(sprite_carte.carte)
 		
 		sprite_carte.angle = 90
@@ -572,275 +574,252 @@ class Fenetre:
 		coord_y = self.hauteur - (self.default_hauteur_sprite + self.espace_entre_carte)
 		carte_prenable.changer_coords(coord_x, coord_y)
 		
-	def boucle_principale(self):
-		simu_bot = False
-		carte_bot = None
-		merveille_bot = None
+	def __construire_merveille(self, merveille: SpriteMerveille, sprite_carte_zoomer: SpriteCarte):
+		# print("__construire_merveille")
+		rets = self.plateau.construire_merveille(merveille.merveille)
+
+		if isinstance(rets, list):
+
+			sprite_carte_zoomer.dezoomer()
+			self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
+			sprite_carte_zoomer = None
+
+			for type, obj in rets:
+				if type == "defausse_carte_adversaire":
+					if isinstance(obj, Carte):
+						type_carte = self.__position_type_carte(obj)
+						sprite_carte_remove = None
+						for sprite_carte in self.sprite_j2[type_carte]:
+							if isinstance(sprite_carte, SpriteCarte):
+								if sprite_carte.carte == obj:
+									sprite_carte_remove = sprite_carte
+						if sprite_carte_remove is not None:
+							self.sprite_j2[type_carte].remove(sprite_carte_remove)
+
+				if type == "jeton_progres_aleatoire":
+					if isinstance(obj, JetonProgres):
+						sprite_jeton_a_prendre = None
+						for sprite_jeton in self.sprite_jetons_progres_plateau:
+							if isinstance(sprite_jeton, SpriteJetonsProgres):
+								if sprite_jeton.jeton == obj:
+									sprite_jeton_a_prendre = sprite_jeton
+						self.__deplacer_jeton_scientifique(sprite_jeton_a_prendre)
+
+				if type == "construction_fausse_gratuite":
+					if isinstance(obj, Carte):
+						if len(self.sprite_cartes_defaussees) != 0:
+							carte_defausee_a_construire = None
+							found = False
+							while not found:
+								num_carte = random.randint(0, len(self.sprite_cartes_defaussees) - 1)
+								for num_sprite, sprite_carte in enumerate(self.sprite_cartes_defaussees):
+									if isinstance(sprite_carte, SpriteCarte):
+										if num_sprite == num_carte:
+											ret = self.plateau.piocher(sprite_carte.carte)
+											if ret == 0:
+												carte_defausee_a_construire = sprite_carte
+												found = True
+							self.__piocher_fausse(carte_defausee_a_construire)
+
+				if type != 1:
+					self.plateau.joueur_qui_joue = self.plateau.adversaire()
 		
+	def boucle_principale(self):
 		en_cours = True
 		while en_cours:
 			if self.plateau.victoire is not None:
 				en_cours = False
-			
+				
 			# PARTIE Process input (events)
 			for event in pygame.event.get():
-				
 				# quitter avec la croix
 				if event.type == pygame.QUIT:
 					en_cours = False
-				
 				# quitter avec la touche echap
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
 						en_cours = False
 				
-				if self.plateau.joueur_qui_joue == self.plateau.joueur1:
-					
-					if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-						
-						clic_x, clic_y = event.pos
-						
-						if self.sprite_jeton_j1_zoomer is None \
-							and self.sprite_merveille_j1_zoomer is None:
-						
-							for sprit in self.sprite_cartes_plateau:
-								
-								if sprit.rect.collidepoint(clic_x, clic_y):
-									
-									if isinstance(sprit, SpriteCarte):
-										
-										if sprit.carte in self.plateau.liste_cartes_prenables():
-											
-											if self.sprite_carte_j1_zoomer is None:
-												
-												sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-												self.sprite_carte_j1_zoomer = sprit
-												self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
-												self.sprite_cartes_plateau.add(self.sprite_carte_j1_zoomer)
-											
-											else:
-												if sprit == self.sprite_carte_j1_zoomer:
-													
-													sprit.dezoomer()
-													self.sprite_carte_j1_zoomer = None
-						
-						bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
-						
-						if (clic_x < bottomleft_x and clic_y > bottomleft_y
-							and self.plateau.joueur_qui_joue == self.plateau.joueur1):
+				
+				if en_cours:
+					if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+						if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 							
-							if self.sprite_carte_j1_zoomer is not None:
+							clic_x, clic_y = event.pos
+							
+							if self.sprite_jeton_j1_zoomer is None and self.sprite_merveille_j1_zoomer is None:
 								
-								if self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
+								for sprit in self.sprite_cartes_plateau:
 									
+									if sprit.rect.collidepoint(clic_x, clic_y):
+										
+										if isinstance(sprit, SpriteCarte):
+											
+											if sprit.carte in self.plateau.liste_cartes_prenables():
+												
+												if self.sprite_carte_j1_zoomer is None:
+													
+													sprit.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+													self.sprite_carte_j1_zoomer = sprit
+													self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
+													self.sprite_cartes_plateau.add(self.sprite_carte_j1_zoomer)
+												
+												else:
+													if sprit == self.sprite_carte_j1_zoomer:
+														sprit.dezoomer()
+														self.sprite_carte_j1_zoomer = None
+							
+							bottomleft_x, bottomleft_y = self.rect_image_plateau.bottomleft
+							
+							if (
+									clic_x < bottomleft_x and clic_y > bottomleft_y and self.plateau.joueur_qui_joue == self.plateau.joueur1):
+								
+								if self.sprite_carte_j1_zoomer is not None:
+									
+									if self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
+										
+										self.sprite_carte_j1_zoomer.dezoomer()
+										self.__piocher_plateau(self.sprite_carte_j1_zoomer)
+										if self.plateau.victoire is not None:
+											en_cours = False
+											break
+										self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
+										self.plateau.joueur_qui_joue = self.plateau.adversaire()
+										self.sprite_carte_j1_zoomer = None
+							
+							if self.rect_image_banque.collidepoint(clic_x, clic_y):
+								
+								if self.sprite_carte_j1_zoomer is not None:
 									self.sprite_carte_j1_zoomer.dezoomer()
-									ret = self.__piocher_plateau(self.sprite_carte_j1_zoomer)
-									if ret == -2:
-										en_cours = False
+									self.__dessiner_defausser(self.sprite_carte_j1_zoomer)
 									self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
 									self.plateau.joueur_qui_joue = self.plateau.adversaire()
 									self.sprite_carte_j1_zoomer = None
-						
-						if self.rect_image_banque.collidepoint(clic_x, clic_y):
 							
-							if self.sprite_carte_j1_zoomer is not None:
+							if self.sprite_carte_j1_zoomer is None and self.sprite_merveille_j1_zoomer is None:
 								
-								self.sprite_carte_j1_zoomer.dezoomer()
-								self.__dessiner_defausser(self.sprite_carte_j1_zoomer)
-								self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
-								self.plateau.joueur_qui_joue = self.plateau.adversaire()
-								self.sprite_carte_j1_zoomer = None
-						
-						if self.sprite_carte_j1_zoomer is None \
-							and self.sprite_merveille_j1_zoomer is None \
-							and self.choix_jeton:
-							
-							for jeton in self.sprite_jetons_progres_plateau:
-								
-								if jeton.rect.collidepoint(clic_x, clic_y):
+								for jeton in self.sprite_jetons_progres_plateau:
 									
-									if isinstance(jeton, SpriteJetonsProgres):
+									if jeton.rect.collidepoint(clic_x, clic_y):
 										
-										if self.sprite_jeton_j1_zoomer is None:
+										if isinstance(jeton, SpriteJetonsProgres):
 											
-											jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-											self.sprite_jeton_j1_zoomer = jeton
-											self.sprite_jetons_progres_plateau.remove(self.sprite_jeton_j1_zoomer)
-											self.sprite_jetons_progres_plateau.add(self.sprite_jeton_j1_zoomer)
-										
-										else:
-											if jeton == self.sprite_jeton_j1_zoomer:
+											if self.sprite_jeton_j1_zoomer is None:
 												
-												if (clic_x < bottomleft_x and clic_y > bottomleft_y and
-													self.plateau.joueur_qui_joue == self.plateau.joueur1):
-													
+												jeton.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+												self.sprite_jeton_j1_zoomer = jeton
+												self.sprite_jetons_progres_plateau.remove(self.sprite_jeton_j1_zoomer)
+												self.sprite_jetons_progres_plateau.add(self.sprite_jeton_j1_zoomer)
+											
+											else:
+												if jeton == self.sprite_jeton_j1_zoomer:
 													jeton.dezoomer()
-													self.__deplacer_jeton_scientifique(jeton)
-													self.choix_jeton = False
 													self.sprite_jeton_j1_zoomer = None
 							
-						if self.sprite_jeton_j1_zoomer is None:
-							
-							for merveille in self.merveille_j1:
+							if self.sprite_jeton_j1_zoomer is None:
 								
-								if merveille.rect.collidepoint(clic_x, clic_y) \
-									and isinstance(merveille, SpriteMerveille):
+								for merveille in self.merveille_j1:
 									
-									if self.sprite_carte_j1_zoomer is None:
-									
-										if self.sprite_merveille_j1_zoomer is None:
-											
-											merveille.zoomer(RATIO_ZOOM_MERVEILLE, (self.largeur / 2, self.hauteur / 2))
-											merveille.angle = 0
-											merveille.pivoter()
-											self.sprite_merveille_j1_zoomer = merveille
-											self.merveille_j1.remove(self.sprite_merveille_j1_zoomer)
-											self.merveille_j1.add(self.sprite_merveille_j1_zoomer)
-											
-										else:
-											if merveille == self.sprite_merveille_j1_zoomer:
-												
-												merveille.dezoomer()
-												merveille.angle = 90
-												merveille.pivoter()
-												self.sprite_merveille_j1_zoomer = None
-												
-									else:
+									if merveille.rect.collidepoint(clic_x, clic_y) and isinstance(merveille,
+											SpriteMerveille):
 										
-										if merveille.rect.collidepoint(clic_x, clic_y) \
-											and isinstance(merveille, SpriteMerveille):
+										if self.sprite_carte_j1_zoomer is None:
 											
-											ret, obj = self.plateau.construire_merveille(merveille.merveille)
-											if ret != -1:
-												self.sprite_carte_j1_zoomer.dezoomer()
-												self.__dessiner_merveille_sacrifier(merveille, self.sprite_carte_j1_zoomer)
-												self.sprite_carte_j1_zoomer = None
+											if self.sprite_merveille_j1_zoomer is None:
 												
-												if ret != 1:
-													self.plateau.joueur_qui_joue = self.plateau.adversaire()
-													
-												elif ret == "defausse_carte_adversaire":
-													if isinstance(obj, Carte):
-														type_carte = self.__position_type_carte(obj)
-														sprite_carte_remove = None
-														for sprite_carte in self.sprite_j2[type_carte]:
-															if isinstance(sprite_carte, SpriteCarte):
-																if sprite_carte.carte == obj:
-																	sprite_carte_remove = sprite_carte
-														if sprite_carte_remove is not None:
-															self.sprite_j2[type_carte].remove(sprite_carte_remove)
-														
-												elif ret == "jeton_progres_aleatoire":
-													if isinstance(obj, JetonProgres):
-														sprite_jeton_a_prendre = None
-														for sprite_jeton in self.sprite_jetons_progres_plateau:
-															if isinstance(sprite_jeton, SpriteJetonsProgres):
-																if sprite_jeton.jeton == obj:
-																	sprite_jeton_a_prendre = sprite_jeton
-														self.__deplacer_jeton_scientifique(sprite_jeton_a_prendre)
-														
-												elif ret == "construction_fausse_gratuite":
-													if isinstance(obj, Carte):
-														if len(self.sprite_cartes_defaussees) != 0:
-															carte_defausee_a_construire = None
-															found = False
-															while not found:
-																num_carte = random.randint(0, len(self.sprite_cartes_defaussees) - 1)
-																for num_sprite, sprite_carte in enumerate (self.sprite_cartes_defaussees):
-																	if isinstance(sprite_carte, SpriteCarte):
-																		if num_sprite == num_carte:
-																			ret = self.plateau.piocher(sprite_carte.carte)
-																			if ret == 0:
-																				carte_defausee_a_construire = sprite_carte
-																				found = True
-															self.__piocher_fausse(carte_defausee_a_construire)
-												
-				else:
-					if not simu_bot:
-						simu_bot = True
+												merveille.zoomer(RATIO_ZOOM_MERVEILLE,
+													(self.largeur / 2, self.hauteur / 2))
+												merveille.angle = 0
+												merveille.pivoter()
+												self.sprite_merveille_j1_zoomer = merveille
+												self.merveille_j1.remove(self.sprite_merveille_j1_zoomer)
+												self.merveille_j1.add(self.sprite_merveille_j1_zoomer)
+											
+											else:
+												if merveille == self.sprite_merveille_j1_zoomer:
+													merveille.dezoomer()
+													merveille.angle = 90
+													merveille.pivoter()
+													self.sprite_merveille_j1_zoomer = None
+										
+										else:
+											
+											if merveille.rect.collidepoint(clic_x, clic_y) and isinstance(merveille,
+													SpriteMerveille):
+												self.__construire_merveille(merveille, self.sprite_carte_j1_zoomer)
 						
+					else:
 						# deb = time.time()
 						nbr_noeuds = 0
-						_, carte_bot, merveille_bot, nbr_noeuds = \
-							alpha_beta_avec_merveille(self.plateau, self.difficulte_profondeur,
-							-math.inf, math.inf, True, nbr_noeuds)
+						_, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
+							self.difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
 						# fin = time.time()
 						# print(f"temps execution : {fin - deb}, nbr_noeuds : {nbr_noeuds}")
 						# if merveille_bot is None:
 						# 	print(f"carte_a_prendre : {carte_bot.nom}")
 						# else:
 						# 	print(f"carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}")
-					# _, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
-					# 	-math.inf, math.inf, True, nbr_noeuds)
-					# print(f"carte : {carte}\nmerveille : {merveille}\nnbr_noeuds : {nbr_noeuds}")
-					
-					for sprite_carte in self.sprite_cartes_plateau:
+						# _, carte_a_prendre, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
+						# 	-math.inf, math.inf, True, nbr_noeuds)
+						# print(f"carte : {carte}\nmerveille : {merveille}\nnbr_noeuds : {nbr_noeuds}")
 						
-						if isinstance(sprite_carte, SpriteCarte):
+						for sprite_carte in self.sprite_cartes_plateau:
 							
-							if sprite_carte.carte == carte_bot:
+							if isinstance(sprite_carte, SpriteCarte):
 								
-								if merveille_bot is None:
-								
-									if self.sprite_carte_j2_zoomer is None:
+								if sprite_carte.carte == carte_bot:
+									
+									if merveille_bot is None:
 										
-										sprite_carte.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
-										self.sprite_carte_j2_zoomer = sprite_carte
-										self.sprite_cartes_plateau.remove(self.sprite_carte_j2_zoomer)
-										self.sprite_cartes_plateau.add(self.sprite_carte_j2_zoomer)
+										if self.sprite_carte_j2_zoomer is None:
+											
+											sprite_carte.zoomer(RATIO_ZOOM_CARTE, (self.largeur / 2, self.hauteur / 2))
+											self.sprite_carte_j2_zoomer = sprite_carte
+											self.sprite_cartes_plateau.remove(self.sprite_carte_j2_zoomer)
+											self.sprite_cartes_plateau.add(self.sprite_carte_j2_zoomer)
+										
+										else:
+											
+											if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+												
+												clic_x, clic_y = event.pos
+												
+												if sprite_carte.rect.collidepoint(clic_x, clic_y):
+													self.sprite_carte_j2_zoomer.dezoomer()
+													self.sprite_carte_j2_zoomer = None
+													self.__piocher_plateau(sprite_carte)
+													if self.plateau.victoire is not None:
+														en_cours = False
+														break
+													self.plateau.joueur_qui_joue = self.plateau.adversaire()
 									
 									else:
 										
-										if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+										for merveille in self.merveille_j2:
 											
-											clic_x, clic_y = event.pos
-											
-											if sprite_carte.rect.collidepoint(clic_x, clic_y):
-												self.sprite_carte_j2_zoomer.dezoomer()
-												self.sprite_carte_j2_zoomer = None
-												ret = self.__piocher_plateau(sprite_carte)
-												if ret == -2:
-													en_cours = False
-												self.plateau.joueur_qui_joue = self.plateau.adversaire()
-												simu_bot = False
+											if isinstance(merveille, SpriteMerveille):
 												
-								else:
-									
-									for merveille in self.merveille_j2:
-										
-										if isinstance(merveille, SpriteMerveille):
-											
-											if merveille.merveille == merveille_bot:
-												
-												if self.sprite_carte_j2_zoomer is None:
+												if merveille.merveille == merveille_bot:
 													
-													sprite_carte.zoomer(RATIO_ZOOM_CARTE,
-														(self.largeur / 2, self.hauteur / 2))
-													self.sprite_carte_j2_zoomer = sprite_carte
-													self.sprite_cartes_plateau.remove(self.sprite_carte_j2_zoomer)
-													self.sprite_cartes_plateau.add(self.sprite_carte_j2_zoomer)
-													
-												else:
-													
-													if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+													if self.sprite_carte_j2_zoomer is None:
 														
-														clic_x, clic_y = event.pos
+														sprite_carte.zoomer(RATIO_ZOOM_CARTE,
+															(self.largeur / 2, self.hauteur / 2))
+														self.sprite_carte_j2_zoomer = sprite_carte
+														self.sprite_cartes_plateau.remove(self.sprite_carte_j2_zoomer)
+														self.sprite_cartes_plateau.add(self.sprite_carte_j2_zoomer)
+													
+													else:
 														
-														if self.sprite_carte_j2_zoomer.rect.collidepoint(clic_x, clic_y):
+														if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 															
-															ret = self.plateau.construire_merveille(merveille.merveille)
-															if ret != -1:
-																self.sprite_carte_j2_zoomer.dezoomer()
-																self.sprite_carte_j2_zoomer = None
-																self.__dessiner_merveille_sacrifier(merveille, sprite_carte)
-																
-																if ret != 1:
-																	self.plateau.joueur_qui_joue = self.plateau.adversaire()
-																else:
-																	print("rejouer")
-																
-															simu_bot = False
-												
+															clic_x, clic_y = event.pos
+															
+															if self.sprite_carte_j2_zoomer.rect.collidepoint(clic_x,
+																	clic_y):
+																self.__construire_merveille(merveille,
+																	self.sprite_carte_j2_zoomer)
+					
 			# PARTIE Update
 			if self.plateau.changement_age() == 1:
 				self.__dessiner_carte()
@@ -865,14 +844,8 @@ class Fenetre:
 			
 			# PARTIE Draw / render
 			self.ecran.blit(self.image_fond, (0, 0))
-			self.ecran.blit(
-				self.image_plateau,
-				self.rect_image_plateau.topleft
-			)
-			self.ecran.blit(
-				self.image_banque,
-				self.rect_image_banque.topleft
-			)
+			self.ecran.blit(self.image_plateau, self.rect_image_plateau.topleft)
+			self.ecran.blit(self.image_banque, self.rect_image_banque.topleft)
 			self.__dessiner_monnaies()
 			
 			for sprite_carte_j1 in self.sprite_j1:
@@ -893,20 +866,26 @@ class Fenetre:
 				self.merveille_j2.draw(self.ecran)
 				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
-				
+				self.sprite_jetons_progres_j1.draw(self.ecran)
+				self.sprite_jetons_progres_j2.draw(self.ecran)
+			
 			elif self.sprite_merveille_j1_zoomer is not None:
 				self.sprite_jetons_progres_plateau.draw(self.ecran)
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merveille_j2.draw(self.ecran)
 				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.merveille_j1.draw(self.ecran)
-				
+				self.sprite_jetons_progres_j1.draw(self.ecran)
+				self.sprite_jetons_progres_j2.draw(self.ecran)
+			
 			elif self.sprite_jeton_j1_zoomer is not None:
 				self.sprite_cartes_plateau.draw(self.ecran)
 				self.merveille_j1.draw(self.ecran)
 				self.merveille_j2.draw(self.ecran)
 				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.sprite_jetons_progres_plateau.draw(self.ecran)
+				self.sprite_jetons_progres_j1.draw(self.ecran)
+				self.sprite_jetons_progres_j2.draw(self.ecran)
 			
 			else:
 				self.sprite_jetons_progres_plateau.draw(self.ecran)
@@ -916,9 +895,10 @@ class Fenetre:
 				self.sprite_cartes_defaussees.draw(self.ecran)
 				self.sprite_jetons_progres_j1.draw(self.ecran)
 				self.sprite_jetons_progres_j2.draw(self.ecran)
-				
+			
 			# after drawing everything, flip this display
 			pygame.display.flip()
 		
 		pygame.quit()
-		print("victoire : ", self.plateau.victoire)
+		if self.plateau.victoire is not None:
+			print("victoire : ", self.plateau.victoire)
