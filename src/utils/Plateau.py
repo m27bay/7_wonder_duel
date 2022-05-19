@@ -645,12 +645,10 @@ class Plateau:
 			for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
 				"guilde des tacticiens", "guilde des scientifiques"]:
 				
-				j1_possede_carte = [carte_joueur for carte_joueur in self.joueur1.cartes if
-					carte_joueur.nom == nom_carte]
-				j2_possede_carte = [carte_joueur for carte_joueur in self.joueur2.cartes if
-					carte_joueur.nom == nom_carte]
+				j1_possede_carte = any(carte_joueur == nom_carte for carte_joueur in self.joueur1.cartes)
+				j2_possede_carte = any(carte_joueur == nom_carte for carte_joueur in self.joueur2.cartes)
 				
-				if len(j1_possede_carte) != 0 or len(j2_possede_carte) != 0:
+				if j1_possede_carte or j2_possede_carte:
 					if nom_carte == "guilde des armateurs":
 						recherche = ["gris", "marron"]
 					elif nom_carte == "guilde des commercants":
@@ -670,12 +668,10 @@ class Plateau:
 						joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
 						joueur.points_victoire += maxi
 			
-			j1_possede_usuriers = [carte_joueur for carte_joueur in self.joueur1.cartes
-				if carte_joueur.nom == "guilde des usuriers"]
-			j2_possede_usuriers = [carte_joueur for carte_joueur in self.joueur2.cartes
-				if carte_joueur.nom == "guilde des usuriers"]
+			j1_possede_usuriers = any(carte_joueur.nom == "usuriers" for carte_joueur in self.joueur1.cartes)
+			j2_possede_usuriers = any(carte_joueur.nom == "usuriers" for carte_joueur in self.joueur2.cartes)
 			
-			if len(j1_possede_usuriers) != 0 or len(j2_possede_usuriers) != 0:
+			if j1_possede_usuriers or j2_possede_usuriers:
 				if self.joueur1.monnaie != self.joueur2.monnaie:
 					maxi = max(self.joueur1.monnaie, self.joueur2.monnaie)
 					joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
@@ -802,15 +798,13 @@ class Plateau:
 			if carte_prenable.couts is None or len(carte_prenable.couts) == 0:
 				return 0
 			
-			# TODO : faire reduction construction avec jeton maconnerie
-			# if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-			# self.reduction_couts_construction_carte(carte_prenable)
-			# print("fonction \"reduction_couts_construction_carte\" à faire")
-			
-			# verification ressources nom_joueur
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
 			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			
+			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
+				liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
+			
+			# verification ressources nom_joueur
 			# le nom_joueur possede toutes les ressouces
 			if len(liste_ressource_necessaire) == 0:
 				
@@ -864,12 +858,45 @@ class Plateau:
 		self.cartes_defaussees.append(carte_prenable)
 		self.enlever_carte(carte_prenable)
 	
+	def effet_jeton_architecture_et_maconnerie(self, liste_ressource_necessaire : list):
+		ressource = liste_ressource_necessaire[0]
+		ressource_split = ressource.split(" ")
+		qte = ressource_split[2]
+		
+		if qte == 1:
+			ressource2 = liste_ressource_necessaire[1]
+			ressource_split2 = ressource2.split(" ")
+			qte2 = ressource_split2[2]
+			
+			if qte2 == 1:
+				liste_ressource_necessaire.remove(ressource2)
+				
+			elif qte2 >= 2:
+				liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+				return liste_ressource_necessaire
+				
+			liste_ressource_necessaire.remove(ressource)
+			return liste_ressource_necessaire
+			
+		elif qte == 2:
+			liste_ressource_necessaire.remove(ressource)
+			return liste_ressource_necessaire
+		
+		else:
+			liste_ressource_necessaire[0] = f"{ressource_split[0]} {ressource_split[1]} {qte - 2}"
+			return liste_ressource_necessaire
+		
+	
 	def construire_merveille(self, merveille_a_construire: Merveille):
 		if merveille_a_construire.est_construite:
 			return -1
 		
 		# verification ressources nom_joueur
 		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
+		
+		joueur_possede_jeton_archi = [jeton for jeton in self.joueur_qui_joue.jetons_progres if jeton.nom == "architecture"]
+		if len(joueur_possede_jeton_archi) != 0:
+			liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
 		
 		# manque des ressouces
 		if len(liste_ressource_necessaire) != 0:
@@ -989,10 +1016,10 @@ class Plateau:
 			elif carte.nom in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
 				"guilde des tacticiens", "guilde des scientifiques"]:
 				
-				j1_possede_carte = [carte_joueur for carte_joueur in self.joueur1.cartes if carte_joueur.nom == carte.nom]
-				j2_possede_carte = [carte_joueur for carte_joueur in self.joueur2.cartes if carte_joueur.nom == carte.nom]
+				j1_possede_carte = any(carte_joueur.nom == carte.nom for carte_joueur in self.joueur1.cartes)
+				j2_possede_carte = any(carte_joueur.nom == carte.nom for carte_joueur in self.joueur2.cartes)
 				
-				if len(j1_possede_carte) != 0 or len(j2_possede_carte) != 0:
+				if j1_possede_carte or j2_possede_carte:
 					if carte.nom == "guilde des armateurs":
 						recherche = ["gris", "marron"]
 					elif carte.nom == "guilde des commercants":
@@ -1038,7 +1065,7 @@ class Plateau:
 			elif type == "adversaire_perd_monnaie":
 				self.adversaire().monnaie -= self.action_banque(-int(effet_split[1]))
 			
-			elif type == "rejouer":
+			elif type == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
 				return 1
 			
 			elif type == "defausse_carte_adversaire":
@@ -1072,9 +1099,6 @@ class Plateau:
 		if jeton.nom in ["agriculture", "urbanisme"]:
 			self.joueur_qui_joue.monnaie += self.action_banque(6)
 		
-		elif jeton.nom == "philosophie":
-			self.joueur_qui_joue.points_victoire += 7
-		
 		elif jeton.nom == "loi":
 			while True:
 				num_symb = random.randint(0, 6)
@@ -1084,3 +1108,4 @@ class Plateau:
 				if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] != 2:
 					self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] += 1
 					break
+			
