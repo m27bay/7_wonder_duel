@@ -617,10 +617,10 @@ class Plateau:
 		elif self.position_jeton_conflit == 18:
 			self.victoire = (self.joueur1.nom, "militaire")
 			
-		elif self.joueur1.monnaie < 0:
+		elif self.joueur1.monnaie <= 0:
 			self.victoire = (self.joueur2.nom, "monnaie")
 			
-		elif self.joueur2.monnaie < 0:
+		elif self.joueur2.monnaie <= 0:
 			self.victoire = (self.joueur1.nom, "monnaie")
 			
 		elif self.joueur1.nbr_symb_scientifique_diff == 6:
@@ -644,9 +644,8 @@ class Plateau:
 			
 			for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
 				"guilde des tacticiens", "guilde des scientifiques"]:
-				
-				j1_possede_carte = any(carte_joueur == nom_carte for carte_joueur in self.joueur1.cartes)
-				j2_possede_carte = any(carte_joueur == nom_carte for carte_joueur in self.joueur2.cartes)
+				j1_possede_carte = any(carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
+				j2_possede_carte = any(carte_joueur.nom == nom_carte for carte_joueur in self.joueur2.cartes)
 				
 				if j1_possede_carte or j2_possede_carte:
 					if nom_carte == "guilde des armateurs":
@@ -668,8 +667,8 @@ class Plateau:
 						joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
 						joueur.points_victoire += maxi
 			
-			j1_possede_usuriers = any(carte_joueur.nom == "usuriers" for carte_joueur in self.joueur1.cartes)
-			j2_possede_usuriers = any(carte_joueur.nom == "usuriers" for carte_joueur in self.joueur2.cartes)
+			j1_possede_usuriers = any(carte_joueur.nom == "guilde des usuriers" for carte_joueur in self.joueur1.cartes)
+			j2_possede_usuriers = any(carte_joueur.nom == "guilde des usuriers" for carte_joueur in self.joueur2.cartes)
 			
 			if j1_possede_usuriers or j2_possede_usuriers:
 				if self.joueur1.monnaie != self.joueur2.monnaie:
@@ -802,6 +801,7 @@ class Plateau:
 			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			
 			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
+				print("possede maconnerie")
 				liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
 			
 			# verification ressources nom_joueur
@@ -889,7 +889,7 @@ class Plateau:
 	
 	def construire_merveille(self, merveille_a_construire: Merveille):
 		if merveille_a_construire.est_construite:
-			return -1
+			return -1, None
 		
 		# verification ressources nom_joueur
 		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
@@ -905,12 +905,12 @@ class Plateau:
 				
 				# manque monnaie
 				if ressource_manquante_split[0] == "monnaie":
-					return -1
+					return -1, None
 			
 			# manque des ressources autre que monnaie
 			prix = self.acheter_ressources(liste_ressource_necessaire)
 			if prix > self.joueur_qui_joue.monnaie:
-				return -1
+				return -1, None
 			else:
 				self.joueur_qui_joue.monnaie += self.action_banque(-prix)
 		
@@ -964,7 +964,6 @@ class Plateau:
 			# si le pion se situe au bout du plateau militaire, il y a une victoire militaire
 			if self.position_jeton_conflit in [0, 18]:
 				self.fin_de_partie()
-				return -1
 			
 			else:
 				numero_jeton = self.numero_jeton_militaire()
@@ -976,7 +975,6 @@ class Plateau:
 						self.adversaire().monnaie -= jeton.pieces
 						if self.adversaire().monnaie < 0:
 							self.fin_de_partie()
-							return -2
 						self.monnaie_banque += jeton.pieces
 						self.joueur_qui_joue.points_victoire += jeton.points_victoire
 						
@@ -991,29 +989,28 @@ class Plateau:
 			if type == "ressource":
 				self.joueur_qui_joue.ressources[effet_split[1]] += int(effet_split[2])
 			
-			elif type == "attaquer":
-				
+			if type == "attaquer":
 				nbr_bouclier = int(effet_split[1])
 				if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
 					nbr_bouclier += 1
 				
-				return self.deplacer_pion_miltaire(nbr_bouclier)
+				self.deplacer_pion_miltaire(nbr_bouclier)
 			
-			elif type == "symbole_scientifique":
+			if type == "symbole_scientifique":
 				self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
 				self.joueur_qui_joue.compter_symb_scientifique()
 				if self.joueur_qui_joue.symb_scientifique[effet_split[1]] == 2:
 					return 2
 			
-			elif type == "monnaie":
+			if type == "monnaie":
 				self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[1]))
 			
-			elif type == "monnaie_par_carte":
+			if type == "monnaie_par_carte":
 				for ma_carte in self.joueur_qui_joue.cartes:
 					if ma_carte.couleur == effet_split[1]:
 						self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[2]))
 						
-			elif carte.nom in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
+			if carte.nom in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
 				"guilde des tacticiens", "guilde des scientifiques"]:
 				
 				j1_possede_carte = any(carte_joueur.nom == carte.nom for carte_joueur in self.joueur1.cartes)
@@ -1050,25 +1047,23 @@ class Plateau:
 		return 1
 	
 	def appliquer_effets_merveille(self, merveille: Merveille):
+		liste_effet = []
 		for effet in merveille.effets:
 			
 			effet_split = effet.split(" ")
-			type = effet[0]
+			type = effet_split[0]
 			
 			# effet commun avec certaines cartes
 			if type in ["monnaie", "monnaie_par_carte"]:
 				self.appliquer_effets_carte(merveille)
 			
-			elif type == "attaquer":
+			if type == "attaquer":
 				self.deplacer_pion_miltaire(int(effet_split[1]))
 			
-			elif type == "adversaire_perd_monnaie":
+			if type == "adversaire_perd_monnaie":
 				self.adversaire().monnaie -= self.action_banque(-int(effet_split[1]))
 			
-			elif type == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
-				return 1
-			
-			elif type == "defausse_carte_adversaire":
+			if type == "defausse_carte_adversaire":
 				couleur = effet_split[1]
 				
 				if couleur == "gris" or couleur == "marron":
@@ -1078,22 +1073,25 @@ class Plateau:
 							self.adversaire().cartes.remove(carte)
 							self.cartes_defaussees.append(carte)
 							break
-					return type, carte
-							
-			elif type == "jeton_progres_aleatoire":
+					liste_effet.append((type, carte))
+			
+			if type == "jeton_progres_aleatoire":
 				jetons = random.sample(self.jetons_progres_plateau, k=3)
 				jeton = random.choice(jetons)
 				self.joueur_qui_joue.jetons_progres.append(jeton)
 				self.jetons_progres_plateau.remove(jeton)
-				return type, jeton
-				
-			elif type == "construction_fausse_gratuite":
+				liste_effet.append((type, jeton))
+			
+			if type == "construction_fausse_gratuite":
 				carte = random.choice(self.cartes_defaussees)
 				self.joueur_qui_joue.cartes.append(carte)
 				self.cartes_defaussees.remove(carte)
-				return type, carte
+				liste_effet.append((type, carte))
+			
+			if type == "rejouer" or self.joueur_qui_joue.possede_jeton_scientifique("theologie"):
+				liste_effet.append("rejouer")
 		
-		return 0
+		return liste_effet
 	
 	def appliquer_effets_jeton(self, jeton: JetonProgres):
 		if jeton.nom in ["agriculture", "urbanisme"]:
