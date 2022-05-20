@@ -992,7 +992,6 @@ class Plateau:
                         if self.adversaire().monnaie < 0:
                             self.fin_de_partie()
                         self.monnaie_banque += jeton.pieces
-                        self.joueur_qui_joue.points_victoire += jeton.points_victoire
 
                         jeton.est_utilise = True
 
