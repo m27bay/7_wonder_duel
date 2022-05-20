@@ -34,6 +34,24 @@ RATIO_ZOOM_MERVEILLE = 0.45
 RATIO_ZOOM_JETONS_SCIENTIFIQUES = 0.60
 
 
+def print_sprite_group(sprite_groupe):
+	if len(sprite_groupe) == 0:
+		print("groupe vide", end=", ")
+	for sprite in sprite_groupe:
+		if isinstance(sprite, SpriteCarte):
+			print(sprite.carte.nom, end=", ")
+		else:
+			print("sprite n'est pas une carte")
+
+
+
+def print_sprite_mega_group(sprite_groupe):
+	for num, groupe in enumerate(sprite_groupe):
+		print(f"groupe n° {num}", end=": ")
+		print_sprite_group(groupe)
+		print()
+
+
 class Fenetre:
 	def __init__(self, titre: str, plateau: Plateau, difficulte_profondeur):
 		pygame.init()
@@ -41,7 +59,7 @@ class Fenetre:
 		self.plateau = plateau
 		self.difficulte_profondeur = difficulte_profondeur
 		
-		self.ecran = pygame.display.set_mode()
+		self.ecran = pygame.display.set_mode((1536, 864))
 		self.largeur, self.hauteur = self.ecran.get_size()
 		
 		pygame.display.set_caption(titre)
@@ -492,7 +510,6 @@ class Fenetre:
 			return 6
 		
 	def __piocher_plateau(self, sprite_carte: SpriteCarte):
-		# print("__piocher_plateau")
 		ret = self.plateau.piocher(sprite_carte.carte)
 		if ret == 0:
 			
@@ -534,12 +551,14 @@ class Fenetre:
 			self.__dessiner_piocher(sprite_carte)
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
-		# print("__dessiner_piocher")
+		#print("__dessiner_piocher")
 		type_carte = self.__position_type_carte(sprite_carte.carte)
+		#print(f"carte : {sprite_carte.carte.nom}, type_carte : {type_carte}")
 		
 		sprite_carte.angle = 90
 		
 		if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+			#print("joueur1")
 			sprite_joueur_qui_joue = self.sprite_j1
 			sprite_carte.angle = -sprite_carte.angle
 			coord_x, _ = self.rect_image_plateau.bottomleft
@@ -547,6 +566,7 @@ class Fenetre:
 			coord_x -= self.default_hauteur_sprite
 			decalage_x = -(len(sprite_joueur_qui_joue[type_carte]) * (self.default_hauteur_sprite / 4))
 		else:
+			#print("ordi")
 			sprite_joueur_qui_joue = self.sprite_j2
 			coord_x, _ = self.rect_image_plateau.bottomright
 			coord_x += self.espace_entre_carte
@@ -563,7 +583,17 @@ class Fenetre:
 		coord_y += self.default_largeur_sprite
 		coord_x += decalage_x
 		
+		# if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+		# 	print("len(self.sprite_j1[type_carte])", len(self.sprite_j1[type_carte]))
+		# else:
+		# 	print("len(self.sprite_j2[type_carte])", len(self.sprite_j2[type_carte]))
+		# print("len(sprite_joueur_qui_joue[type_carte])", len(sprite_joueur_qui_joue[type_carte]))
 		sprite_joueur_qui_joue[type_carte].add(sprite_carte)
+		# print("len(sprite_joueur_qui_joue[type_carte])", len(sprite_joueur_qui_joue[type_carte]))
+		# if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+		# 	print("len(self.sprite_j1[type_carte])", len(self.sprite_j1[type_carte]))
+		# else:
+		# 	print("len(self.sprite_j2[type_carte])", len(self.sprite_j2[type_carte]))
 		sprite_carte.changer_coords(coord_x, coord_y)
 			
 	def __dessiner_defausser(self, carte_prenable: SpriteCarte):
@@ -575,36 +605,60 @@ class Fenetre:
 		carte_prenable.changer_coords(coord_x, coord_y)
 		
 	def __construire_merveille(self, merveille: SpriteMerveille, sprite_carte_zoomer: SpriteCarte):
-		print("__construire_merveille")
+		# print("__construire_merveille")
 		rets = self.plateau.construire_merveille(merveille.merveille)
 		if rets != (-1, None):
 			self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
+			
+			if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+				sprite_cartes = self.sprite_j2
+			else:
+				sprite_cartes = self.sprite_j1
+			
+			# print("groupe j1")
+			# print_sprite_mega_group(self.sprite_j1)
+			# print("groupe j2")
+			# print_sprite_mega_group(self.sprite_j2)
 			
 			for ret in rets:
 				if type(ret) is tuple:
 					type_ret, obj = ret
 					if type_ret == "defausse_carte_adversaire":
 						if isinstance(obj, Carte):
-							print(type_ret, obj.nom)
+							# print(type_ret, obj.nom)
 							type_carte = self.__position_type_carte(obj)
 							sprite_carte_remove = None
-							for sprite_carte in self.sprite_j2[type_carte]:
+							
+							for sprite_carte in sprite_cartes[type_carte]:
 								if isinstance(sprite_carte, SpriteCarte):
 									if sprite_carte.carte == obj:
+										# print("carte trouvee")
 										sprite_carte_remove = sprite_carte
+										break
 							if sprite_carte_remove is not None:
-								self.sprite_j2[type_carte].remove(sprite_carte_remove)
-	
+								# print("remove")
+								sprite_cartes[type_carte].remove(sprite_carte_remove)
+								self.sprite_cartes_defaussees.add(sprite_carte_remove)
+								
+								sprite_carte_remove.angle = 0
+								sprite_carte_remove.pivoter()
+								
+								coord_x = self.largeur / 2 - self.rect_image_plateau.width / 4
+								coord_y = self.hauteur - (self.default_hauteur_sprite + self.espace_entre_carte)
+								sprite_carte_remove.changer_coords(coord_x, coord_y)
+					
+					
 					if type_ret == "jeton_progres_aleatoire":
 						if isinstance(obj, JetonProgres):
-							print(type_ret, obj.nom)
+							# print(type_ret, obj.nom)
 							sprite_jeton_a_prendre = None
 							for sprite_jeton in self.sprite_jetons_progres_plateau:
 								if isinstance(sprite_jeton, SpriteJetonsProgres):
 									if sprite_jeton.jeton == obj:
 										sprite_jeton_a_prendre = sprite_jeton
+										break
 							self.__deplacer_jeton_scientifique(sprite_jeton_a_prendre)
-	
+					
 					if type_ret == "construction_fausse_gratuite":
 						if isinstance(obj, Carte):
 							print(type_ret, obj.nom)
@@ -621,9 +675,9 @@ class Fenetre:
 													carte_defausee_a_construire = sprite_carte
 													found = True
 								self.__piocher_fausse(carte_defausee_a_construire)
-								
+				
 				else:
-					if type(ret) is str:
+					if type(ret) is str and ret == "rejouer":
 						return 1
 					
 		return 0
@@ -766,29 +820,21 @@ class Fenetre:
 						deb = time.time()
 						nbr_noeuds = 0
 						meilleur_eval = 0
-						print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
+						# print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
 						meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
 							self.difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
 						# meilleur_eval, carte_bot, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 						# 		-math.inf, math.inf, True, nbr_noeuds)
-						print(f"{Couleurs.FAIL}fin alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
+						# print(f"{Couleurs.FAIL}fin alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
 						fin = time.time()
 						temps_exe = fin - deb
 						
 						if merveille_bot is None:
-							if carte_bot is None:
-								print(f"{Couleurs.FAIL}carte is none{Couleurs.RESET}")
-								# exit(-3)
-							else:
-								print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, temps execution : {temps_exe}, "
-									f"nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
+							print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, temps execution : {temps_exe}, "
+								f"nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
 						else:
-							if carte_bot is None:
-								print(f"{Couleurs.FAIL}carte is none{Couleurs.RESET}")
-								# exit(-3)
-							else:
-								print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}, "
-									f"temps execution : {temps_exe}, nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
+							print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}, "
+								f"temps execution : {temps_exe}, nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
 						
 						liste_temps.append(temps_exe)
 						liste_nbr_noeuds.append(nbr_noeuds)
