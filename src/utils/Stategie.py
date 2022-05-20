@@ -214,7 +214,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 								carte_random = carte_a_sacrifier
 					
 					print(f"carte a sacrifier ? {carte_random.nom}")
-					ret = carte_random.piocher(carte_a_sacrifier)
+					ret = copie_partie.piocher(carte_a_sacrifier)
 					if ret == 0:
 						copie_partie.enlever_carte(carte_random)
 						
