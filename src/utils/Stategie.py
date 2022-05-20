@@ -198,42 +198,43 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 			print(f"boucle carte : {carte.nom}", end="")
 			copie_partie: Plateau = partie.constructeur_par_copie()
 			
-			if isinstance(carte, Merveille) and len(liste_cartes_prenable) >= 1:
-				print(", construire ?", end="")
-				ret = copie_partie.construire_merveille(carte)
-				
-				if ret == (-1, None):
-					print(f" non, ressources insuffisantes")
-				
-				elif ret == (-2, None):
-					print(f" non, deja construite")
-				
-				else:
-					if len(liste_cartes_prenable) == 1:
-						carte_random = liste_cartes_prenable[0]
+			if isinstance(carte, Merveille):
+				if len(liste_cartes_prenable) >= 1:
+					print(", construire ?", end="")
+					ret = copie_partie.construire_merveille(carte)
+
+					if ret == (-1, None):
+						print(f" non, ressources insuffisantes")
+
+					elif ret == (-2, None):
+						print(f" non, deja construite")
+
 					else:
-						carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
+						if len(liste_cartes_prenable) == 1:
+							carte_random = liste_cartes_prenable[0]
+						else:
+							carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
 
-					print(f" oui, avec la carte {carte_random.nom}")
-					copie_partie.joueur_qui_joue.merveilles.append(carte)
-					copie_partie.enlever_carte(carte_random)
+						print(f" oui, avec la carte {carte_random.nom}")
+						copie_partie.joueur_qui_joue.merveilles.append(carte)
+						copie_partie.enlever_carte(carte_random)
 
-					# if "rejouer" in ret:
-					evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
-						profondeur - 1, alpha, beta, True, nbr_noeuds)
-					# else:
-					# 	evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie, profondeur - 1,
-					# 		alpha, beta, False, nbr_noeuds)
-					
-					if evaluation_merveille > max_eval:
-						max_eval = evaluation_merveille
-						merveille_a_construire = carte
-						carte_a_sacrifier = carte_random
-						print(f"merveille : {merveille_a_construire.nom} avec carte {carte_a_sacrifier.nom} : meilleur eval : {max_eval}")
-						
-						alpha = max(alpha, evaluation_merveille)
-						if beta <= alpha:
-							break
+						# if "rejouer" in ret:
+						evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
+							profondeur - 1, alpha, beta, True, nbr_noeuds)
+						# else:
+						# 	evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie, profondeur - 1,
+						# 		alpha, beta, False, nbr_noeuds)
+
+						if evaluation_merveille > max_eval:
+							max_eval = evaluation_merveille
+							merveille_a_construire = carte
+							carte_a_sacrifier = carte_random
+							print(f"merveille : {merveille_a_construire.nom} avec carte {carte_a_sacrifier.nom} : meilleur eval : {max_eval}")
+
+							alpha = max(alpha, evaluation_merveille)
+							if beta <= alpha:
+								break
 			
 			else:
 				print(", piocher ?", end="")
