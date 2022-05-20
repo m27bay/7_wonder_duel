@@ -22,10 +22,11 @@ def musique():
 
     pygame.mixer.init()
 
-    playlist = []
-    playlist.append("src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
-    playlist.append("src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
-    playlist.append("src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
+    playlist = [
+        "src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav",
+        "src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav",
+        "src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav"
+    ]
 
     # Get the first track from the playlist
     pygame.mixer.music.load(playlist.pop())

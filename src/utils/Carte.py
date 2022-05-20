@@ -54,8 +54,8 @@ class Carte:
                 and self.couleur == other.couleur \
                 and self.age == other.age \
                 and self.est_face_cachee == other.est_face_cachee
-        else:
-            return False
+        
+        return False
 
     def __str__(self):
         """

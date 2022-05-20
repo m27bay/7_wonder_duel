@@ -269,10 +269,7 @@ class TestFonctionEvaluationDurantPartie3(unittest.TestCase):
             self.plateau, 2, True, nbr_noeuds)
 
         self.assertEqual(1, eval_minimax)
-        self.assertTrue(
-            carte_a_prendre.nom == "cavite"
-            or carte_a_prendre.nom == "tour de garde"
-            or carte_a_prendre.nom == "gisement")
+        self.assertTrue(carte_a_prendre.nom in ["cavite", "tour de garde" "gisement"])
         self.assertEqual(37, nbr_noeuds)
 
 

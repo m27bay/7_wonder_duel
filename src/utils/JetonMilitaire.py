@@ -15,8 +15,8 @@ class JetonMilitaire:
                 and self.est_utilise == other.est_utilise \
                 and self.pieces == other.pieces \
                 and self.points_victoire == other.points_victoire
-        else:
-            return False
+        
+        return False
 
     def __str__(self):
         return f"JetonMilitaire({self.nom}, {self.pieces}, {self.points_victoire}), " \

@@ -1,8 +1,6 @@
 """
 Fichier de test pour la classe Jeu.
 """
-import math
-from tkinter.messagebox import NO
 import unittest
 
 from src.utils.Carte import Carte
