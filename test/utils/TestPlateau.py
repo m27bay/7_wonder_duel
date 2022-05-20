@@ -316,54 +316,66 @@ class TestOutilsPlateau(unittest.TestCase):
 
     def test_piocher_1(self):
         self.plateau.joueur_qui_joue = self.plateau.joueur1
-        carte = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
-        self.plateau.piocher(carte)
-        self.plateau.appliquer_effets_carte(carte)
-        self.plateau.joueur_qui_joue.cartes.append(carte)
-        
-        carte = Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1)
-        self.plateau.piocher(carte)
-        self.plateau.appliquer_effets_carte(carte)
-        self.plateau.joueur_qui_joue.cartes.append(carte)
-        
-        carte = Carte("mine", ["ressource pierre 1"], None, None, "marron", age=1)
+        carte = Carte("bassin argileux", [
+                      "ressource argile 1"], None, None, "marron", age=1)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
 
-        carte = Carte("verrerie", ["ressource verre 1"], None, None, "gris", age=1)
+        carte = Carte("chantier", ["ressource bois 1"],
+                      None, None, "marron", age=1)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
 
-        carte = Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2)
+        carte = Carte("mine", ["ressource pierre 1"],
+                      None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+
+        carte = Carte("verrerie", ["ressource verre 1"],
+                      None, None, "gris", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+
+        carte = Carte(
+            "soufflerie", ["ressource verre 1"], None, None, "gris", age=2)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
 
         self.plateau.joueur_qui_joue = self.plateau.joueur2
-        carte = Carte("depot d argile", ["reduc_ressource argile 1"], None, None, "jaune", age=1)
+        carte = Carte("depot d argile", [
+                      "reduc_ressource argile 1"], None, None, "jaune", age=1)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
         self.plateau.joueur_qui_joue.monnaie = 7
 
-        carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge", age=2)
-        liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(carte)
-        self.assertEqual(["ressource argile 2", "ressource verre 1"], liste_ressource_necessaire)
-        self.assertEqual(8, self.plateau.acheter_ressources(liste_ressource_necessaire))
-        
+        carte = Carte("place d armes", ["attaquer 2"], [
+                      "ressource argile 2", "ressource verre 1"], None, "rouge", age=2)
+        liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(
+            carte)
+        self.assertEqual(
+            ["ressource argile 2", "ressource verre 1"], liste_ressource_necessaire)
+        self.assertEqual(8, self.plateau.acheter_ressources(
+            liste_ressource_necessaire))
+
         ret = self.plateau.piocher(carte)
         self.assertEqual(-1, ret)
-        
+
     def test_piocher_2(self):
         self.plateau.joueur_qui_joue = self.plateau.joueur1
-        carte = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
+        carte = Carte("bassin argileux", [
+                      "ressource argile 1"], None, None, "marron", age=1)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
 
-        carte = Carte("cavite", ["ressource argile 1"], None, None, "marron", age=1)
+        carte = Carte("cavite", ["ressource argile 1"],
+                      None, None, "marron", age=1)
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
@@ -372,10 +384,10 @@ class TestOutilsPlateau(unittest.TestCase):
         self.plateau.joueur_qui_joue.monnaie = 6
         carte = Carte("forum", ["ressource_au_choix verre papyrus"], ["monnaie 3", "ressource argile 1"],
                       None, "jaune", age=2)
-        
+
         ret = self.plateau.piocher(carte)
         self.assertEqual(-1, ret)
-        
+
 
 class TestEffetsCartesGuide(unittest.TestCase):
     def setUp(self) -> None:

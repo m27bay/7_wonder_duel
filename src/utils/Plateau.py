@@ -779,7 +779,8 @@ class Plateau:
 
         # calcul ressources produite par adversaire
         adversaire = self.adversaire()
-        ressource_adversaire = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+        ressource_adversaire = {"bois": 0, "pierre": 0,
+                                "argile": 0, "verre": 0, "papyrus": 0}
         for carte_ressource_adversaire in adversaire.cartes:
             if carte_ressource_adversaire.couleur != "jaune":
                 for effet in carte_ressource_adversaire.effets:
@@ -790,30 +791,34 @@ class Plateau:
                         ressource_adversaire[ressource] += qte
 
         # calcul ressources necessaire
-        ressource_necessaire = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+        ressource_necessaire = {"bois": 0, "pierre": 0,
+                                "argile": 0, "verre": 0, "papyrus": 0}
         for ressource in ressources_manquantes:
             ressource_split = ressource.split(" ")
             type = ressource_split[1]
             qte = int(ressource_split[2])
             ressource_necessaire[type] += qte
-        
+
         for type, qte in ressource_necessaire.items():
             # si j'ai besoin d'une ressource
             if qte != 0:
                 # si l'adversaire produit la ressource
                 if ressource_adversaire[type] != 0:
-                    prix_reduc = self.joueur_qui_joue.possede_carte_reduction(type)
+                    prix_reduc = self.joueur_qui_joue.possede_carte_reduction(
+                        type)
                     # si j'ai un reduc
                     if prix_reduc != 0:
                         # prix_commerce = (prix_reduc + qte produite par adv) * qte necessaire
-                        prix_commerce += ((prix_reduc + ressource_adversaire[type]) * qte)
-                        
+                        prix_commerce += ((prix_reduc +
+                                          ressource_adversaire[type]) * qte)
+
                     # si je n'ai pas de reduc
                     else:
                         # prix_commerce = (2 + quantite_qte produite par adv) * qte necessaire
-                        prix_commerce += ((2 + ressource_adversaire[type]) * qte)
-                    
-                else: # si l'adversaire ne produit pas la ressource
+                        prix_commerce += ((2 +
+                                          ressource_adversaire[type]) * qte)
+
+                else:  # si l'adversaire ne produit pas la ressource
                     prix_commerce += (2 * qte)
 
         return prix_commerce
@@ -853,7 +858,7 @@ class Plateau:
                 monnaie = 0
             if prix + monnaie > self.joueur_qui_joue.monnaie:
                 return -1
-                
+
             if self.adversaire().possede_jeton_scientifique("economie"):
                 self.adversaire().monnaie += prix
             else:
