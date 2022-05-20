@@ -2,6 +2,7 @@
 Fichier de test pour la classe Jeu.
 """
 import math
+from tkinter.messagebox import NO
 import unittest
 
 from src.utils.Carte import Carte
@@ -312,20 +313,29 @@ class TestOutilsPlateau(unittest.TestCase):
         self.plateau.fin_de_partie()
         self.assertEqual(self.plateau.victoire, (None, "égalité"))
 
-
-class TestPiocher(unittest.TestCase):
-    def setUp(self) -> None:
-        self.j1 = Joueur("Bruno")
-        self.j2 = Joueur("Antoine")
-        self.plateau = Plateau(self.j1, self.j2)
-
-    def test_piocher_pas_chainage_coute_rien(self):
+    def test_piocher_1(self):
         self.plateau.joueur_qui_joue = self.plateau.joueur1
-        self.plateau.joueur1.monnaie = 7
-        ret = self.plateau.piocher(
-            Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1))
-        self.assertEqual(0, ret)
-        self.assertEqual(7, self.plateau.joueur1.monnaie)
+        self.plateau.piocher(Carte("bassin argileux", [
+            "ressource argile 1"], None, None, "marron", age=1))
+        self.plateau.piocher(Carte("chantier", ["ressource bois 1"],
+                                   None, None, "marron", age=1))
+        self.plateau.piocher(
+            Carte("mine", ["ressource pierre 1"], None, None, "marron", age=1))
+
+        self.plateau.piocher(
+            Carte("verrerie", ["ressource verre 1"], None, None, "gris", age=1))
+
+        self.plateau.piocher(Carte("soufflerie", ["ressource verre 1"],
+                                   None, None, "gris", age=2))
+
+        self.plateau.joueur_qui_joue = self.plateau.joueur2
+        self.plateau.piocher(Carte("depot d argile", [
+                             "reduc_ressource argile 1"], None, None, "jaune", age=1))
+        self.plateau.joueur_qui_joue.monnaie = 7
+        carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
+                      age=2)
+        ret = self.plateau.piocher(carte)
+        self.assertEqual(-1, ret)
 
 
 class TestEffetsCartesGuide(unittest.TestCase):
