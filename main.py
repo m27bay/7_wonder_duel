@@ -263,8 +263,9 @@ def affichage_menu_difficulter():
 
 
 def jouer_vs_boot(difficulter):
-    plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
+    plateau = Plateau(Joueur("joueur"), Joueur("ordi"), False)
     plateau.preparation_plateau()
+    print(plateau)
     fenetre = Fenetre("7 wonder Duel", plateau, difficulter)
     fenetre.boucle_principale()
 
