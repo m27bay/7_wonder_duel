@@ -879,7 +879,12 @@ class Plateau:
 	def construire_merveille(self, merveille_a_construire: Merveille):
 		if merveille_a_construire.est_construite:
 			return -2, None
-		
+
+		nbr_merveille_construite_j1 = self.joueur1.liste_merveilles_construite()
+		nbr_merveille_construite_j2 = self.joueur2.liste_merveilles_construite()
+		if len(nbr_merveille_construite_j1) + len(nbr_merveille_construite_j2) > 7:
+			return -2, None
+
 		# verification ressources nom_joueur
 		liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(merveille_a_construire)
 		# print(liste_ressource_necessaire)
