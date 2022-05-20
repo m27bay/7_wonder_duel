@@ -340,7 +340,6 @@ class TestOutilsPlateau(unittest.TestCase):
         self.plateau.piocher(carte)
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
-        # print(mon_str_liste(self.plateau.joueur_qui_joue.cartes))
 
         self.plateau.joueur_qui_joue = self.plateau.joueur2
         carte = Carte("depot d argile", ["reduc_ressource argile 1"], None, None, "jaune", age=1)
@@ -348,18 +347,6 @@ class TestOutilsPlateau(unittest.TestCase):
         self.plateau.appliquer_effets_carte(carte)
         self.plateau.joueur_qui_joue.cartes.append(carte)
         self.plateau.joueur_qui_joue.monnaie = 7
-        
-        # sous_carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2"], None,
-        #     "rouge", age=2)
-        # sous_liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(sous_carte)
-        # self.assertEqual(["ressource argile 2"], sous_liste_ressource_necessaire)
-        # self.assertEqual(4, self.plateau.acheter_ressources(sous_liste_ressource_necessaire))
-        
-        sous_carte = Carte("place d armes", ["attaquer 2"], ["ressource verre 1"], None,
-            "rouge", age=2)
-        sous_liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(sous_carte)
-        self.assertEqual(["ressource verre 1"], sous_liste_ressource_necessaire)
-        self.assertEqual(4, self.plateau.acheter_ressources(sous_liste_ressource_necessaire))
 
         carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge", age=2)
         liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(carte)
@@ -367,9 +354,28 @@ class TestOutilsPlateau(unittest.TestCase):
         self.assertEqual(8, self.plateau.acheter_ressources(liste_ressource_necessaire))
         
         ret = self.plateau.piocher(carte)
-        self.plateau.joueur_qui_joue.cartes.append(carte)
         self.assertEqual(-1, ret)
+        
+    def test_piocher_2(self):
+        self.plateau.joueur_qui_joue = self.plateau.joueur1
+        carte = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
 
+        carte = Carte("cavite", ["ressource argile 1"], None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+
+        self.plateau.joueur_qui_joue = self.plateau.joueur2
+        self.plateau.joueur_qui_joue.monnaie = 6
+        carte = Carte("forum", ["ressource_au_choix verre papyrus"], ["monnaie 3", "ressource argile 1"],
+                      None, "jaune", age=2)
+        
+        ret = self.plateau.piocher(carte)
+        self.assertEqual(-1, ret)
+        
 
 class TestEffetsCartesGuide(unittest.TestCase):
     def setUp(self) -> None:
@@ -733,237 +739,6 @@ class TestAttaquerJoueur2(unittest.TestCase):
         self.assertEqual(5, self.plateau.joueur1.monnaie)
         self.assertTrue(self.plateau.jetons_militaire[2].est_utilise)
         self.assertTrue(self.plateau.jetons_militaire[1].est_utilise)
-
-
-class testPartieComplete(unittest.TestCase):
-    def test_partie_age_I(self):
-        plateau = Plateau(Joueur("j1"), Joueur("j2"))
-        plateau.preparation_plateau()
-        difficulte_profondeur = 5
-
-        plateau.cartes_plateau[4][0] = Carte(
-            "gisement", ["ressource pierre 1"], None, None, "marron", age=1)
-        plateau.cartes_plateau[4][2] = Carte(
-            "theatre", ["point_victoire 3"], None, None, "bleu", age=1)
-        plateau.cartes_plateau[4][4] = Carte(
-            "tour de garde", ["attaquer 1"], None, None, "rouge", age=1)
-        plateau.cartes_plateau[4][6] = Carte(
-            "autel", ["point_victoire 3"], None, None, "bleu", age=1)
-        plateau.cartes_plateau[4][8] = Carte("bains", ["point_victoire 3"], [
-                                             "ressource pierre 1"], None, "bleu", age=1)
-        plateau.cartes_plateau[4][10] = Carte("cavite", ["ressource argile 1"], [
-                                              "monnaie 1"], None, "marron", age=1)
-
-        plateau.cartes_plateau[3][1] = Carte("mine", ["ressource pierre 1"], [
-                                             "monnaie 1"], None, "marron", age=1)
-        plateau.cartes_plateau[3][3] = Carte("palissade", ["attaquer 1"], [
-                                             "monnaie 2"], None, "rouge", age=1)
-        plateau.cartes_plateau[3][5] = Carte("depot de pierre", [
-                                             "reduc_ressource pierre 1"], ["monnaie 3"], None, "jaune", age=1)
-        plateau.cartes_plateau[3][7] = Carte("scriptorium", [
-                                             f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}"], ["monnaie 2"], None, "vert", age=1)
-        plateau.cartes_plateau[3][9] = Carte(
-            "taverne", ["monnaie 4"], None, None, "jaune", age=1)
-
-        plateau.cartes_plateau[2][2] = Carte(
-            "chantier", ["ressource bois 1"], None, None, "marron", age=1)
-        plateau.cartes_plateau[2][4] = Carte("presse", ["ressource papyrus 1"], [
-                                             "monnaie 1"], None, "gris", age=1)
-        plateau.cartes_plateau[2][6] = Carte("officine", [
-                                             f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[2]}"], ["monnaie 2"], None, "vert", age=1)
-        plateau.cartes_plateau[2][8] = Carte("apothicaire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[5]}", "point_victoire 1"], [
-                                             "ressource verre 1"], None, "vert", age=1)
-
-        plateau.cartes_plateau[1][3] = Carte(
-            "bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
-        plateau.cartes_plateau[1][5] = Carte("depot de bois", ["reduc_ressource bois 1"], [
-                                             "monnaie 3"], None, "jaune", age=1)
-        plateau.cartes_plateau[1][7] = Carte("caserne", ["attaquer 1"], [
-                                             "ressource argile 1"], None, "rouge", age=1)
-
-        plateau.cartes_plateau[0][4] = Carte("depot d argile", ["reduc_ressource argile 1"], [
-                                             "monnaie 3"], None, "jaune", age=1)
-        plateau.cartes_plateau[0][6] = Carte("atelier", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], [
-                                             "ressource papyrus 1"], None, "vert", age=1)
-
-        plateau.joueur1.merveilles[0] = Merveille("statue de zeus",
-                                                  ["defausse_carte_adversaire marron",
-                                                      "attaquer 1", "point_victoire 3"],
-                                                  ["ressource pierre 1", "ressource bois 1",
-                                                      "ressource argile 1", "ressource papyrus 2"]
-                                                  )
-        plateau.joueur1.merveilles[1] = Merveille("grand phare",
-                                                  ["ressource_au_choix bois argile pierre",
-                                                      "point_victoire 4"],
-                                                  ["ressource bois 1", "ressource pierre 1",
-                                                      "ressource papyrus 2"]
-                                                  )
-        plateau.joueur1.merveilles[2] = Merveille("piree",
-                                                  ["ressource_au_choix papyrus verre",
-                                                      "rejouer", "point_victoire 2"],
-                                                  ["ressource bois 2", "ressource pierre 1",
-                                                      "ressource argile 1"]
-                                                  )
-        plateau.joueur1.merveilles[3] = Merveille("via appia",
-                                                  ["monnaie 3", "adversaire_perd_monnaie 3",
-                                                      "rejouer", "point_victoire 3"],
-                                                  ["ressource pierre 2", "ressource argile 2",
-                                                      "ressource papyrus 1"]
-                                                  )
-
-        plateau.joueur2.merveilles[0] = Merveille("jardin suspendus",
-                                                  ["monnaie 6", "rejouer",
-                                                      "point_victoire 3"],
-                                                  ["ressource bois 2 ", "ressource verre 1",
-                                                      "ressource papyrus 1"]
-                                                  )
-        plateau.joueur2.merveilles[1] = Merveille("sphinx",
-                                                  ["rejouer", "point_victoire 6"],
-                                                  ["ressource pierre 1",
-                                                      "ressource argile 1", "ressource verre 2"]
-                                                  )
-        plateau.joueur2.merveilles[2] = Merveille("pyramides",
-                                                  ["point_victoire 9"],
-                                                  ["ressource pierre 3",
-                                                      "ressource papyrus 1"]
-                                                  )
-        plateau.joueur2.merveilles[3] = Merveille("colosse",
-                                                  ["attaquer 2", "point_victoire 3"],
-                                                  ["ressource argile 3",
-                                                      "ressource verre 1"]
-                                                  )
-
-        plateau.jetons_progres_plateau[0] = JetonProgres(
-            "mathematiques", ["point_victoire_par_jeton 3", "point_victoire 3"])
-        plateau.jetons_progres_plateau[1] = JetonProgres(
-            "agriculture", ["monnaie 6", "point_victoire 4"])
-        plateau.jetons_progres_plateau[2] = JetonProgres(
-            "architecture", ["reduc_merveille"])
-        plateau.jetons_progres_plateau[3] = JetonProgres(
-            "theologie", ["rejouer"])
-        plateau.jetons_progres_plateau[4] = JetonProgres(
-            "loi", ["symbole_scientifique"])
-
-        carte = plateau.cartes_plateau[4][0]
-        plateau.piocher(carte)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        nbr_noeuds = 0
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau,
-                                                                difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[4][10], carte_bot)
-
-        plateau.piocher(carte_bot)
-        self.assertEqual(6, plateau.joueur2.monnaie)
-        plateau.appliquer_effets_carte(carte_bot)
-        plateau.joueur_qui_joue.cartes.append(carte_bot)
-        plateau.enlever_carte(carte_bot)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[4][6]
-        plateau.piocher(carte)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[4][8], carte_bot)
-
-        plateau.piocher(carte_bot)
-        self.assertEqual(3, plateau.joueur2.monnaie)
-        plateau.appliquer_effets_carte(carte_bot)
-        plateau.joueur_qui_joue.cartes.append(carte_bot)
-        plateau.enlever_carte(carte_bot)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[3][9]
-        plateau.piocher(carte)
-        plateau.appliquer_effets_carte(carte)
-        self.assertEqual(11, plateau.joueur1.monnaie)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[4][4], carte_bot)
-
-        plateau.piocher(carte_bot)
-        plateau.appliquer_effets_carte(carte_bot)
-        self.assertEqual(8, plateau.position_jeton_conflit)
-        plateau.joueur_qui_joue.cartes.append(carte_bot)
-        plateau.enlever_carte(carte_bot)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[3][7]
-        plateau.piocher(carte)
-        self.assertEqual(9, plateau.joueur1.monnaie)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[4][2], carte_bot)
-
-        plateau.piocher(carte_bot)
-        plateau.appliquer_effets_carte(carte_bot)
-        plateau.joueur_qui_joue.cartes.append(carte_bot)
-        plateau.enlever_carte(carte_bot)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[3][1]
-        plateau.piocher(carte)
-        self.assertEqual(8, plateau.joueur1.monnaie)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[3][5], carte_bot)
-
-        ancienne_monnaie = plateau.joueur2.monnaie
-        plateau.piocher(carte_bot)
-        plateau.appliquer_effets_carte(carte_bot)
-        self.assertEqual(ancienne_monnaie - 3, plateau.joueur2.monnaie)
-        plateau.joueur_qui_joue.cartes.append(carte_bot)
-        plateau.enlever_carte(carte_bot)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[2][6]
-        ancienne_monnaie = plateau.joueur1.monnaie
-        plateau.piocher(carte)
-        self.assertEqual(ancienne_monnaie - 2, plateau.joueur1.monnaie)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                -math.inf, math.inf, True, nbr_noeuds)
-        self.assertEqual(plateau.cartes_plateau[3][3], carte_bot)
-
-        ancienne_monnaie = plateau.joueur2.monnaie
-        plateau.defausser(carte_bot)
-        self.assertEqual(ancienne_monnaie + 3, plateau.joueur2.monnaie)
-        plateau.joueur_qui_joue = plateau.adversaire()
-
-        carte = plateau.cartes_plateau[2][4]
-        ancienne_monnaie = plateau.joueur1.monnaie
-        plateau.piocher(carte)
-        self.assertEqual(ancienne_monnaie - 1, plateau.joueur1.monnaie)
-        plateau.appliquer_effets_carte(carte)
-        plateau.joueur_qui_joue.cartes.append(carte)
-        plateau.enlever_carte(carte)
-        plateau.joueur_qui_joue = plateau.adversaire()
 
 
 if __name__ == '__main__':

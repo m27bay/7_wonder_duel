@@ -836,47 +836,36 @@ class Plateau:
                 liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(
                     liste_ressource_necessaire)
 
-            # verification ressources joueur
-            # le joueur possede toutes les ressouces
-            if len(liste_ressource_necessaire) == 0:
+            monnaie = None
+            # carte coute monnaie ?
+            for cout in carte_prenable.couts:
+                cout_split = cout.split(" ")
+                if cout_split[0] == "monnaie":
+                    monnaie = int(cout_split[1])
 
-                # on retire uniquement la monnaie
-                for cout in carte_prenable.couts:
-                    # monnaie x
-                    cout_split = cout.split(" ")
-                    if cout_split[0] == "monnaie":
-                        self.joueur_qui_joue.monnaie += self.action_banque(-int(
-                            cout_split[1]))
-
-                return 0
-
-            # manque des ressouces
-            for ressource_manquante in liste_ressource_necessaire:
-                ressource_manquante_split = ressource_manquante.split(" ")
-
-                # manque monnaie
-                if ressource_manquante_split[0] == "monnaie":
-                    return -1
+            # manque des monnaie
+            if monnaie is not None and monnaie > self.joueur_qui_joue.monnaie:
+                return -1
 
             # manque des ressources autre que monnaie
             prix = self.acheter_ressources(liste_ressource_necessaire)
-            # print(f"acheter_ressources({liste_ressource_necessaire}) = {prix}")
-            if prix > self.joueur_qui_joue.monnaie:
+            if monnaie is None:
+                monnaie = 0
+            if prix + monnaie > self.joueur_qui_joue.monnaie:
                 return -1
-
+                
+            if self.adversaire().possede_jeton_scientifique("economie"):
+                self.adversaire().monnaie += prix
             else:
-                if self.adversaire().possede_jeton_scientifique("economie"):
-                    self.adversaire().monnaie += prix
-                else:
-                    self.monnaie_banque += prix
-                self.joueur_qui_joue.monnaie -= prix
+                self.monnaie_banque += prix
+            self.monnaie_banque += monnaie
+            self.joueur_qui_joue.monnaie -= (prix + monnaie)
 
-                return 0
-
-        # le joueur possde la carte chainage, construction gratuite
-        # application effet jeton "urbanisme"
-        if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
-            self.joueur_qui_joue.monnaie += self.action_banque(4)
+        else:
+            # le joueur possede la carte chainage, construction gratuite
+            # application effet jeton "urbanisme"
+            if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
+                self.joueur_qui_joue.monnaie += self.action_banque(4)
 
         return 0
 
