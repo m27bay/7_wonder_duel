@@ -18,14 +18,19 @@ MENU_OPTIONS = 2
 MENU_DIFFICULTE = 3
 JOUER_JVO = 5
 JOUER_JVJ = 6
+
+
 def musique():
 
     pygame.mixer.init()
 
     playlist = []
-    playlist.append("src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
-    playlist.append("src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
-    playlist.append("src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
 
     # Get the first track from the playlist
     pygame.mixer.music.load(playlist.pop())
@@ -103,8 +108,8 @@ def affichage_menu_accueille():
     bouton_jouer.affichage_du_bouton(window_surface)
 
     bouton_quitter = Boutton.Button(image_menu[3], image_menu[3], (taille[0]/2)-75, (taille[1]/2) + 140,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                    LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                    )
 
     bouton_quitter.affichage_du_bouton(window_surface)
 
@@ -112,10 +117,12 @@ def affichage_menu_accueille():
 
     if MUTE_SOUND == 0:
 
-        bouton_son_on = Boutton.Button(image_menu[4], image_menu[4], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
+        bouton_son_on = Boutton.Button(
+            image_menu[4], image_menu[4], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
         bouton_son_on.affichage_du_bouton(window_surface)
 
-        bouton_son_off = Boutton.Button(image_menu[5], image_menu[5], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
+        bouton_son_off = Boutton.Button(
+            image_menu[5], image_menu[5], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
 
     elif MUTE_SOUND == 1:
 
@@ -180,14 +187,14 @@ def affichage_mode_jouer():
     bouton_titre_jouer.affichage_du_bouton(window_surface)
 
     bouton_jvj = Boutton.Button(image_mode_jouer[7], image_mode_jouer[7], (taille[0]/2)-75, (taille[1]/2-30),
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                )
 
     bouton_jvj.affichage_du_bouton(window_surface)
 
     bouton_jvo = Boutton.Button(image_mode_jouer[6], image_mode_jouer[6], (taille[0]/2)-75, (taille[1]/2)+170,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                )
     bouton_jvo.affichage_du_bouton(window_surface)
 
     bouton_retour = Boutton.Button(image_mode_jouer[8], image_mode_jouer[8],
@@ -199,13 +206,14 @@ def affichage_mode_jouer():
     window_tempo = window_surface
 
     bouton_merveille_aleatoire_non = Boutton.Button(image_mode_jouer[5], image_mode_jouer[5], (taille[0] / 2) - 75, (taille[1] / 2) + 70,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                                    LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                                    )
     bouton_merveille_aleatoire_non.affichage_du_bouton(window_surface)
 
     bouton_merveille_aleatoire_oui = Boutton.Button(image_mode_jouer[4], image_mode_jouer[4], (taille[0] / 2) - 75,
-        (taille[1] / 2) + 70,LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                                    (taille[1] / 2) +
+                                                    70, LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                                    )
 
     status_aleatoire = 0
     pygame.display.flip()
@@ -229,14 +237,16 @@ def affichage_mode_jouer():
                     break
 
                 elif event.button == 1 and bouton_merveille_aleatoire_non.rectangle.collidepoint(event.pos) and status_aleatoire == 0:
-                    bouton_merveille_aleatoire_oui.affichage_du_bouton(window_tempo)
+                    bouton_merveille_aleatoire_oui.affichage_du_bouton(
+                        window_tempo)
                     merveille_aleatoire = False
                     print("changement alea")
                     status_aleatoire = 1
                     break
 
                 elif event.button == 1 and bouton_merveille_aleatoire_non.rectangle.collidepoint(event.pos) and status_aleatoire == 1:
-                    bouton_merveille_aleatoire_non.affichage_du_bouton(window_tempo)
+                    bouton_merveille_aleatoire_non.affichage_du_bouton(
+                        window_tempo)
                     merveille_aleatoire = True
                     print("changement alea")
                     status_aleatoire = 0
@@ -338,14 +348,15 @@ def affichage_menu_difficulte():
     return choix_menu, niveau_diff
 
 
-def joueur_vs_ordi(difficulte,merveille_aleatoire):
-    plateau = Plateau(Joueur("joueur"), Joueur("ordi"),merveille_aleatoire)
+def joueur_vs_ordi(difficulte, merveille_aleatoire):
+    plateau = Plateau(Joueur("joueur"), Joueur("ordi"), merveille_aleatoire)
     plateau.preparation_plateau()
     fenetre = Fenetre("7 wonder Duel", plateau, difficulte)
     fenetre.boucle_principale()
 
+
 def joueur_vs_joueur(merveille_aleatoire):
-    plateau = Plateau(Joueur("joueur"), Joueur("ordi"),merveille_aleatoire)
+    plateau = Plateau(Joueur("joueur"), Joueur("ordi"), merveille_aleatoire)
     plateau.preparation_plateau()
     fenetre = Fenetre("7 wonder Duel", plateau, 1, True)
     fenetre.boucle_principale()
@@ -377,7 +388,7 @@ def affichage_ensemble():
             break
 
         elif quel_menu == MENU_DIFFICULTE:
-            joueur_vs_ordi(niveau_difficulte,merveille_aleatoire)
+            joueur_vs_ordi(niveau_difficulte, merveille_aleatoire)
             break
 
         else:
