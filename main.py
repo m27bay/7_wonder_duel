@@ -34,7 +34,7 @@ def musique():
     pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
     pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
     pygame.mixer.music.play()  # Play the music
-    pygame.mixer.music.set_volume(0.1)
+    pygame.mixer.music.set_volume(0.5)
 
     if len(playlist) > 0:  # If there are more tracks in the queue...
         pygame.mixer.music.queue(playlist.pop())  # Q
@@ -94,15 +94,11 @@ def affichage_menu_accueille():
                                   LONGUEUR_TITRE, LARGEUR_TITRE)
     bouton_titre.affichage_du_bouton(window_surface)
 
-    bouton_jouer = Boutton.Button(image_menu[1], image_menu[1], (taille[0]/2)-75, taille[1]/2-30,
+    bouton_jouer = Boutton.Button(image_menu[1], image_menu[1], (taille[0]/2)-75, taille[1]/2,
                                   LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
     bouton_jouer.affichage_du_bouton(window_surface)
 
-    bouton_options = Boutton.Button(image_menu[2], image_menu[2], (taille[0]/2)-75, (taille[1]/2) + 70,
-                                    LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
-    bouton_options.affichage_du_bouton(window_surface)
-
-    bouton_quitter = Boutton.Button(image_menu[3], image_menu[3], (taille[0]/2)-75, (taille[1]/2) + 170,
+    bouton_quitter = Boutton.Button(image_menu[3], image_menu[3], (taille[0]/2)-75, (taille[1]/2) + 140,
                                     LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
     bouton_quitter.affichage_du_bouton(window_surface)
     window_tempo = window_surface
@@ -139,10 +135,6 @@ def affichage_menu_accueille():
                     launched = False
                     choix_menu = MENU_JOUER
                     break
-                elif event.button == 1 and bouton_options.rectangle.collidepoint(event.pos):
-                    launched = False
-                    choix_menu = MENU_OPTIONS
-                    break
         if launched == False:
             break
         pygame.display.flip()
@@ -166,17 +158,13 @@ def affichage_mode_jouer():
                                         LONGUEUR_TITRE, LARGEUR_TITRE)
     bouton_titre_jouer.affichage_du_bouton(window_surface)
 
-    bouton_jvj = Boutton.Button(image_mode_jouer[7], image_mode_jouer[7], (taille[0]/2)-75, (taille[1]/2)-30,
+    bouton_jvj = Boutton.Button(image_mode_jouer[7], image_mode_jouer[7], (taille[0]/2)-75, (taille[1]/2),
                                 LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
     bouton_jvj.affichage_du_bouton(window_surface)
 
-    bouton_jvo = Boutton.Button(image_mode_jouer[6], image_mode_jouer[6], (taille[0]/2)-75, (taille[1]/2)+70,
+    bouton_jvo = Boutton.Button(image_mode_jouer[6], image_mode_jouer[6], (taille[0]/2)-75, (taille[1]/2)+140,
                                 LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
     bouton_jvo.affichage_du_bouton(window_surface)
-
-    bouton_dificulter = Boutton.Button(image_mode_jouer[9], image_mode_jouer[9], (taille[0] / 2) - 75, (taille[1] / 2) +
-                                       170, LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU)
-    bouton_dificulter.affichage_du_bouton(window_surface)
 
     bouton_retour = Boutton.Button(image_mode_jouer[8], image_mode_jouer[8],
                                    (taille[0]/12), (taille[1] - (taille[1]/6)), 90, 90)
@@ -197,10 +185,6 @@ def affichage_mode_jouer():
                     launched = False
                     jeux = 2
                     choix_menu = JOUER_JVO
-                    break
-                elif event.button == 1 and bouton_dificulter.rectangle.collidepoint(event.pos):
-                    launched = False
-                    choix_menu = MENU_DIFICULTER
                     break
                 elif event.button == 1 and bouton_retour.rectangle.collidepoint(event.pos):
                     launched = False
@@ -256,14 +240,17 @@ def affichage_menu_difficulter():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and bouton_difficulter_facile.rectangle.collidepoint(event.pos):
                     launched = False
-                    niveau_diff = 1
+                    niveau_diff = 5
+                    choix_menu = MENU_DIFICULTER
                 elif event.button == 1 and bouton_difficulter_moyen.rectangle.collidepoint(event.pos):
                     launched = False
-                    niveau_diff = 2
+                    niveau_diff = 7
+                    choix_menu = MENU_DIFICULTER
                     break
                 elif event.button == 1 and bouton_difficulter_difficile.rectangle.collidepoint(event.pos):
                     launched = False
-                    niveau_diff = 3
+                    niveau_diff = 9
+                    choix_menu = MENU_DIFICULTER
                     break
                 elif event.button == 1 and bouton_retour.rectangle.collidepoint(event.pos):
                     launched = False
@@ -351,10 +338,10 @@ def choix_ressources2():
     pygame.quit()
 
 
-def jouer_vs_boot():
+def jouer_vs_boot(difficulter):
     plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
     plateau.preparation_plateau()
-    fenetre = Fenetre("7 wonder Duel", plateau, 7)
+    fenetre = Fenetre("7 wonder Duel", plateau, difficulter)
     fenetre.boucle_principale()
 
 
@@ -374,10 +361,12 @@ def affichage_enssemble():
             quel_menu = affichage_menu_accueille()
         elif quel_menu == MENU_JOUER:
             quel_menu, mode_de_jeux = affichage_mode_jouer()
-        elif quel_menu == MENU_DIFICULTER:
+        elif quel_menu == JOUER_JVO:
             quel_menu, niveau_difficulter = affichage_menu_difficulter()
-        elif quel_menu == JOUER_JVO :
-            jouer_vs_boot()
+        elif quel_menu == JOUER_JVJ:
+            break
+        elif quel_menu == MENU_DIFICULTER:
+            jouer_vs_boot(niveau_difficulter)
             break
         else:
             break
