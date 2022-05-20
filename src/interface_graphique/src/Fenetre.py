@@ -654,6 +654,9 @@ class Fenetre:
         carte_prenable.changer_coords(coord_x, coord_y)
 
     def __construire_merveille(self, merveille: SpriteMerveille, sprite_carte_zoomer: SpriteCarte):
+        ret = self.plateau.piocher(sprite_carte_zoomer.carte)
+        if ret == -1:
+            return -1
         rets = self.plateau.construire_merveille(merveille.merveille)
         if rets != (-1, None):
             self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
@@ -855,7 +858,7 @@ class Fenetre:
                                             ret = self.__construire_merveille(
                                                 merveille, self.sprite_carte_j1_zoomer)
                                             self.sprite_carte_j1_zoomer = None
-                                            if ret != 1:
+                                            if ret == 0:
                                                 self.plateau.joueur_qui_joue = self.plateau.adversaire()
 
                 else:
@@ -979,7 +982,7 @@ class Fenetre:
                                                     ret = self.__construire_merveille(merveille,
                                                                                       self.sprite_carte_j2_zoomer)
                                                     self.sprite_carte_j2_zoomer = None
-                                                    if ret != 1:
+                                                    if ret == 0:
                                                         self.plateau.joueur_qui_joue = self.plateau.adversaire()
                     else:
                         if coup_bot:
@@ -1081,7 +1084,7 @@ class Fenetre:
                                                                                                       self.sprite_carte_j2_zoomer)
                                                                     self.sprite_carte_j2_zoomer = None
                                                                     coup_bot = True
-                                                                    if ret != 1:
+                                                                    if ret == 0:
                                                                         self.plateau.joueur_qui_joue = self.plateau.adversaire()
 
             # PARTIE Update

@@ -376,6 +376,55 @@ class TestOutilsPlateau(unittest.TestCase):
         ret = self.plateau.piocher(carte)
         self.assertEqual(-1, ret)
         
+    # def test_construire_temple_artemis(self):
+    #     self.plateau.joueur_qui_joue = self.plateau.joueur1
+    #     carte = Carte("chantier", ["ressource bois 1"],
+    #                   None, None, "marron", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte = Carte("mine", ["ressource pierre 1"], None, None, "marron", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte = Carte("exploitation", ["ressource bois 1"], None, None, "marron", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte = Carte("gisement", ["ressource pierre 1"], None, None, "marron", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte = Carte("carriere", ["ressource pierre 2"], None, None, "marron", age=2)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte =  Carte("verrerie", ["ressource verre 1"], None, None, "gris", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     self.plateau.joueur_qui_joue = self.plateau.joueur2
+    #     self.plateau.joueur_qui_joue.monnaie = 24
+    #     carte =  Carte("depot de pierre", ["reduc_ressource pierre 1"], None, None, "jaune", age=1)
+    #     self.plateau.piocher(carte)
+    #     self.plateau.appliquer_effets_carte(carte)
+    #     self.plateau.joueur_qui_joue.cartes.append(carte)
+    #
+    #     carte = Carte("laboratoire", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"],
+    #                   ["ressource verre 2", "ressource bois 1"], None, "vert", age=2)
+    #     liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(carte)
+    #     self.assertEqual(["ressource verre 2", "ressource bois 1"], liste_ressource_necessaire)
+    #     self.assertEqual(10, self.plateau.acheter_ressources(liste_ressource_necessaire))
+    #     ret = self.plateau.piocher(carte)
+    #     if ret == 0:
+    #         self.plateau.construire_merveille()
+        
 
 class TestEffetsCartesGuide(unittest.TestCase):
     def setUp(self) -> None:

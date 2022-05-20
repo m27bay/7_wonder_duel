@@ -928,29 +928,12 @@ class Plateau:
 
         # manque des ressouces
         if len(liste_ressource_necessaire) != 0:
-            for ressource_manquante in liste_ressource_necessaire:
-                ressource_manquante_split = ressource_manquante.split(" ")
-
-                # manque monnaie
-                if ressource_manquante_split[0] == "monnaie":
-                    return -1, None
-
-            # manque des ressources autre que monnaie
             prix = self.acheter_ressources(liste_ressource_necessaire)
             if prix > self.joueur_qui_joue.monnaie:
                 return -1, None
 
-            self.joueur_qui_joue.monnaie += self.action_banque(-prix)
-
-        else:
-            # on retire uniquement la monnaie
-            for cout in merveille_a_construire.couts:
-
-                # monnaie x
-                cout_split = cout.split(" ")
-                if cout_split[0] == "monnaie":
-                    self.joueur_qui_joue.monnaie += self.action_banque(-int(
-                        cout_split[1]))
+            self.joueur_qui_joue.monnaie -= prix
+            self.monnaie_banque += prix
 
         for merveille in self.joueur_qui_joue.merveilles:
             if merveille == merveille_a_construire:

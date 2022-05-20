@@ -208,19 +208,21 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 
                     carte_random = None
                     if len(liste_cartes_prenable) == 1:
-                        carte_random = liste_cartes_prenable[0]
+                        copie_partie_copie = copie_partie.constructeur_par_copie()
+                        ret = copie_partie_copie.piocher(liste_cartes_prenable[0])
+                        if ret == 0:
+                            carte_random = liste_cartes_prenable[0]
 
                     else:
-                        print("choix carte à sacrifier")
                         for carte_a_sacrifier in liste_cartes_prenable:
                             copie_partie_copie = copie_partie.constructeur_par_copie()
                             ret = copie_partie_copie.piocher(carte_a_sacrifier)
                             if ret == 0:
                                 carte_random = carte_a_sacrifier
-                                print(f"choix = {carte_random.nom}")
                                 break
-                        if carte_random is None:
-                            carte_random = liste_cartes_prenable[0]
+                                
+                    if carte_random is None:
+                        continue
 
                     print(f"carte a sacrifier ? {carte_random.nom}")
                     ret = copie_partie.piocher(carte_a_sacrifier)
