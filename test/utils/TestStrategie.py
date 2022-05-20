@@ -207,7 +207,7 @@ class TestFonctionEvaluationDurantPartie2(unittest.TestCase):
 
         self.assertEqual(1, eval_minimax)
         self.assertTrue(
-            carte_a_prendre.nom in ["cavite","tour de garde","gisement"])
+            carte_a_prendre.nom in ["cavite", "tour de garde", "gisement"])
         self.assertEqual(37, nbr_noeuds)
 
 
