@@ -37,10 +37,7 @@ def fonction_evaluation(partie):
 	
 	# print(f"evaluation_j2 merveilles : {evaluation_j2}")
 	
-	if partie.joueur1.monnaie == 0:
-		evaluation_j2 += 20
-	else:
-		evaluation_j2 += partie.joueur2.monnaie
+	evaluation_j2 += partie.joueur2.monnaie
 	
 	# print(f"evaluation_j2 monnaies : {evaluation_j2}")
 	
@@ -63,10 +60,7 @@ def fonction_evaluation(partie):
 	
 	# print(f"evaluation_j1 merveilles : {evaluation_j1}")
 	
-	if partie.joueur2.monnaie == 0:
-		evaluation_j1 += 20
-	else:
-		evaluation_j1 += partie.joueur1.monnaie
+	evaluation_j1 += partie.joueur1.monnaie
 	
 	# print(f"evaluation_j1 monnaies : {evaluation_j1}")
 	
