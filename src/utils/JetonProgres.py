@@ -33,3 +33,7 @@ class JetonProgres:
 		"""
 		return f"nom : {self.nom}, " \
 			f"effets : {str(self.effets)}"
+	
+	def constructeur_par_copie(self):
+		return JetonProgres(self.nom, self.effets.copy())
+	
