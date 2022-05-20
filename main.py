@@ -21,18 +21,24 @@ JOUER_JVO = 5
 JOUER_JVJ = 6
 blank_color = (255, 255, 255)
 
+
 def musique():
 
     pygame.mixer.init()
 
     playlist = list()
-    playlist.append("src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
-    playlist.append("src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
-    playlist.append("src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/Thomas-Bergersen-Immortal-_2011_.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/Two-Steps-From-Hell-Protectors-of-the-Earth.wav")
+    playlist.append(
+        "src/interface_graphique/ressources/sons/maxkomusic-medieval-fantasy.wav")
 
-    pygame.mixer.music.load(playlist.pop())  # Get the first track from the playlist
+    # Get the first track from the playlist
+    pygame.mixer.music.load(playlist.pop())
     pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
-    pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
+    pygame.mixer.music.set_endevent(
+        pygame.USEREVENT)  # Setup the end track event
     pygame.mixer.music.play()  # Play the music
     pygame.mixer.music.set_volume(0.5)
 
@@ -61,6 +67,7 @@ tab_image = [
     "src/interface_graphique/ressources/images/image_menu/Verre.jpg"
 ]
 
+
 def tableau_image():
     return tab_image
 
@@ -79,6 +86,8 @@ pygame.display.set_caption("my game")
 
 
 '#MENU d ACCUEILLE DU JEUX'
+
+
 def affichage_menu_accueille():
     choix_menu = None
     taille = taille_ecran()
@@ -90,25 +99,27 @@ def affichage_menu_accueille():
     image_menu = tableau_image()
 
     bouton_titre = Boutton.Button(image_menu[0], image_menu[0], (taille[0]/2)-175, (taille[1]/2)-400,
-        LONGUEUR_TITRE, LARGEUR_TITRE
-    )
+                                  LONGUEUR_TITRE, LARGEUR_TITRE
+                                  )
     bouton_titre.affichage_du_bouton(window_surface)
 
     bouton_jouer = Boutton.Button(image_menu[1], image_menu[1], (taille[0]/2)-75, taille[1]/2,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                  LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                  )
     bouton_jouer.affichage_du_bouton(window_surface)
 
     bouton_quitter = Boutton.Button(image_menu[3], image_menu[3], (taille[0]/2)-75, (taille[1]/2) + 140,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                    LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                    )
     bouton_quitter.affichage_du_bouton(window_surface)
     window_tempo = window_surface
 
-    bouton_son_on = Boutton.Button(image_menu[4], image_menu[4], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
+    bouton_son_on = Boutton.Button(
+        image_menu[4], image_menu[4], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
     bouton_son_on.affichage_du_bouton(window_surface)
 
-    bouton_son_off = Boutton.Button(image_menu[5], image_menu[5], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
+    bouton_son_off = Boutton.Button(
+        image_menu[5], image_menu[5], (taille[0]/12), (taille[1] - (taille[1]/6)), 150, 115)
 
     pygame.display.flip()
     status_son = 0
@@ -154,25 +165,26 @@ def affichage_mode_jouer():
     image_mode_jouer = tableau_image()
 
     bouton_titre_jouer = Boutton.Button(image_mode_jouer[0], image_mode_jouer[0], (taille[0]/2)-175, (taille[1]/2)-400,
-        LONGUEUR_TITRE, LARGEUR_TITRE
-    )
+                                        LONGUEUR_TITRE, LARGEUR_TITRE
+                                        )
 
     bouton_titre_jouer.affichage_du_bouton(window_surface)
 
     bouton_jvj = Boutton.Button(image_mode_jouer[7], image_mode_jouer[7], (taille[0]/2)-75, (taille[1]/2),
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                )
 
     bouton_jvj.affichage_du_bouton(window_surface)
 
     bouton_jvo = Boutton.Button(image_mode_jouer[6], image_mode_jouer[6], (taille[0]/2)-75, (taille[1]/2)+140,
-        LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
-    )
+                                LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
+                                )
     bouton_jvo.affichage_du_bouton(window_surface)
 
     bouton_retour = Boutton.Button(image_mode_jouer[8], image_mode_jouer[8],
-        (taille[0]/12), (taille[1] - (taille[1]/6)), 90, 90
-    )
+                                   (taille[0]/12), (taille[1] -
+                                                    (taille[1]/6)), 90, 90
+                                   )
     bouton_retour.affichage_du_bouton(window_surface)
 
     pygame.display.flip()
@@ -220,29 +232,33 @@ def affichage_menu_difficulte():
     image_menu_difficulte = tableau_image()
 
     bouton_titre_difficulte = Boutton.Button(image_menu_difficulte[0], image_menu_difficulte[0], (taille[0] / 2) -
-        175, (taille[1] / 2) - 400, LONGUEUR_TITRE, LARGEUR_TITRE
-    )
+                                             175, (taille[1] / 2) -
+                                             400, LONGUEUR_TITRE, LARGEUR_TITRE
+                                             )
 
     bouton_titre_difficulte.affichage_du_bouton(window_surface)
 
     bouton_difficulte_facile = Boutton.Button(image_menu_difficulte[10], image_menu_difficulte[10],
-        (taille[0] / 2) - 75, (taille[1] / 2) - 30, LONGUEUR_BOUTON_MENU,
-        LARGEUR_BOUTON_MENU
-    )
+                                              (taille[0] / 2) - 75, (taille[1] /
+                                                                     2) - 30, LONGUEUR_BOUTON_MENU,
+                                              LARGEUR_BOUTON_MENU
+                                              )
 
     bouton_difficulte_facile.affichage_du_bouton(window_surface)
 
     bouton_difficulte_moyen = Boutton.Button(image_menu_difficulte[11], image_menu_difficulte[11],
-        (taille[0] / 2) - 75, (taille[1] / 2) + 70, LONGUEUR_BOUTON_MENU,
-        LARGEUR_BOUTON_MENU
-    )
+                                             (taille[0] / 2) - 75, (taille[1] /
+                                                                    2) + 70, LONGUEUR_BOUTON_MENU,
+                                             LARGEUR_BOUTON_MENU
+                                             )
 
     bouton_difficulte_moyen.affichage_du_bouton(window_surface)
 
     bouton_difficulte_difficile = Boutton.Button(image_menu_difficulte[12], image_menu_difficulte[12],
-        (taille[0] / 2) - 75, (taille[1] / 2) + 170, LONGUEUR_BOUTON_MENU,
-        LARGEUR_BOUTON_MENU
-    )
+                                                 (taille[0] / 2) - 75, (taille[1] /
+                                                                        2) + 170, LONGUEUR_BOUTON_MENU,
+                                                 LARGEUR_BOUTON_MENU
+                                                 )
 
     bouton_difficulte_difficile.affichage_du_bouton(window_surface)
 
