@@ -550,9 +550,9 @@ class Fenetre:
             return 6
 
     def __piocher_plateau(self, sprite_carte: SpriteCarte):
-        print(f"{Couleurs.FAIL}monnaie avant piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
+        # print(f"{Couleurs.FAIL}monnaie avant piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
         ret = self.plateau.piocher(sprite_carte.carte)
-        print(f"{Couleurs.FAIL}monnaie après piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
+        # print(f"{Couleurs.FAIL}monnaie après piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
         if ret == 0:
 
             ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
