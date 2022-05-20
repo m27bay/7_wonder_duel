@@ -518,15 +518,16 @@ class Fenetre:
 			
 			else:
 				if ret2 == 2:
+					sprite_jeton = None
 					if len(self.sprite_jetons_progres_plateau) >= 1:
+						sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					else:
 						sprite_num = 0
-						if len(self.sprite_jetons_progres_plateau) > 1:
-							sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
-						sprite_jeton = None
-						for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
-							if num == sprite_num:
-								sprite_jeton = sprite
-						self.__deplacer_jeton_scientifique(sprite_jeton)
+						
+					for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
+						if num == sprite_num:
+							sprite_jeton = sprite
+					self.__deplacer_jeton_scientifique(sprite_jeton)
 				
 				self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
 				self.plateau.enlever_carte(sprite_carte.carte)
@@ -538,6 +539,8 @@ class Fenetre:
 
 		return 0
 			
+		return 0
+			
 	def __piocher_fausse(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.appliquer_effets_carte(sprite_carte.carte)
 		if self.plateau.victoire is not None:
@@ -546,14 +549,19 @@ class Fenetre:
 		else:
 			if ret == 2:
 				sprite_jeton = None
-				sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+				if len(self.sprite_jetons_progres_plateau) >= 1:
+					sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					
+				else:
+					sprite_num = 0
+					
 				for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
 					if num == sprite_num:
 						sprite_jeton = sprite
 				self.__deplacer_jeton_scientifique(sprite_jeton)
 			
 			self.__dessiner_piocher(sprite_carte)
-
+		
 		return 0
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
@@ -679,6 +687,7 @@ class Fenetre:
 		while en_cours:
 			if self.plateau.victoire is not None:
 				en_cours = False
+				break
 				
 			# PARTIE Process input (events)
 			for event in pygame.event.get():
@@ -806,6 +815,10 @@ class Fenetre:
 						nbr_noeuds = 0
 						meilleur_eval = 0
 						print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
+						
+						if len(self.plateau.cartes_plateau) == 0:
+							break
+						
 						meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
 							self.difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
 						# meilleur_eval, carte_bot, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
