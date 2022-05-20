@@ -196,7 +196,7 @@ class Joueur:
         return liste_couts_manquants
 
     def possede_carte_chainage(self, carte: Carte):
-        
+
         # si la carte ne possede pas de carte de chainage
         if carte.nom_carte_chainage is None:
             return False
