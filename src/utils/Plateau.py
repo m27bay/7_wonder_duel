@@ -13,6 +13,7 @@ from src.utils.Joueur import Joueur
 
 
 from src.utils.Outils import mon_str_liste2D
+import sys
 
 SYMBOLE_SCIENTIFIQUES = [
     "sphere_armillaire",
@@ -621,7 +622,7 @@ class Plateau:
         if not carte_trouvee:
             print(
                 f"{Couleurs.FAIL} ERREUR enlever_carte {carte_a_enlever.nom} : introuvble {Couleurs.FAIL}")
-            exit(-1)
+            sys.exit(-1)
 
         for carte in self.liste_cartes_prenables():
             carte.devoiler()
@@ -764,7 +765,7 @@ class Plateau:
             gain = 0
             print(
                 f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
-            exit(-2)
+            sys.exit(-2)
 
         elif self.monnaie_banque < monnaies:
             gain = self.monnaie_banque
@@ -1128,7 +1129,7 @@ class Plateau:
                     else:
                         print(
                             f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
-                        exit(-2)
+                        sys.exit(-2)
         return 1
 
     def appliquer_effets_merveille(self, merveille: Merveille):
