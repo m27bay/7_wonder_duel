@@ -62,6 +62,12 @@ class TestJoueur(unittest.TestCase):
 		carte = Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1)
 		self.assertEqual([], self.joueur.couts_manquants(carte))
 		
+	def test_aucune_ressources_manquantes2(self):
+		self.joueur.cartes.append(Carte("chantier", ["ressource bois 2"], None, None, "marron", age=1))
+		self.joueur.ressources["bois"] = 2
+		carte = Carte("ecurie", ["attaquer 1"], ["ressource bois 1"], None, "rouge", age=1)
+		self.assertEqual([], self.joueur.couts_manquants(carte))
+		
 	def test_une_ressources_manquantes(self):
 		carte = Carte("atelier",
 			[f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[3]}", "point_victoire 1"], ["ressource papyrus 1"],
@@ -157,18 +163,20 @@ class TestJoueur(unittest.TestCase):
 		self.assertEqual(6, self.joueur.points_victoire)
 	
 	def test_compter_point_victoire_avec_les_merveilles(self):
-		self.joueur.merveilles.append(
-			Merveille("circus maximus",
-				["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
-				["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
-			)
+		merveille = Merveille("circus maximus",
+			["defausse_carte_adversaire grise", "attaquer 1", "point_victoire 3"],
+			["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
 		)
-		self.joueur.merveilles.append(
-			Merveille("colosse",
-				["attaquer 2", "point_victoire 3"],
-				["ressource argile 3", "ressource verre 1"]
-			)
+		merveille.est_construite = True
+		self.joueur.merveilles.append(merveille)
+		
+		merveille = Merveille("colosse",
+			["attaquer 2", "point_victoire 3"],
+			["ressource argile 3", "ressource verre 1"]
 		)
+		merveille.est_construite = True
+		self.joueur.merveilles.append(merveille)
+		
 		self.joueur.compter_point_victoire()
 		self.assertEqual(6, self.joueur.points_victoire)
 	
