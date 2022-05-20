@@ -10,6 +10,7 @@ from src.utils.CarteGuilde import CarteGuilde
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
 from src.utils.Merveille import Merveille
+from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 from src.utils.Stategie import alpha_beta_avec_merveille
 
@@ -315,26 +316,58 @@ class TestOutilsPlateau(unittest.TestCase):
 
     def test_piocher_1(self):
         self.plateau.joueur_qui_joue = self.plateau.joueur1
-        self.plateau.piocher(Carte("bassin argileux", [
-            "ressource argile 1"], None, None, "marron", age=1))
-        self.plateau.piocher(Carte("chantier", ["ressource bois 1"],
-                                   None, None, "marron", age=1))
-        self.plateau.piocher(
-            Carte("mine", ["ressource pierre 1"], None, None, "marron", age=1))
+        carte = Carte("bassin argileux", ["ressource argile 1"], None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+        
+        carte = Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+        
+        carte = Carte("mine", ["ressource pierre 1"], None, None, "marron", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
 
-        self.plateau.piocher(
-            Carte("verrerie", ["ressource verre 1"], None, None, "gris", age=1))
+        carte = Carte("verrerie", ["ressource verre 1"], None, None, "gris", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
 
-        self.plateau.piocher(Carte("soufflerie", ["ressource verre 1"],
-                                   None, None, "gris", age=2))
+        carte = Carte("soufflerie", ["ressource verre 1"], None, None, "gris", age=2)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
+        # print(mon_str_liste(self.plateau.joueur_qui_joue.cartes))
 
         self.plateau.joueur_qui_joue = self.plateau.joueur2
-        self.plateau.piocher(Carte("depot d argile", [
-                             "reduc_ressource argile 1"], None, None, "jaune", age=1))
+        carte = Carte("depot d argile", ["reduc_ressource argile 1"], None, None, "jaune", age=1)
+        self.plateau.piocher(carte)
+        self.plateau.appliquer_effets_carte(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
         self.plateau.joueur_qui_joue.monnaie = 7
-        carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge",
-                      age=2)
+        
+        # sous_carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2"], None,
+        #     "rouge", age=2)
+        # sous_liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(sous_carte)
+        # self.assertEqual(["ressource argile 2"], sous_liste_ressource_necessaire)
+        # self.assertEqual(4, self.plateau.acheter_ressources(sous_liste_ressource_necessaire))
+        
+        sous_carte = Carte("place d armes", ["attaquer 2"], ["ressource verre 1"], None,
+            "rouge", age=2)
+        sous_liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(sous_carte)
+        self.assertEqual(["ressource verre 1"], sous_liste_ressource_necessaire)
+        self.assertEqual(4, self.plateau.acheter_ressources(sous_liste_ressource_necessaire))
+
+        carte = Carte("place d armes", ["attaquer 2"], ["ressource argile 2", "ressource verre 1"], None, "rouge", age=2)
+        liste_ressource_necessaire = self.plateau.joueur_qui_joue.couts_manquants(carte)
+        self.assertEqual(["ressource argile 2", "ressource verre 1"], liste_ressource_necessaire)
+        self.assertEqual(8, self.plateau.acheter_ressources(liste_ressource_necessaire))
+        
         ret = self.plateau.piocher(carte)
+        self.plateau.joueur_qui_joue.cartes.append(carte)
         self.assertEqual(-1, ret)
 
 

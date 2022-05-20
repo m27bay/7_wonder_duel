@@ -34,8 +34,8 @@ class Plateau:
         """
         Constructeur de la classe plateau.
 
-        :param joueur1: premier nom_joueur.
-        :param joueur2: deuxieme nom_joueur.
+        :param joueur1: premier joueur.
+        :param joueur2: deuxieme joueur.
         :param choix_auto_merveilles: boolean indiquant si le choix
                 des merveilles est automatique ou non.
         """
@@ -760,7 +760,6 @@ class Plateau:
             return 0
 
         if self.monnaie_banque == 0:
-            gain = 0
             print(
                 f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
             sys.exit(-2)
@@ -778,83 +777,45 @@ class Plateau:
     def acheter_ressources(self, ressources_manquantes: list) -> int:
         prix_commerce = 0
 
-        # Verification si le nom_joueur adverse produit les ressources manquantes
+        # calcul ressources produite par adversaire
         adversaire = self.adversaire()
-        carte_liste_ressource_adversaire = []
+        ressource_adversaire = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+        for carte_ressource_adversaire in adversaire.cartes:
+            if carte_ressource_adversaire.couleur != "jaune":
+                for effet in carte_ressource_adversaire.effets:
+                    ressource_adversaire_split = effet.split(" ")
+                    if len(ressource_adversaire_split) == 3 and ressource_adversaire_split[0] == "ressource":
+                        ressource = ressource_adversaire_split[1]
+                        qte = int(ressource_adversaire_split[2])
+                        ressource_adversaire[ressource] += qte
 
-        for ressource_manquante in ressources_manquantes:
-            carte_production = adversaire.production_type_ressources(
-                ressource_manquante)
+        # calcul ressources necessaire
+        ressource_necessaire = {"bois": 0, "pierre": 0, "argile": 0, "verre": 0, "papyrus": 0}
+        for ressource in ressources_manquantes:
+            ressource_split = ressource.split(" ")
+            type = ressource_split[1]
+            qte = int(ressource_split[2])
+            ressource_necessaire[type] += qte
+        
+        for type, qte in ressource_necessaire.items():
+            # si j'ai besoin d'une ressource
+            if qte != 0:
+                # si l'adversaire produit la ressource
+                if ressource_adversaire[type] != 0:
+                    prix_reduc = self.joueur_qui_joue.possede_carte_reduction(type)
+                    # si j'ai un reduc
+                    if prix_reduc != 0:
+                        # prix_commerce = (prix_reduc + qte produite par adv) * qte necessaire
+                        prix_commerce += ((prix_reduc + ressource_adversaire[type]) * qte)
+                        
+                    # si je n'ai pas de reduc
+                    else:
+                        # prix_commerce = (2 + quantite_qte produite par adv) * qte necessaire
+                        prix_commerce += ((2 + ressource_adversaire[type]) * qte)
+                    
+                else: # si l'adversaire ne produit pas la ressource
+                    prix_commerce += (2 * qte)
 
-            if carte_production is not None:
-                carte_liste_ressource_adversaire.append(carte_production)
-
-        # si le nom_joueur adverse ne produit aucune ressouces ressources manquantes
-        if len(carte_liste_ressource_adversaire) == 0:
-
-            for ressource_manquante in ressources_manquantes:
-
-                ressource_manquante_split = ressource_manquante.split(" ")
-                prix_reduc = self.joueur_qui_joue.possede_carte_reduction(
-                    ressource_manquante_split[1])
-
-                if prix_reduc != 0:
-                    # (1 * quantite_ressource_adversaire = 0) * quantite_ressource_necessaire pour le nom_joueur
-                    prix_commerce += prix_reduc * \
-                        int(ressource_manquante_split[2])
-
-                else:
-                    # (2 * quantite_ressource_adversaire = 0) * quantite_ressource_necessaire pour le nom_joueur
-                    prix_commerce += (2 * int(ressource_manquante_split[2]))
-
-        # le nom_joueur adverse produit des ressouces qui me manquent
-        else:
-            # les cartes jaunes ne compte pas dans le commerce
-            for carte in carte_liste_ressource_adversaire:
-
-                if carte.couleur == "jaune":
-                    carte_liste_ressource_adversaire.remove(carte)
-
-            for ressource_manquante in ressources_manquantes:
-                ressource_manquante_split = ressource_manquante.split(" ")
-
-                # si le nom_joueur adversaire produit la ressource
-                ressource_trouve = False
-
-                # parmis les cartes produisant la ressouce que j'achete
-                for carte_ressource_adversaire in carte_liste_ressource_adversaire:
-
-                    # parmis les effets de cette carte
-                    for effet in carte_ressource_adversaire.effets:
-                        ressource_adversaire_split = effet.split(" ")
-
-                        # nom_joueur adversaire produit ressource qu'il me manque ?
-                        if ressource_manquante_split[1] == ressource_adversaire_split[1]:
-                            ressource_trouve = True
-
-                            # ai je une reduction sur cette ressource ?
-                            prix_reduc = self.joueur_qui_joue.possede_carte_reduction(
-                                ressource_manquante_split[1])
-
-                            if prix_reduc != 0:
-                                # (prix_reduc * quantite_ressource_necessaire pour le nom_joueur)
-                                prix_commerce += (
-                                    (prix_reduc + int(ressource_adversaire_split[2])) *
-                                    int(ressource_manquante_split[2])
-                                )
-
-                            else:
-                                # (2 + quantite_ressource_adversaire) * quantite_ressource_necessaire pour le nom_joueur
-                                prix_commerce += (
-                                    (2 + int(ressource_adversaire_split[2])) * int(
-                                        ressource_manquante_split[2])
-                                )
-
-                # si l'adversaire ne produit pas la ressource
-                if not ressource_trouve:
-                    prix_commerce += (2 * int(ressource_manquante_split[2]))
-
-        # print(ressources_manquantes, prix_commerce)
         return prix_commerce
 
     def piocher(self, carte_prenable: Carte):
@@ -875,8 +836,8 @@ class Plateau:
                 liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(
                     liste_ressource_necessaire)
 
-            # verification ressources nom_joueur
-            # le nom_joueur possede toutes les ressouces
+            # verification ressources joueur
+            # le joueur possede toutes les ressouces
             if len(liste_ressource_necessaire) == 0:
 
                 # on retire uniquement la monnaie
@@ -899,6 +860,7 @@ class Plateau:
 
             # manque des ressources autre que monnaie
             prix = self.acheter_ressources(liste_ressource_necessaire)
+            # print(f"acheter_ressources({liste_ressource_necessaire}) = {prix}")
             if prix > self.joueur_qui_joue.monnaie:
                 return -1
 
@@ -911,7 +873,7 @@ class Plateau:
 
                 return 0
 
-        # le nom_joueur possde la carte chainage, construction gratuite
+        # le joueur possde la carte chainage, construction gratuite
         # application effet jeton "urbanisme"
         if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
             self.joueur_qui_joue.monnaie += self.action_banque(4)
@@ -965,7 +927,7 @@ class Plateau:
         if len(nbr_merveille_construite_j1) + len(nbr_merveille_construite_j2) > 7:
             return -2, None
 
-        # verification ressources nom_joueur
+        # verification ressources joueur
         liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(
             merveille_a_construire)
         # print(liste_ressource_necessaire)

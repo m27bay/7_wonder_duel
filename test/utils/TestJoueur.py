@@ -125,12 +125,16 @@ class TestJoueur(unittest.TestCase):
         self.assertEqual(["monnaie 1"], self.joueur.couts_manquants(carte))
 
     def test_possede_carte_chainage(self):
-        self.joueur.cartes.append(Carte("carte", None, None, None, None, None))
+        self.joueur.cartes.append(Carte("ecuries", ["attaquer 1"], [
+                      "ressource bois 1"], None, "rouge", age=1))
 
         self.assertTrue(self.joueur.possede_carte_chainage(
-            Carte("carte2", None, None, "carte", None, None)))
+            Carte("haras", ["attaquer 1"], ["ressource argile 1", "ressource bois 1"], "ecuries", "rouge", age=2)))
         self.assertFalse(self.joueur.possede_carte_chainage(
-            Carte("carte3", None, None, "erreur", None, None)))
+            Carte("bibliotheque", [f"symbole_scientifique {SYMBOLE_SCIENTIFIQUES[4]}", "point_victoire 2"],
+                ["ressource pierre 1", "ressource bois 1", "ressource verre 1"], "scriptorium", "vert", age=2)))
+        self.assertFalse(self.joueur.possede_carte_chainage(
+            Carte("chantier", ["ressource bois 1"], None, None, "marron", age=1)))
 
     def test_production_type_ressources(self):
         self.joueur.cartes.append(

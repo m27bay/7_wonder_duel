@@ -196,15 +196,12 @@ class Joueur:
         return liste_couts_manquants
 
     def possede_carte_chainage(self, carte: Carte):
+        
         # si la carte ne possede pas de carte de chainage
         if carte.nom_carte_chainage is None:
             return False
 
-        #
-        for ma_carte in self.cartes:
-            if ma_carte.nom == carte.nom_carte_chainage:
-                return True
-        return False
+        return any(carte_joueur.nom == carte.nom_carte_chainage for carte_joueur in self.cartes)
 
     def production_type_ressources(self, ressource: str):
         """
@@ -232,11 +229,14 @@ class Joueur:
         :return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
         """
         for carte in self.cartes:
+            # print(f"carte : {carte.nom}", end=", ")
             for effet in carte.effets:
+                # print(effet, end="")
                 effet_split = effet.split(" ")
 
                 # reduc_ressource type prixReduc
                 if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
+                    # print(f" reduc : ", effet_split[2])
                     return int(effet_split[2])
 
         return 0
