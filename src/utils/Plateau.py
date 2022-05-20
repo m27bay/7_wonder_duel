@@ -776,6 +776,7 @@ class Plateau:
 				if not ressource_trouve:
 					prix_commerce += (2 * int(ressource_manquante_split[2]))
 		
+		# print(ressources_manquantes, prix_commerce)
 		return prix_commerce
 	
 	def piocher(self, carte_prenable: Carte):
@@ -787,7 +788,8 @@ class Plateau:
 				return 0
 			
 			liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(carte_prenable)
-			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
+			if len(liste_ressource_necessaire) != 0:
+				liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			
 			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
 				liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
@@ -992,6 +994,9 @@ class Plateau:
 			
 			if type == "monnaie":
 				self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[1]))
+				
+			if type == "monnaie_par_merveille":
+				self.joueur_qui_joue.monnaie += self.action_banque(int(effet_split[1]))
 			
 			if type == "monnaie_par_carte":
 				for ma_carte in self.joueur_qui_joue.cartes:
@@ -1011,7 +1016,7 @@ class Plateau:
 					recherche = ["rouge"]
 				else:
 					recherche = ["vert"]
-						
+					
 				nbr_carte_recherche_j1 = len(
 					[carte for carte in self.joueur1.cartes if carte.couleur in recherche])
 				nbr_carte_recherche_j2 = len(
