@@ -262,82 +262,6 @@ def affichage_menu_difficulter():
     return choix_menu, niveau_diff
 
 
-def choix_ressources1():
-    pygame.init()
-    color = (105, 105, 105)
-    couleur_texte = (0, 0, 0)
-    image_choix = tableau_image()
-    ecran = pygame.display.set_mode((300, 200))
-    ecran.fill(color)
-
-    format_texte = pygame.font.SysFont("arial", 20)
-    texte = format_texte.render("choisi tes ressources", True, couleur_texte)
-    ecran.blit(texte, [50, 40])
-
-    button_argiles = Boutton.Button(image_choix[13], image_choix[13],60,80,50,50)
-    button_argiles.affichage_du_bouton(ecran)
-
-    button_pierre = Boutton.Button(image_choix[14], image_choix[14],120,80,50,50)
-    button_pierre.affichage_du_bouton(ecran)
-
-    button_bois = Boutton.Button(image_choix[15], image_choix[15],180,80,50,50)
-    button_bois.affichage_du_bouton(ecran)
-
-    pygame.display.flip()
-    cpt = 0
-
-    launched = True
-    while launched:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                launched = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and button_argiles.rectangle.collidepoint(event.pos):
-                    return "argiles"
-                elif event.button == 1 and button_pierre.rectangle.collidepoint(event.pos):
-                    return "pierre"
-                elif event.button == 1 and button_bois.rectangle.collidepoint(event.pos):
-                    return "bois"
-        if launched == False:
-            break
-        pygame.display.flip()
-    pygame.quit()
-
-def choix_ressources2():
-    pygame.init()
-    color = (105, 105, 105)
-    couleur_texte = (0, 0, 0)
-    image_choix = tableau_image()
-    ecran = pygame.display.set_mode((300, 200))
-    ecran.fill(color)
-
-    format_texte = pygame.font.SysFont("arial", 20)
-    texte = format_texte.render("choisi tes ressources", True, couleur_texte)
-    ecran.blit(texte, [50, 40])
-
-    button_papier = Boutton.Button(image_choix[16], image_choix[16], 80, 80, 50, 50)
-    button_papier.affichage_du_bouton(ecran)
-
-    button_verre = Boutton.Button(image_choix[17], image_choix[17], 160, 80, 50, 50)
-    button_verre.affichage_du_bouton(ecran)
-
-    pygame.display.flip()
-    launched = True
-    while launched:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                launched = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and button_papier.rectangle.collidepoint(event.pos):
-                    return "papier"
-                elif event.button == 1 and button_verre.rectangle.collidepoint(event.pos):
-                    return "verre"
-        if launched == False:
-            break
-        pygame.display.flip()
-    pygame.quit()
-
-
 def jouer_vs_boot(difficulter):
     plateau = Plateau(Joueur("joueur"), Joueur("ordi"))
     plateau.preparation_plateau()
@@ -375,5 +299,3 @@ def affichage_enssemble():
 '#affichage_mode_jouer()'
 if __name__ == '__main__':
     affichage_enssemble()
-    # choix_ressources1()
-    #choix_ressources2()
