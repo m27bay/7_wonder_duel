@@ -953,6 +953,7 @@ class Fenetre:
 							print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
 							
 							if len(self.plateau.cartes_plateau) == 0:
+								en_cours = False
 								break
 							
 							meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
