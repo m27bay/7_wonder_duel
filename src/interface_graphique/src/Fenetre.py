@@ -932,29 +932,30 @@ class Fenetre:
 							nbr_noeuds = 0
 							meilleur_eval = 0
 							print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
-							
-							if len(self.plateau.cartes_plateau) == 0:
-								en_cours = False
-								break
-							
+
 							meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
 								self.difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
 							# meilleur_eval, carte_bot, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
 							# 		-math.inf, math.inf, True, nbr_noeuds)
-							print(f"{Couleurs.FAIL}fin alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
-							fin = time.time()
-							temps_exe = fin - deb
+
+							if carte_bot is not None:
+								print(f"{Couleurs.FAIL}fin alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
+
+								fin = time.time()
+								temps_exe = fin - deb
+
+								if merveille_bot is None:
+									print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, temps execution : {temps_exe}, "
+										f"nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
+								else:
+									print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}, "
+										f"temps execution : {temps_exe}, nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
 							
-							if merveille_bot is None:
-								print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, temps execution : {temps_exe}, "
-									f"nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
+								liste_temps.append(temps_exe)
+								liste_nbr_noeuds.append(nbr_noeuds)
+								coup_bot = False
 							else:
-								print(f"{Couleurs.OK}carte_a_prendre : {carte_bot.nom}, merveille : {merveille_bot.nom}, "
-									f"temps execution : {temps_exe}, nbr_noeuds : {nbr_noeuds}{Couleurs.RESET}")
-							
-							liste_temps.append(temps_exe)
-							liste_nbr_noeuds.append(nbr_noeuds)
-							coup_bot = False
+								coup_bot = True
 						
 						if not coup_bot:
 							for sprite_carte in self.sprite_cartes_plateau:
