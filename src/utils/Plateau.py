@@ -856,12 +856,12 @@ class Plateau:
 	def effet_jeton_architecture_et_maconnerie(self, liste_ressource_necessaire : list):
 		ressource = liste_ressource_necessaire[0]
 		ressource_split = ressource.split(" ")
-		qte = ressource_split[2]
+		qte = int(ressource_split[2])
 		
 		if qte == 1:
 			ressource2 = liste_ressource_necessaire[1]
 			ressource_split2 = ressource2.split(" ")
-			qte2 = ressource_split2[2]
+			qte2 = int(ressource_split2[2])
 			
 			if qte2 == 1:
 				liste_ressource_necessaire.remove(ressource2)
