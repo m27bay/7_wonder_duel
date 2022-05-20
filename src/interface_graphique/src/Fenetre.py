@@ -571,7 +571,24 @@ class Fenetre:
                     for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
                         if num == sprite_num:
                             sprite_jeton = sprite
+                            
+                    ret = self.plateau.appliquer_effets_jeton(sprite_jeton.jeton)
                     self.__deplacer_jeton_scientifique(sprite_jeton)
+                    
+                    while ret == 2:
+                        sprite_jeton = None
+                        if len(self.sprite_jetons_progres_plateau) >= 1:
+                            sprite_num = random.randint(
+                                0, len(self.sprite_jetons_progres_plateau) - 1)
+                        else:
+                            sprite_num = 0
+    
+                        for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
+                            if num == sprite_num:
+                                sprite_jeton = sprite
+                                
+                        ret = self.plateau.appliquer_effets_jeton(sprite_jeton.jeton)
+                        self.__deplacer_jeton_scientifique(sprite_jeton)
 
                 self.plateau.joueur_qui_joue.cartes.append(sprite_carte.carte)
                 self.plateau.enlever_carte(sprite_carte.carte)

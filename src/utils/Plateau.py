@@ -992,6 +992,7 @@ class Plateau:
                         jeton.est_utilise = True
 
     def appliquer_effets_carte(self, carte: Carte):
+        ret = 0
         for effet in carte.effets:
 
             effet_split = effet.split(" ")
@@ -1012,7 +1013,7 @@ class Plateau:
                 self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
                 self.joueur_qui_joue.compter_symb_scientifique()
                 if self.joueur_qui_joue.symb_scientifique[effet_split[1]] == 2:
-                    return 2
+                    ret =  2
 
             if type == "monnaie":
                 self.joueur_qui_joue.monnaie += self.action_banque(
@@ -1059,7 +1060,7 @@ class Plateau:
                         print(
                             f"{Couleurs.FAIL} ERREUR : la banque n'a plus d'argent {Couleurs.FAIL}")
                         sys.exit(-2)
-        return 1
+        return ret
 
     def appliquer_effets_merveille(self, merveille: Merveille):
         liste_effet = []
@@ -1133,5 +1134,8 @@ class Plateau:
                              "compas_maconniques", "plume"]
 
                 if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] != 2:
+                    print(list_symb[num_symb])
                     self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] += 1
+                    if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] == 2:
+                        return 2
                     break
