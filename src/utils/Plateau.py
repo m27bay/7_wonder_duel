@@ -1021,7 +1021,7 @@ class Plateau:
                     return ret
                 else:
                     if self.joueur_qui_joue.symb_scientifique[effet_split[1]] == 2:
-                        ret =  2
+                        ret = 2
 
             if type == "monnaie":
                 self.joueur_qui_joue.monnaie += self.action_banque(
