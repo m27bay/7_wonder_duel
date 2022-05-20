@@ -425,7 +425,7 @@ class TestEffetsMerveillesGuide(unittest.TestCase):
         self.plateau.preparation_plateau()
         self.plateau.joueur1.ressources["pierre"] = 3
         self.plateau.joueur1.ressources["papyrus"] = 1
-        # merveilles[0] = pyramides
+        # merveilles[0] c'est pyramides
         self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
         self.assertTrue(self.plateau.joueur1.merveilles[0].est_construite)
 

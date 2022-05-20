@@ -7,7 +7,6 @@ import unittest
 from src.utils.Carte import Carte
 from src.utils.Merveille import Merveille
 from src.utils.JetonMilitaire import JetonMilitaire
-from src.utils.JetonProgres import JetonProgres
 
 
 class TestCarte(unittest.TestCase):

@@ -55,8 +55,8 @@ class Joueur:
                 and self.points_victoire == other.points_victoire \
                 and self.symb_scientifique == other.symb_scientifique \
                 and self.nbr_symb_scientifique_diff == other.nbr_symb_scientifique_diff
-        else:
-            return False
+
+        return False
 
     def __str__(self):
         return f"nom : {self.nom}\n" \
@@ -181,9 +181,7 @@ class Joueur:
                             cout_manquant_ressource = cout_manquant_split[1]
                             cout_manquant_qte = int(cout_manquant_split[2])
 
-                            if cout_manquant_ressource == effet_type_ressource_1 \
-                                    or cout_manquant_ressource == effet_type_ressource_2 \
-                                    or cout_manquant_ressource == effet_type_ressource_3:
+                            if cout_manquant_ressource in [effet_type_ressource_1, effet_type_ressource_2, effet_type_ressource_3]:
 
                                 if cout_manquant_qte == 1:
                                     liste_couts_manquants.remove(cout_manquant)

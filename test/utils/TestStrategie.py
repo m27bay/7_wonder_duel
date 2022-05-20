@@ -1,11 +1,10 @@
 import math
-import time
 import unittest
 
 from src.utils.Carte import Carte
 from src.utils.Joueur import Joueur
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
-from src.utils.Stategie import fonction_evaluation, alpha_beta, alpha_beta_avec_merveille
+from src.utils.Stategie import fonction_evaluation, alpha_beta_avec_merveille
 from src.utils.Stategie import minimax
 
 
@@ -208,9 +207,7 @@ class TestFonctionEvaluationDurantPartie2(unittest.TestCase):
 
         self.assertEqual(1, eval_minimax)
         self.assertTrue(
-            carte_a_prendre.nom == "cavite"
-            or carte_a_prendre.nom == "tour de garde"
-            or carte_a_prendre.nom == "gisement")
+            carte_a_prendre.nom in ["cavite","tour de garde","gisement"])
         self.assertEqual(37, nbr_noeuds)
 
 

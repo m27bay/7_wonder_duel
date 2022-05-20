@@ -1,12 +1,9 @@
 import math
 import csv
-import random
 
 from src.utils.Colours import Couleurs
 from src.utils.Merveille import Merveille
-from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau
-from src.utils.Joueur import Joueur
 
 
 notation_carte = {}

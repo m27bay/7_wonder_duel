@@ -436,8 +436,8 @@ class Plateau:
                 and self.merveilles == other.merveilles \
                 and self.jetons_progres == other.jetons_progres \
                 and self.jetons_progres_plateau == other.jetons_progres_plateau
-        else:
-            return False
+
+        return False
 
     def __str__(self):
         return f"cartes_plateau : {mon_str_liste2D(self.cartes_plateau)}" \
@@ -601,8 +601,8 @@ class Plateau:
     def adversaire(self):
         if self.joueur_qui_joue == self.joueur1:
             return self.joueur2
-        else:
-            return self.joueur1
+
+        return self.joueur1
 
     def enlever_carte(self, carte_a_enlever: Carte) -> None:
         """
@@ -645,15 +645,14 @@ class Plateau:
         if ligne == len(self.cartes_plateau) - 1:
             return True
         # si la carte est sur le bord gauche, pas de "fils" à sa gauche
-        elif colonne == 0:
+        if colonne == 0:
             return self.cartes_plateau[ligne + 1][colonne + 1] == 0
         # si la carte est sur le bord droit, pas de "fils" à sa droite
-        elif colonne == len(self.cartes_plateau[ligne]) - 1:
+        if colonne == len(self.cartes_plateau[ligne]) - 1:
             return self.cartes_plateau[ligne + 1][colonne - 1] == 0
         # milieu de la matrice
-        else:
-            return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) and (
-                self.cartes_plateau[ligne + 1][colonne + 1] == 0)
+        return (self.cartes_plateau[ligne + 1][colonne - 1] == 0) and (
+            self.cartes_plateau[ligne + 1][colonne + 1] == 0)
 
     def liste_cartes_prenables(self):
         cartes_prenable = []
@@ -671,10 +670,9 @@ class Plateau:
                 self.fin_de_partie()
                 return -1
 
-            else:
-                self.age += 1
-                self.__preparation_cartes()
-                return 1
+            self.age += 1
+            self.__preparation_cartes()
+            return 1
 
         return 0
 
@@ -891,35 +889,34 @@ class Plateau:
 
                 return 0
 
-            else:
-                # manque des ressouces
-                for ressource_manquante in liste_ressource_necessaire:
-                    ressource_manquante_split = ressource_manquante.split(" ")
+            # manque des ressouces
+            for ressource_manquante in liste_ressource_necessaire:
+                ressource_manquante_split = ressource_manquante.split(" ")
 
-                    # manque monnaie
-                    if ressource_manquante_split[0] == "monnaie":
-                        return -1
-
-                # manque des ressources autre que monnaie
-                prix = self.acheter_ressources(liste_ressource_necessaire)
-                if prix > self.joueur_qui_joue.monnaie:
+                # manque monnaie
+                if ressource_manquante_split[0] == "monnaie":
                     return -1
 
+            # manque des ressources autre que monnaie
+            prix = self.acheter_ressources(liste_ressource_necessaire)
+            if prix > self.joueur_qui_joue.monnaie:
+                return -1
+
+            else:
+                if self.adversaire().possede_jeton_scientifique("economie"):
+                    self.adversaire().monnaie += prix
                 else:
-                    if self.adversaire().possede_jeton_scientifique("economie"):
-                        self.adversaire().monnaie += prix
-                    else:
-                        self.monnaie_banque += prix
-                    self.joueur_qui_joue.monnaie -= prix
+                    self.monnaie_banque += prix
+                self.joueur_qui_joue.monnaie -= prix
 
-                    return 0
+                return 0
 
-        else:  # le nom_joueur possde la carte chainage, construction gratuite
-            # application effet jeton "urbanisme"
-            if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
-                self.joueur_qui_joue.monnaie += self.action_banque(4)
+        # le nom_joueur possde la carte chainage, construction gratuite
+        # application effet jeton "urbanisme"
+        if self.joueur_qui_joue.possede_jeton_scientifique("urbanisme"):
+            self.joueur_qui_joue.monnaie += self.action_banque(4)
 
-            return 0
+        return 0
 
     def defausser(self, carte_prenable: Carte):
         self.joueur_qui_joue.monnaie += self.action_banque(2)
@@ -952,13 +949,12 @@ class Plateau:
             liste_ressource_necessaire.remove(ressource)
             return liste_ressource_necessaire
 
-        elif qte == 2:
+        if qte == 2:
             liste_ressource_necessaire.remove(ressource)
             return liste_ressource_necessaire
 
-        else:
-            liste_ressource_necessaire[0] = f"{ressource_split[0]} {ressource_split[1]} {qte - 2}"
-            return liste_ressource_necessaire
+        liste_ressource_necessaire[0] = f"{ressource_split[0]} {ressource_split[1]} {qte - 2}"
+        return liste_ressource_necessaire
 
     def construire_merveille(self, merveille_a_construire: Merveille):
         if merveille_a_construire.est_construite:
@@ -992,8 +988,8 @@ class Plateau:
             prix = self.acheter_ressources(liste_ressource_necessaire)
             if prix > self.joueur_qui_joue.monnaie:
                 return -1, None
-            else:
-                self.joueur_qui_joue.monnaie += self.action_banque(-prix)
+
+            self.joueur_qui_joue.monnaie += self.action_banque(-prix)
 
         else:
             # on retire uniquement la monnaie
@@ -1021,18 +1017,17 @@ class Plateau:
 
         if self.position_jeton_conflit in [1, 2, 3]:
             return 0
-        elif self.position_jeton_conflit in [4, 5, 6]:
+        if self.position_jeton_conflit in [4, 5, 6]:
             return 1
-        elif self.position_jeton_conflit in [7, 8]:
+        if self.position_jeton_conflit in [7, 8]:
             return 2
-        elif self.position_jeton_conflit in [10, 11]:
+        if self.position_jeton_conflit in [10, 11]:
             return 3
-        elif self.position_jeton_conflit in [12, 13, 14]:
+        if self.position_jeton_conflit in [12, 13, 14]:
             return 4
-        elif self.position_jeton_conflit in [15, 16, 17]:
+        if self.position_jeton_conflit in [15, 16, 17]:
             return 5
-        else:
-            return -1
+        return -1
 
     def deplacer_pion_miltaire(self, nbr_deplacement: int):
         # On deplace le pion case par case
@@ -1153,7 +1148,7 @@ class Plateau:
             if type == "defausse_carte_adversaire":
                 couleur = effet_split[1]
 
-                if couleur == "gris" or couleur == "marron":
+                if couleur in ["gris", "marron"]:
                     adversaire = self.adversaire()
                     cartes = adversaire.possede_cartes_couleur(couleur)
                     if len(cartes) != 0:
