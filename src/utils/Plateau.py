@@ -397,9 +397,9 @@ class Plateau:
         for carte in self.cartes_guilde:
             plateau.cartes_guilde.append(carte.constructeur_par_copie())
 
-        for num_ligne, ligne_carte in enumerate(self.cartes_plateau):
+        for _, ligne_carte in enumerate(self.cartes_plateau):
             copie_ligne = []
-            for num_colonne, carte in enumerate(ligne_carte):
+            for _, carte in enumerate(ligne_carte):
                 if carte != 0:
                     copie_ligne.append(carte.constructeur_par_copie())
                 else:
