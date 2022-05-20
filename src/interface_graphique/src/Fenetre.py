@@ -514,12 +514,16 @@ class Fenetre:
 			
 			ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
 			if self.plateau.victoire is not None:
-				return
+				return 2
 			
 			else:
 				if ret2 == 2:
 					sprite_jeton = None
-					sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					if len(self.sprite_jetons_progres_plateau) >= 1:
+						sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					else:
+						sprite_num = 0
+						
 					for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
 						if num == sprite_num:
 							sprite_jeton = sprite
@@ -533,21 +537,30 @@ class Fenetre:
 		elif ret == -1:
 			self.__dessiner_defausser(sprite_carte)
 			
+		return 0
+			
 	def __piocher_fausse(self, sprite_carte: SpriteCarte):
 		ret = self.plateau.appliquer_effets_carte(sprite_carte.carte)
 		if self.plateau.victoire is not None:
-			return
+			return 2
 		
 		else:
 			if ret == 2:
 				sprite_jeton = None
-				sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+				if len(self.sprite_jetons_progres_plateau) >= 1:
+					sprite_num = random.randint(0, len(self.sprite_jetons_progres_plateau) - 1)
+					
+				else:
+					sprite_num = 0
+					
 				for num, sprite in enumerate(self.sprite_jetons_progres_plateau):
 					if num == sprite_num:
 						sprite_jeton = sprite
 				self.__deplacer_jeton_scientifique(sprite_jeton)
 			
 			self.__dessiner_piocher(sprite_carte)
+		
+		return 0
 			
 	def __dessiner_piocher(self, sprite_carte: SpriteCarte):
 		#print("__dessiner_piocher")
@@ -693,6 +706,7 @@ class Fenetre:
 		while en_cours:
 			if self.plateau.victoire is not None:
 				en_cours = False
+				break
 				
 			# PARTIE Process input (events)
 			for event in pygame.event.get():
@@ -741,8 +755,8 @@ class Fenetre:
 								if self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
 									
 									self.sprite_carte_j1_zoomer.dezoomer()
-									self.__piocher_plateau(self.sprite_carte_j1_zoomer)
-									if self.plateau.victoire is not None:
+									ret = self.__piocher_plateau(self.sprite_carte_j1_zoomer)
+									if ret == 2:
 										en_cours = False
 										break
 									self.sprite_cartes_plateau.remove(self.sprite_carte_j1_zoomer)
@@ -820,6 +834,10 @@ class Fenetre:
 						nbr_noeuds = 0
 						meilleur_eval = 0
 						print(f"{Couleurs.FAIL}debut alpha_beta_avec_merveille (meilleur_eval = {meilleur_eval}){Couleurs.RESET}")
+						
+						if len(self.plateau.cartes_plateau) == 0:
+							break
+						
 						meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(self.plateau,
 							self.difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
 						# meilleur_eval, carte_bot, nbr_noeuds = alpha_beta(self.plateau, self.difficulte_profondeur,
@@ -864,9 +882,10 @@ class Fenetre:
 												if sprite_carte.rect.collidepoint(clic_x, clic_y):
 													self.sprite_carte_j2_zoomer.dezoomer()
 													self.sprite_carte_j2_zoomer = None
-													self.__piocher_plateau(sprite_carte)
-													if self.plateau.victoire is not None:
+													ret = self.__piocher_plateau(sprite_carte)
+													if ret == 2:
 														en_cours = False
+														break
 													self.plateau.joueur_qui_joue = self.plateau.adversaire()
 													coup_bot = True
 									

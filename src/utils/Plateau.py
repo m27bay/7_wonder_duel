@@ -790,7 +790,6 @@ class Plateau:
 			liste_ressource_necessaire = self.joueur_qui_joue.cout_manquant_ressource_au_choix(liste_ressource_necessaire)
 			
 			if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-				# print("possede maconnerie")
 				liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(liste_ressource_necessaire)
 			
 			# verification ressources nom_joueur
