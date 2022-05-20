@@ -15,7 +15,7 @@ class JetonMilitaire:
                 and self.est_utilise == other.est_utilise \
                 and self.pieces == other.pieces \
                 and self.points_victoire == other.points_victoire
-        
+
         return False
 
     def __str__(self):

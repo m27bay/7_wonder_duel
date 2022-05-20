@@ -1019,7 +1019,7 @@ class Plateau:
                 if self.joueur_qui_joue.nbr_symb_scientifique_diff == 6:
                     self.fin_de_partie()
                     return ret
-                
+
                 if self.joueur_qui_joue.symb_scientifique[effet_split[1]] == 2:
                     ret = 2
 
