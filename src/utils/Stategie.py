@@ -181,7 +181,9 @@ def alpha_beta(partie, profondeur, alpha, beta, coup_bot, nbr_noeuds):
 
 
 def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noeuds):
+	print(f"{Couleurs.WARNING}alpha_beta_avec_merveille{Couleurs.RESET}")
 	if profondeur == 0 or partie_fini(partie):
+		print(f"{Couleurs.WARNING}evaluation{Couleurs.RESET}")
 		return fonction_evaluation(partie), None, None, nbr_noeuds+1
 	
 	merveille_a_construire = None
