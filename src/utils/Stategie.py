@@ -6,6 +6,7 @@ from src.utils.Colours import Couleurs
 from src.utils.Merveille import Merveille
 from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau
+from src.utils.Joueur import Joueur
 
 
 notation_carte = {}
@@ -68,7 +69,8 @@ def fonction_evaluation(partie):
 		evaluation_j1 += 20
 	
 	# print(f"evaluation_j1 conflit : {evaluation_j1}")
-	
+
+
 	# print(f"evaluation_j2 : {evaluation_j2}, evaluation_j1 : {evaluation_j1}")
 	return evaluation_j2 - evaluation_j1
 
@@ -196,7 +198,7 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 			print(f"boucle carte : {carte.nom}", end="")
 			copie_partie: Plateau = partie.constructeur_par_copie()
 			
-			if isinstance(carte, Merveille):
+			if isinstance(carte, Merveille) and len(liste_cartes_prenable) >= 1:
 				print(", construire ?", end="")
 				ret = copie_partie.construire_merveille(carte)
 				
@@ -207,11 +209,15 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 					print(f" non, deja construite")
 				
 				else:
-					carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
+					if len(liste_cartes_prenable) == 1:
+						carte_random = liste_cartes_prenable[0]
+					else:
+						carte_random = liste_cartes_prenable[random.randint(0, len(liste_cartes_prenable) - 1)]
+
 					print(f" oui, avec la carte {carte_random.nom}")
 					copie_partie.joueur_qui_joue.merveilles.append(carte)
 					copie_partie.enlever_carte(carte_random)
-					
+
 					# if "rejouer" in ret:
 					evaluation_merveille, _, _, nbr_noeuds = alpha_beta_avec_merveille(copie_partie,
 						profondeur - 1, alpha, beta, True, nbr_noeuds)
