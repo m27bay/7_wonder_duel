@@ -2,7 +2,6 @@
 Fichier de test pour la classe Jeu.
 """
 import math
-import random
 import unittest
 
 from src.utils.Carte import Carte
@@ -10,7 +9,6 @@ from src.utils.CarteGuilde import CarteGuilde
 from src.utils.JetonProgres import JetonProgres
 from src.utils.Joueur import Joueur
 from src.utils.Merveille import Merveille
-from src.utils.Outils import mon_str_liste
 from src.utils.Plateau import Plateau, SYMBOLE_SCIENTIFIQUES
 from src.utils.Stategie import alpha_beta_avec_merveille
 
@@ -427,18 +425,11 @@ class TestEffetsMerveillesGuide(unittest.TestCase):
         self.plateau.preparation_plateau()
         self.plateau.joueur1.ressources["pierre"] = 3
         self.plateau.joueur1.ressources["papyrus"] = 1
-        # Merveille("pyramides",
-        # 	["point_victoire 9"],
-        # 	["ressource pierre 3", "ressource papyrus 1"]
-        # )
+        # merveilles[0] = pyramides
         self.plateau.construire_merveille(self.plateau.joueur1.merveilles[0])
         self.assertTrue(self.plateau.joueur1.merveilles[0].est_construite)
 
     def test_effets_circus_maximus(self):
-        # Merveille("circus maximus",
-        # 	["defausse_carte_adversaire gris", "attaquer 1", "point_victoire 3"],
-        # 	["ressource pierre 2", "ressource bois 1", "ressource verre 1"]
-        # )
         self.plateau.preparation_plateau()
         self.plateau.joueur_qui_joue = self.plateau.joueur2
         self.plateau.joueur2.ressources["pierre"] = 2
@@ -458,10 +449,6 @@ class TestEffetsMerveillesGuide(unittest.TestCase):
         self.assertEqual(3, self.plateau.joueur2.points_victoire)
 
     def test_effets_jardin_suspendus(self):
-        # Merveille("jardin suspendus",
-        # 	["monnaie 6", "rejouer", "point_victoire 3"],
-        # 	["ressource bois 2 ", "ressource verre 1", "ressource papyrus 1"]
-        # )
         self.plateau.preparation_plateau()
         self.plateau.joueur1.merveilles[0] = Merveille("jardin suspendus",
                                                        ["monnaie 6", "rejouer",
@@ -822,8 +809,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.joueur_qui_joue = plateau.adversaire()
 
         nbr_noeuds = 0
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau,
-                                                                                        difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau,
+                                                                difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[4][10], carte_bot)
 
         plateau.piocher(carte_bot)
@@ -840,8 +827,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
 
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                                        -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
+                                                                -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[4][8], carte_bot)
 
         plateau.piocher(carte_bot)
@@ -859,8 +846,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
 
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                                        -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
+                                                                -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[4][4], carte_bot)
 
         plateau.piocher(carte_bot)
@@ -878,8 +865,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
 
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                                        -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
+                                                                -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[4][2], carte_bot)
 
         plateau.piocher(carte_bot)
@@ -896,8 +883,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
 
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                                        -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
+                                                                -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[3][5], carte_bot)
 
         ancienne_monnaie = plateau.joueur2.monnaie
@@ -917,8 +904,8 @@ class testPartieComplete(unittest.TestCase):
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
 
-        meilleur_eval, carte_bot, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
-                                                                                        -math.inf, math.inf, True, nbr_noeuds)
+        _, carte_bot, _, nbr_noeuds = alpha_beta_avec_merveille(plateau, difficulte_profondeur,
+                                                                -math.inf, math.inf, True, nbr_noeuds)
         self.assertEqual(plateau.cartes_plateau[3][3], carte_bot)
 
         ancienne_monnaie = plateau.joueur2.monnaie
@@ -934,26 +921,6 @@ class testPartieComplete(unittest.TestCase):
         plateau.joueur_qui_joue.cartes.append(carte)
         plateau.enlever_carte(carte)
         plateau.joueur_qui_joue = plateau.adversaire()
-
-    # def test_partie_age(self):
-    # 	plateau = Plateau(Joueur("j1"), Joueur("j2"))
-    # 	plateau.preparation_plateau()
-    # 	difficulte_profondeur = 5
-    #
-    # 	while plateau.victoire is None:
-    # 		carte = None
-    # 		if plateau.joueur_qui_joue == plateau.joueur1:
-    # 			carte = random.choice(plateau.liste_cartes_prenables())
-    # 		else:
-    # 			nbr_noeuds = 0
-    # 			meilleur_eval, carte, merveille_bot, nbr_noeuds = alpha_beta_avec_merveille(plateau,
-    # 				difficulte_profondeur, -math.inf, math.inf, True, nbr_noeuds)
-    #
-    # 		monnaie = plateau.joueur_qui_joue.monnaie
-    # 		ret = plateau.piocher(carte)
-    # 		if ret == 0:
-    #
-    # 		elif
 
 
 if __name__ == '__main__':
