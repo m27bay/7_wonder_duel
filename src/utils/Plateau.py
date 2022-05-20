@@ -44,7 +44,7 @@ class Plateau:
 			self.joueur2 = joueur2
 			self.joueur_qui_joue = None
 			self.victoire = None #(nom du joueur, motif)
-			# motif : militaire, monnaie, points victoire, scientifique, égalité
+			# motif : militaire, points victoire, scientifique, égalité
 			
 			#
 			self.choix_auto_merveilles = choix_auto_merveilles
@@ -617,12 +617,6 @@ class Plateau:
 			
 		elif self.position_jeton_conflit == 18:
 			self.victoire = (self.joueur1.nom, "militaire")
-			
-		elif self.joueur1.monnaie <= 0:
-			self.victoire = (self.joueur2.nom, "monnaie")
-			
-		elif self.joueur2.monnaie <= 0:
-			self.victoire = (self.joueur1.nom, "monnaie")
 			
 		elif self.joueur1.nbr_symb_scientifique_diff == 6:
 			self.victoire = (self.joueur1.nom, "scientifique")
