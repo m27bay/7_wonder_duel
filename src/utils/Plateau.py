@@ -1138,13 +1138,13 @@ class Plateau:
 
         elif jeton.nom == "loi":
             while True:
-                num_symb = random.randint(0, 6)
                 list_symb = ["sphere_armillaire", "roue", "cadran_solaire", "pilon",
                              "compas_maconniques", "plume"]
+                nom_jeton_random = random.choice(list_symb)
 
-                if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] != 2:
-                    print(list_symb[num_symb])
-                    self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] += 1
-                    if self.joueur_qui_joue.symb_scientifique[list_symb[num_symb]] == 2:
+                if self.joueur_qui_joue.symb_scientifique[nom_jeton_random] != 2:
+                    print(nom_jeton_random)
+                    self.joueur_qui_joue.symb_scientifique[nom_jeton_random] += 1
+                    if self.joueur_qui_joue.symb_scientifique[nom_jeton_random] == 2:
                         return 2
                     break
