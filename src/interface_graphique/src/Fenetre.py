@@ -674,79 +674,85 @@ class Fenetre:
         carte_prenable.changer_coords(coord_x, coord_y)
 
     def __construire_merveille(self, merveille: SpriteMerveille, sprite_carte_zoomer: SpriteCarte):
+        old_monnaie = self.plateau.joueur_qui_joue.monnaie
         ret = self.plateau.piocher(sprite_carte_zoomer.carte)
+        
         if ret == -1:
             return -1
+        
         rets = self.plateau.construire_merveille(merveille.merveille)
-        if rets != (-1, None):
-            self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
+        if rets == (-1, None):
+            self.plateau.joueur_qui_joue.monnaie = old_monnaie
+            return -1
+        
+        self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
 
-            if self.plateau.joueur_qui_joue == self.plateau.joueur1:
-                sprite_cartes = self.sprite_j2
-            else:
-                sprite_cartes = self.sprite_j1
+        if self.plateau.joueur_qui_joue == self.plateau.joueur1:
+            sprite_cartes = self.sprite_j2
+        else:
+            sprite_cartes = self.sprite_j1
 
-            for ret in rets:
-                if type(ret) is tuple:
-                    type_ret, obj = ret
-                    if type_ret == "defausse_carte_adversaire" and isinstance(obj, Carte):
-                        type_carte = self.__position_type_carte(obj)
-                        sprite_carte_remove = None
+        for ret in rets:
+            if type(ret) is tuple:
+                type_ret, obj = ret
+                if type_ret == "defausse_carte_adversaire" and isinstance(obj, Carte):
+                    type_carte = self.__position_type_carte(obj)
+                    sprite_carte_remove = None
 
-                        for sprite_carte in sprite_cartes[type_carte]:
-                            if isinstance(sprite_carte, SpriteCarte) and sprite_carte.carte == obj:
-                                sprite_carte_remove = sprite_carte
+                    for sprite_carte in sprite_cartes[type_carte]:
+                        if isinstance(sprite_carte, SpriteCarte) and sprite_carte.carte == obj:
+                            sprite_carte_remove = sprite_carte
+                            break
+
+                    if sprite_carte_remove is not None:
+                        sprite_cartes[type_carte].remove(
+                            sprite_carte_remove)
+                        self.sprite_cartes_defaussees.add(
+                            sprite_carte_remove)
+
+                        sprite_carte_remove.angle = 0
+                        sprite_carte_remove.pivoter()
+
+                        coord_x = self.largeur / 2 - self.rect_image_plateau.width / 4
+                        coord_y = self.hauteur - \
+                            (self.default_hauteur_sprite +
+                             self.espace_entre_carte)
+                        sprite_carte_remove.changer_coords(
+                            coord_x, coord_y)
+
+                if type_ret == "jeton_progres_aleatoire":
+                    if isinstance(obj, JetonProgres):
+                        sprite_jeton_a_prendre = None
+                        for sprite_jeton in self.sprite_jetons_progres_plateau:
+                            if isinstance(sprite_jeton, SpriteJetonsProgres) and sprite_jeton.jeton == obj:
+                                sprite_jeton_a_prendre = sprite_jeton
                                 break
+                        self.__deplacer_jeton_scientifique(
+                            sprite_jeton_a_prendre)
 
-                        if sprite_carte_remove is not None:
-                            sprite_cartes[type_carte].remove(
-                                sprite_carte_remove)
-                            self.sprite_cartes_defaussees.add(
-                                sprite_carte_remove)
+                if type_ret == "construction_fausse_gratuite":
+                    if isinstance(obj, Carte):
+                        if len(self.sprite_cartes_defaussees) != 0:
+                            carte_defausee_a_construire = None
+                            found = False
+                            while not found:
+                                num_carte = random.randint(
+                                    0, len(self.sprite_cartes_defaussees) - 1)
+                                for num_sprite, sprite_carte in enumerate(self.sprite_cartes_defaussees):
+                                    if isinstance(sprite_carte, SpriteCarte) and num_sprite == num_carte:
+                                        ret = self.plateau.piocher(
+                                            sprite_carte.carte)
+                                        if ret == 0:
+                                            carte_defausee_a_construire = sprite_carte
+                                            found = True
+                            ret = self.__piocher_fausse(
+                                carte_defausee_a_construire)
+                            if ret == 2:
+                                return 2
 
-                            sprite_carte_remove.angle = 0
-                            sprite_carte_remove.pivoter()
-
-                            coord_x = self.largeur / 2 - self.rect_image_plateau.width / 4
-                            coord_y = self.hauteur - \
-                                (self.default_hauteur_sprite +
-                                 self.espace_entre_carte)
-                            sprite_carte_remove.changer_coords(
-                                coord_x, coord_y)
-
-                    if type_ret == "jeton_progres_aleatoire":
-                        if isinstance(obj, JetonProgres):
-                            sprite_jeton_a_prendre = None
-                            for sprite_jeton in self.sprite_jetons_progres_plateau:
-                                if isinstance(sprite_jeton, SpriteJetonsProgres) and sprite_jeton.jeton == obj:
-                                    sprite_jeton_a_prendre = sprite_jeton
-                                    break
-                            self.__deplacer_jeton_scientifique(
-                                sprite_jeton_a_prendre)
-
-                    if type_ret == "construction_fausse_gratuite":
-                        if isinstance(obj, Carte):
-                            if len(self.sprite_cartes_defaussees) != 0:
-                                carte_defausee_a_construire = None
-                                found = False
-                                while not found:
-                                    num_carte = random.randint(
-                                        0, len(self.sprite_cartes_defaussees) - 1)
-                                    for num_sprite, sprite_carte in enumerate(self.sprite_cartes_defaussees):
-                                        if isinstance(sprite_carte, SpriteCarte) and num_sprite == num_carte:
-                                            ret = self.plateau.piocher(
-                                                sprite_carte.carte)
-                                            if ret == 0:
-                                                carte_defausee_a_construire = sprite_carte
-                                                found = True
-                                ret = self.__piocher_fausse(
-                                    carte_defausee_a_construire)
-                                if ret == 2:
-                                    return 2
-
-                else:
-                    if type(ret) is str and ret == "rejouer":
-                        return 1
+            else:
+                if type(ret) is str and ret == "rejouer":
+                    return 1
 
         return 0
 

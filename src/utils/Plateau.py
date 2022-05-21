@@ -838,8 +838,9 @@ class Plateau:
                     liste_ressource_necessaire)
 
             if carte_prenable.couleur == "bleu" and self.joueur_qui_joue.possede_jeton_scientifique("maconnerie"):
-                liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(
-                    liste_ressource_necessaire)
+                if len(liste_ressource_necessaire) != 0:
+                    liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(
+                        liste_ressource_necessaire)
 
             monnaie = None
             # carte coute monnaie ?
@@ -924,10 +925,9 @@ class Plateau:
         # verification ressources joueur
         liste_ressource_necessaire = self.joueur_qui_joue.couts_manquants(
             merveille_a_construire)
-        # print(liste_ressource_necessaire)
         joueur_possede_jeton_archi = any(
             jeton.nom == "architecture" for jeton in self.joueur_qui_joue.jetons_progres)
-        if joueur_possede_jeton_archi:
+        if joueur_possede_jeton_archi and len(liste_ressource_necessaire) != 0:
             liste_ressource_necessaire = self.effet_jeton_architecture_et_maconnerie(
                 liste_ressource_necessaire)
 
@@ -1145,7 +1145,6 @@ class Plateau:
                 nom_jeton_random = random.choice(list_symb)
 
                 if self.joueur_qui_joue.symb_scientifique[nom_jeton_random] != 2:
-                    print(nom_jeton_random)
                     self.joueur_qui_joue.symb_scientifique[nom_jeton_random] += 1
                     if self.joueur_qui_joue.symb_scientifique[nom_jeton_random] == 2:
                         return 2
