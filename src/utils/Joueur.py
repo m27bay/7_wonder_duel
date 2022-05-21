@@ -254,7 +254,8 @@ class Joueur:
         """
         Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
         """
-
+        
+        print(f"compter points {self.nom}")
         self.points_victoire = 0
         # compter points victoire avec les cartes
         for carte in self.cartes:
@@ -263,6 +264,7 @@ class Joueur:
                 # decoupe l effet
                 effet_split = effet.split(" ")
                 if effet_split[0] == "point_victoire":
+                    print(f"points cartes {carte.nom} = {int(effet_split[1])}")
                     self.points_victoire += int(effet_split[1])
 
         # compter points de victoire avec les merveilles
@@ -272,6 +274,7 @@ class Joueur:
                     # decoupe l effet
                     effet_split = effet.split(" ")
                     if effet_split[0] == "point_victoire":
+                        print(f"points merveille {merveille.nom} = {int(effet_split[1])}")
                         self.points_victoire += int(effet_split[1])
 
         # compter points de victoire avec les jetons_progres
