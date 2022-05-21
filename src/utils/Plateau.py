@@ -1001,6 +1001,7 @@ class Plateau:
 
             # si le pion se situe au bout du plateau militaire, il y a une victoire militaire
             if self.position_jeton_conflit in [0, 18]:
+                print(f"position jeton conflit: {self.position_jeton_conflit}")
                 self.fin_de_partie()
 
             else:
@@ -1012,6 +1013,7 @@ class Plateau:
                     if not jeton.est_utilise:
                         self.adversaire().monnaie -= jeton.pieces
                         if self.adversaire().monnaie < 0:
+                            print(f"monaie adversaire : {self.adversaire().monnaie}")
                             self.fin_de_partie()
                         self.monnaie_banque += jeton.pieces
 
@@ -1030,18 +1032,15 @@ class Plateau:
 
             if type == "attaquer":
                 nbr_bouclier = int(effet_split[1])
-                print("avant if")
                 if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
-                    print("avant effet", nbr_bouclier)
                     nbr_bouclier += 1
-                    print("apres effet", nbr_bouclier)
-                print("apres if")
                 self.deplacer_pion_miltaire(nbr_bouclier)
 
             if type == "symbole_scientifique":
                 self.joueur_qui_joue.symb_scientifique[effet_split[1]] += 1
                 self.joueur_qui_joue.compter_symb_scientifique()
                 if self.joueur_qui_joue.nbr_symb_scientifique_diff == 6:
+                    print(f"joueur_qui_joue.nbr_symb_scientifique_diff :{self.joueur_qui_joue.nbr_symb_scientifique_diff}")
                     self.fin_de_partie()
                     return ret
 
