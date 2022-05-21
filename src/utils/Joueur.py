@@ -284,18 +284,17 @@ class Joueur:
                 # decoupe l effet
                 effet_split = effet.split(" ")
 
-                # mathematiques
-                if effet_split[0] == "point_victoire_par_jeton":
-                    self.points_victoire += int(
-                        effet_split[1]) * len(self.jetons_progres)
-
                 # agriculture,
-                elif effet_split[0] == "point_victoire":
+                if effet_split[0] == "point_victoire":
                     self.points_victoire += int(effet_split[1])
 
                 # philosophie
                 elif effet_split[0] == "point_victoire_fin_partie":
                     self.points_victoire += int(effet_split[1])
+
+        joueur_possede_mathematique = any(jeton.nom == "mathematiques" for jeton in self.jetons_progres)
+        if joueur_possede_mathematique:
+            self.points_victoire += 3 * (len(self.jetons_progres) - 1)
 
     def trouver_repartition_monnaies(self):
         repartition = {6: 0, 3: 0, 1: 0}

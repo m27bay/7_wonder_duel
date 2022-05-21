@@ -697,12 +697,15 @@ class Plateau:
 
         if self.position_jeton_conflit > 9:
             self.joueur1.points_victoire += jeton.points_victoire
+            print(f"j1 gagne {jeton.points_victoire} avec jeton militaire")
 
         elif self.position_jeton_conflit < 9:
             self.joueur2.points_victoire += jeton.points_victoire
+            print(f"j2 gagne {jeton.points_victoire} avec jeton militaire")
 
         for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
                           "guilde des tacticiens", "guilde des scientifiques"]:
+            print(f"effet carte {nom_carte}")
             j1_possede_carte = any(
                 carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
             j2_possede_carte = any(
@@ -742,20 +745,20 @@ class Plateau:
                     joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
                     joueur.points_victoire += int(joueur.monnaie / 3)
 
-            self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
-            self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
+        self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
+        print(f"gain monnaie j1 {int(self.joueur1.monnaie / 3)}")
+        self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
+        print(f"gain monnaie j2 {int(self.joueur2.monnaie / 3)}")
 
+        if self.victoire is None:
             if self.joueur1.points_victoire > self.joueur2.points_victoire:
-                if self.victoire is None:
-                    self.victoire = (self.joueur1.nom, "points victoire")
+                self.victoire = (self.joueur1.nom, "points victoire")
 
             elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-                if self.victoire is None:
-                    self.victoire = (self.joueur2.nom, "points victoire")
+                self.victoire = (self.joueur2.nom, "points victoire")
 
             else:
-                if self.victoire is None:
-                    self.victoire = (None, "égalité")
+                self.victoire = (None, "égalité")
 
     def action_banque(self, monnaies: int):
         if monnaies == 0:
@@ -889,29 +892,45 @@ class Plateau:
         self.enlever_carte(carte_prenable)
 
     def effet_jeton_architecture_et_maconnerie(self, liste_ressource_necessaire: list):
+        # on prend la première ressource necessaire
         ressource = liste_ressource_necessaire[0]
         ressource_split = ressource.split(" ")
         qte = int(ressource_split[2])
 
+        # s'il manque 1 qte de cette ressource
         if qte == 1:
-            ressource2 = liste_ressource_necessaire[1]
-            ressource_split2 = ressource2.split(" ")
-            qte2 = int(ressource_split2[2])
 
-            if qte2 == 1:
-                liste_ressource_necessaire.remove(ressource2)
+            # s'il y a d'autre ressource manquante
+            if len(liste_ressource_necessaire) >= 2:
+                ressource2 = liste_ressource_necessaire[1]
+                ressource_split2 = ressource2.split(" ")
+                qte2 = int(ressource_split2[2])
 
-            elif qte2 >= 2:
-                liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+                # si la deuxième ressource est en qte 1
+                if qte2 == 1:
+                    liste_ressource_necessaire.remove(ressource2)
+
+                # si la deuxième ressource est en qte >= 1
+                elif qte2 >= 2:
+                    # on fait la différence
+                    liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+                    return liste_ressource_necessaire
+
+                # on supprime la première ressource
+                liste_ressource_necessaire.remove(ressource)
                 return liste_ressource_necessaire
 
+            # else, il ne manque qu'une ressource
+            return []
+
+        # si la première ressource est en qte = 2
+        elif qte == 2:
+            # on la supprime
             liste_ressource_necessaire.remove(ressource)
             return liste_ressource_necessaire
 
-        if qte == 2:
-            liste_ressource_necessaire.remove(ressource)
-            return liste_ressource_necessaire
-
+        # si la premirèe qte >= 2
+        # on fait la différence
         liste_ressource_necessaire[0] = f"{ressource_split[0]} {ressource_split[1]} {qte - 2}"
         return liste_ressource_necessaire
 
