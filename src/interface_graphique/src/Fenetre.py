@@ -671,15 +671,8 @@ class Fenetre:
         carte_prenable.changer_coords(coord_x, coord_y)
 
     def __construire_merveille(self, merveille: SpriteMerveille, sprite_carte_zoomer: SpriteCarte):
-        old_monnaie = self.plateau.joueur_qui_joue.monnaie
-        ret = self.plateau.piocher(sprite_carte_zoomer.carte)
-
-        if ret == -1:
-            return -1
-
         rets = self.plateau.construire_merveille(merveille.merveille)
         if rets == (-1, None):
-            self.plateau.joueur_qui_joue.monnaie = old_monnaie
             return -1
 
         self.__dessiner_merveille_sacrifier(merveille, sprite_carte_zoomer)
