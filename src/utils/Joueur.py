@@ -122,7 +122,7 @@ class Joueur:
 
         else:
             liste_couts_manquants = []
-            
+
             for cout in carte.couts:
                 cout_split = cout.split(" ")
                 cout_type = cout_split[0]
@@ -131,7 +131,7 @@ class Joueur:
                     cout_type_ressource = cout_split[1]
                     cout_qte_ressource = int(cout_split[2])
                     qte_produite = self.ressources[cout_type_ressource]
-    
+
                     if qte_produite < cout_qte_ressource:
                         difference_qte = cout_qte_ressource - qte_produite
                         ressource_manquante = f"ressource {cout_type_ressource} {difference_qte}"
@@ -189,7 +189,7 @@ class Joueur:
         return liste_couts_manquants
 
     def possede_carte_chainage(self, carte: Carte):
-        
+
         # si la carte ne possede pas de carte de chainage
         if carte.nom_carte_chainage is None:
             return False
