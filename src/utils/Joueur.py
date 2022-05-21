@@ -255,7 +255,6 @@ class Joueur:
         Ajoute les points de victoires des differents objets (Carte, Jeton, CarteFille)
         """
         
-        print(f"compter points {self.nom}")
         self.points_victoire = 0
         # compter points victoire avec les cartes
         for carte in self.cartes:
@@ -264,7 +263,6 @@ class Joueur:
                 # decoupe l effet
                 effet_split = effet.split(" ")
                 if effet_split[0] == "point_victoire":
-                    print(f"points cartes {carte.nom} = {int(effet_split[1])}")
                     self.points_victoire += int(effet_split[1])
 
         # compter points de victoire avec les merveilles
@@ -274,7 +272,6 @@ class Joueur:
                     # decoupe l effet
                     effet_split = effet.split(" ")
                     if effet_split[0] == "point_victoire":
-                        print(f"points merveille {merveille.nom} = {int(effet_split[1])}")
                         self.points_victoire += int(effet_split[1])
 
         # compter points de victoire avec les jetons_progres
@@ -286,17 +283,14 @@ class Joueur:
 
                 # agriculture,
                 if effet_split[0] == "point_victoire":
-                    print(f"points agriculture = {int(effet_split[1])}")
                     self.points_victoire += int(effet_split[1])
 
                 # philosophie
                 elif effet_split[0] == "point_victoire_fin_partie":
-                    print(f"points philosophie = {int(effet_split[1])}")
                     self.points_victoire += int(effet_split[1])
 
         joueur_possede_mathematique = any(jeton.nom == "mathematiques" for jeton in self.jetons_progres)
         if joueur_possede_mathematique:
-            print(f"points mathematiques = {3 * (len(self.jetons_progres) - 1)}")
             self.points_victoire += 3 * (len(self.jetons_progres) - 1)
 
     def trouver_repartition_monnaies(self):
