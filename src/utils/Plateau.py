@@ -1008,9 +1008,12 @@ class Plateau:
 
             if type == "attaquer":
                 nbr_bouclier = int(effet_split[1])
+                print("avant if")
                 if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
+                    print("avant effet",nbr_bouclier)
                     nbr_bouclier += 1
-
+                    print("apres effet",nbr_bouclier)
+                print("apres if")
                 self.deplacer_pion_miltaire(nbr_bouclier)
 
             if type == "symbole_scientifique":

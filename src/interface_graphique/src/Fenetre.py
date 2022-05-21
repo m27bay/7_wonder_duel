@@ -491,6 +491,7 @@ class Fenetre:
                             sprite_jeton_militaire)
 
     def __deplacer_jeton_scientifique(self, sprite_jeton: SpriteJetonsProgres):
+        self.plateau.joueur_qui_joue.jetons_progres.append(sprite_jeton.jeton)
         if self.plateau.joueur_qui_joue == self.plateau.joueur1:
             coord_x, coord_y = self.rect_image_plateau.bottomleft
             coord_x /= 8
@@ -557,9 +558,11 @@ class Fenetre:
 
             ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
             if self.plateau.victoire is not None:
+                print("here")
                 return 2
 
             if ret2 == 2:
+
                 sprite_jeton = None
                 if len(self.sprite_jetons_progres_plateau) >= 1:
                     sprite_num = random.randint(
