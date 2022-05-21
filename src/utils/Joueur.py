@@ -122,7 +122,7 @@ class Joueur:
 
         else:
             liste_couts_manquants = []
-
+            
             for cout in carte.couts:
                 cout_split = cout.split(" ")
                 cout_type = cout_split[0]
@@ -131,7 +131,7 @@ class Joueur:
                     cout_type_ressource = cout_split[1]
                     cout_qte_ressource = int(cout_split[2])
                     qte_produite = self.ressources[cout_type_ressource]
-
+    
                     if qte_produite < cout_qte_ressource:
                         difference_qte = cout_qte_ressource - qte_produite
                         ressource_manquante = f"ressource {cout_type_ressource} {difference_qte}"
@@ -147,13 +147,6 @@ class Joueur:
 
             if len(liste_couts_manquants) == 0:
                 return []
-
-            if len(liste_couts_manquants) == 1:
-                cout_manquant_split = liste_couts_manquants[0].split(" ")
-                cout_manquant_type = cout_manquant_split[0]
-
-                if cout_manquant_type == "monnaie":
-                    return liste_couts_manquants
 
             return liste_couts_manquants
 
@@ -229,14 +222,11 @@ class Joueur:
         :return: le prix reduit si le nom_joueur possede une carte reduction de la ressource, 0 sinon.
         """
         for carte in self.cartes:
-            # print(f"carte : {carte.nom}", end=", ")
             for effet in carte.effets:
-                # print(effet, end="")
                 effet_split = effet.split(" ")
 
                 # reduc_ressource type prixReduc
                 if effet_split[0] == "reduc_ressource" and effet_split[1] == ressource:
-                    # print(f" reduc : ", effet_split[2])
                     return int(effet_split[2])
 
         return 0

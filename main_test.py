@@ -12,6 +12,7 @@ if __name__ == '__main__':
     # facile = 5
     # normal = 7
     # difficile = 9
-    fenetre = Fenetre("7 wonder Duel", plateau, 5)
+    # fenetre = Fenetre("7 wonder Duel", plateau, 9)
+    fenetre = Fenetre("7 wonder Duel", plateau, 5, True)
 
     fenetre.boucle_principale()
