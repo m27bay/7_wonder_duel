@@ -697,12 +697,15 @@ class Plateau:
 
         if self.position_jeton_conflit > 9:
             self.joueur1.points_victoire += jeton.points_victoire
+            print(f"j1 gagne {jeton.points_victoire} avec jeton militaire")
 
         elif self.position_jeton_conflit < 9:
             self.joueur2.points_victoire += jeton.points_victoire
+            print(f"j2 gagne {jeton.points_victoire} avec jeton militaire")
 
         for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
                           "guilde des tacticiens", "guilde des scientifiques"]:
+            print(f"effet carte {nom_carte}")
             j1_possede_carte = any(
                 carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
             j2_possede_carte = any(
@@ -742,20 +745,20 @@ class Plateau:
                     joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
                     joueur.points_victoire += int(joueur.monnaie / 3)
 
-            self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
-            self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
+        self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
+        print(f"gain monnaie j1 {int(self.joueur1.monnaie / 3)}")
+        self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
+        print(f"gain monnaie j2 {int(self.joueur2.monnaie / 3)}")
 
+        if self.victoire is None:
             if self.joueur1.points_victoire > self.joueur2.points_victoire:
-                if self.victoire is None:
-                    self.victoire = (self.joueur1.nom, "points victoire")
+                self.victoire = (self.joueur1.nom, "points victoire")
 
             elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-                if self.victoire is None:
-                    self.victoire = (self.joueur2.nom, "points victoire")
+                self.victoire = (self.joueur2.nom, "points victoire")
 
             else:
-                if self.victoire is None:
-                    self.victoire = (None, "égalité")
+                self.victoire = (None, "égalité")
 
     def action_banque(self, monnaies: int):
         if monnaies == 0:
