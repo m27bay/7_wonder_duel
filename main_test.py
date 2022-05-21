@@ -26,8 +26,7 @@ if __name__ == '__main__':
         "plume": 0
     }
     plateau.jetons_progres_plateau.clear()
-    plateau.jetons_progres_plateau.append(JetonProgres(
-                    "urbanisme", ["monnaie 6", "bonus_monnaie_chainage 4"]))
+    plateau.jetons_progres_plateau.append(JetonProgres("philosophie", ["point_victoire_fin_partie 7"]))
 
     # plateau.joueur1.jetons_progres.append(JetonProgres("strategie", ["bonus_attaque"]))
     # print(plateau.joueur1.possede_jeton_scientifique("strategie"))
