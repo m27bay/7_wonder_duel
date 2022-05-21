@@ -680,57 +680,56 @@ class Plateau:
         if self.position_jeton_conflit == 0:
             self.victoire = (self.joueur2.nom, "militaire")
 
-        elif self.position_jeton_conflit == 18:
+        if self.position_jeton_conflit == 18:
             self.victoire = (self.joueur1.nom, "militaire")
 
-        elif self.joueur1.nbr_symb_scientifique_diff == 6:
+        if self.joueur1.nbr_symb_scientifique_diff == 6:
             self.victoire = (self.joueur1.nom, "scientifique")
 
-        elif self.joueur2.nbr_symb_scientifique_diff == 6:
+        if self.joueur2.nbr_symb_scientifique_diff == 6:
             self.victoire = (self.joueur2.nom, "scientifique")
 
-        else:
-            self.joueur1.compter_point_victoire()
-            self.joueur2.compter_point_victoire()
+        self.joueur1.compter_point_victoire()
+        self.joueur2.compter_point_victoire()
 
-            numero_jeton = self.numero_jeton_militaire()
-            jeton = self.jetons_militaire[numero_jeton]
+        numero_jeton = self.numero_jeton_militaire()
+        jeton = self.jetons_militaire[numero_jeton]
 
-            if self.position_jeton_conflit > 9:
-                self.joueur1.points_victoire += jeton.points_victoire
+        if self.position_jeton_conflit > 9:
+            self.joueur1.points_victoire += jeton.points_victoire
 
-            elif self.position_jeton_conflit < 9:
-                self.joueur2.points_victoire += jeton.points_victoire
+        elif self.position_jeton_conflit < 9:
+            self.joueur2.points_victoire += jeton.points_victoire
 
-            for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
-                              "guilde des tacticiens", "guilde des scientifiques"]:
-                j1_possede_carte = any(
-                    carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
-                j2_possede_carte = any(
-                    carte_joueur.nom == nom_carte for carte_joueur in self.joueur2.cartes)
+        for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
+                          "guilde des tacticiens", "guilde des scientifiques"]:
+            j1_possede_carte = any(
+                carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
+            j2_possede_carte = any(
+                carte_joueur.nom == nom_carte for carte_joueur in self.joueur2.cartes)
 
-                if j1_possede_carte or j2_possede_carte:
-                    if nom_carte == "guilde des armateurs":
-                        recherche = ["gris", "marron"]
-                    elif nom_carte == "guilde des commercants":
-                        recherche = ["jaune"]
-                    elif nom_carte == "guilde des magistrats":
-                        recherche = ["bleu"]
-                    elif nom_carte == "guilde des tacticiens":
-                        recherche = ["rouge"]
-                    else:
-                        recherche = ["vert"]
+            if j1_possede_carte or j2_possede_carte:
+                if nom_carte == "guilde des armateurs":
+                    recherche = ["gris", "marron"]
+                elif nom_carte == "guilde des commercants":
+                    recherche = ["jaune"]
+                elif nom_carte == "guilde des magistrats":
+                    recherche = ["bleu"]
+                elif nom_carte == "guilde des tacticiens":
+                    recherche = ["rouge"]
+                else:
+                    recherche = ["vert"]
 
-                    nbr_carte_recherche_j1 = len(
-                        [carte for carte in self.joueur1.cartes if carte.couleur in recherche])
-                    nbr_carte_recherche_j2 = len(
-                        [carte for carte in self.joueur2.cartes if carte.couleur in recherche])
+                nbr_carte_recherche_j1 = len(
+                    [carte for carte in self.joueur1.cartes if carte.couleur in recherche])
+                nbr_carte_recherche_j2 = len(
+                    [carte for carte in self.joueur2.cartes if carte.couleur in recherche])
 
-                    if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
-                        maxi = max(nbr_carte_recherche_j1,
-                                   nbr_carte_recherche_j2)
-                        joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
-                        joueur.points_victoire += maxi
+                if nbr_carte_recherche_j1 != nbr_carte_recherche_j2:
+                    maxi = max(nbr_carte_recherche_j1,
+                               nbr_carte_recherche_j2)
+                    joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
+                    joueur.points_victoire += maxi
 
             j1_possede_usuriers = any(
                 carte_joueur.nom == "guilde des usuriers" for carte_joueur in self.joueur1.cartes)
@@ -747,13 +746,16 @@ class Plateau:
             self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
 
             if self.joueur1.points_victoire > self.joueur2.points_victoire:
-                self.victoire = (self.joueur1.nom, "points victoire")
+                if self.victoire is None:
+                    self.victoire = (self.joueur1.nom, "points victoire")
 
             elif self.joueur1.points_victoire < self.joueur2.points_victoire:
-                self.victoire = (self.joueur2.nom, "points victoire")
+                if self.victoire is None:
+                    self.victoire = (self.joueur2.nom, "points victoire")
 
             else:
-                self.victoire = (None, "égalité")
+                if self.victoire is None:
+                    self.victoire = (None, "égalité")
 
     def action_banque(self, monnaies: int):
         if monnaies == 0:
