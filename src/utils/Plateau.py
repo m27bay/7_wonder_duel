@@ -705,7 +705,6 @@ class Plateau:
 
         for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
                           "guilde des tacticiens", "guilde des scientifiques"]:
-            print(f"effet carte {nom_carte}")
             j1_possede_carte = any(
                 carte_joueur.nom == nom_carte for carte_joueur in self.joueur1.cartes)
             j2_possede_carte = any(
@@ -733,6 +732,7 @@ class Plateau:
                                nbr_carte_recherche_j2)
                     joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
                     joueur.points_victoire += maxi
+                    print(f"effet carte {nom_carte}, {joueur.nom} gagne {maxi}")
 
             j1_possede_usuriers = any(
                 carte_joueur.nom == "guilde des usuriers" for carte_joueur in self.joueur1.cartes)
@@ -744,6 +744,7 @@ class Plateau:
                     maxi = max(self.joueur1.monnaie, self.joueur2.monnaie)
                     joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
                     joueur.points_victoire += int(joueur.monnaie / 3)
+                    print(f"effet carte {nom_carte}, {joueur.nom} gagne {int(joueur.monnaie / 3)}")
 
         self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
         print(f"gain monnaie j1 {int(self.joueur1.monnaie / 3)}")

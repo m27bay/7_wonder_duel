@@ -558,7 +558,7 @@ class Fenetre:
 
             ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
             if self.plateau.victoire is not None:
-                print("here")
+                print("here1")
                 return 2
 
             if ret2 == 2:
@@ -767,6 +767,7 @@ class Fenetre:
 
         while en_cours:
             if self.plateau.victoire is not None:
+                print("fin partie")
                 en_cours = False
                 break
 
