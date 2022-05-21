@@ -697,11 +697,9 @@ class Plateau:
 
         if self.position_jeton_conflit > 9:
             self.joueur1.points_victoire += jeton.points_victoire
-            print(f"j1 gagne {jeton.points_victoire} avec jeton militaire")
 
         elif self.position_jeton_conflit < 9:
             self.joueur2.points_victoire += jeton.points_victoire
-            print(f"j2 gagne {jeton.points_victoire} avec jeton militaire")
 
         for nom_carte in ["guilde des armateurs", "guilde des commercants", "guilde des magistrats",
                           "guilde des tacticiens", "guilde des scientifiques"]:
@@ -732,7 +730,6 @@ class Plateau:
                                nbr_carte_recherche_j2)
                     joueur = self.joueur1 if maxi == nbr_carte_recherche_j1 else self.joueur2
                     joueur.points_victoire += maxi
-                    print(f"effet carte {nom_carte}, {joueur.nom} gagne {maxi}")
 
             j1_possede_usuriers = any(
                 carte_joueur.nom == "guilde des usuriers" for carte_joueur in self.joueur1.cartes)
@@ -744,12 +741,9 @@ class Plateau:
                     maxi = max(self.joueur1.monnaie, self.joueur2.monnaie)
                     joueur = self.joueur1 if maxi == self.joueur1.monnaie else self.joueur2
                     joueur.points_victoire += int(joueur.monnaie / 3)
-                    print(f"effet carte {nom_carte}, {joueur.nom} gagne {int(joueur.monnaie / 3)}")
 
         self.joueur1.points_victoire += int(self.joueur1.monnaie / 3)
-        print(f"gain monnaie j1 {int(self.joueur1.monnaie / 3)}")
         self.joueur2.points_victoire += int(self.joueur2.monnaie / 3)
-        print(f"gain monnaie j2 {int(self.joueur2.monnaie / 3)}")
 
         if self.victoire is None:
             if self.joueur1.points_victoire > self.joueur2.points_victoire:
@@ -914,7 +908,7 @@ class Plateau:
                 # si la deuxième ressource est en qte >= 1
                 elif qte2 >= 2:
                     # on fait la différence
-                    liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+                    liste_ressource_necessaire[1] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
                     return liste_ressource_necessaire
 
                 # on supprime la première ressource
@@ -1010,9 +1004,10 @@ class Plateau:
                     jeton = self.jetons_militaire[numero_jeton]
 
                     if not jeton.est_utilise:
-                        self.adversaire().monnaie -= jeton.pieces
-                        if self.adversaire().monnaie < 0:
-                            self.fin_de_partie()
+                        if self.adversaire().monnaie >= jeton.pieces:
+                            self.adversaire().monnaie -= jeton.pieces
+                        else:
+                             self.adversaire().monnaie = 0
                         self.monnaie_banque += jeton.pieces
 
                         jeton.est_utilise = True
@@ -1030,12 +1025,8 @@ class Plateau:
 
             if type == "attaquer":
                 nbr_bouclier = int(effet_split[1])
-                print("avant if")
                 if self.joueur_qui_joue.possede_jeton_scientifique("strategie"):
-                    print("avant effet", nbr_bouclier)
                     nbr_bouclier += 1
-                    print("apres effet", nbr_bouclier)
-                print("apres if")
                 self.deplacer_pion_miltaire(nbr_bouclier)
 
             if type == "symbole_scientifique":

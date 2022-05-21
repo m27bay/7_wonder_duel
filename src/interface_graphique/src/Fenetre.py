@@ -551,14 +551,11 @@ class Fenetre:
             return 6
 
     def __piocher_plateau(self, sprite_carte: SpriteCarte):
-        # print(f"{Couleurs.FAIL}monnaie avant piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
         ret = self.plateau.piocher(sprite_carte.carte)
-        # print(f"{Couleurs.FAIL}monnaie après piocher : {self.plateau.joueur_qui_joue.monnaie}{Couleurs.RESET}")
         if ret == 0:
 
             ret2 = self.plateau.appliquer_effets_carte(sprite_carte.carte)
             if self.plateau.victoire is not None:
-                print("here1")
                 return 2
 
             if ret2 == 2:
@@ -767,7 +764,6 @@ class Fenetre:
 
         while en_cours:
             if self.plateau.victoire is not None:
-                print("fin partie")
                 en_cours = False
                 break
 
@@ -811,12 +807,9 @@ class Fenetre:
 
                         if (clic_x < bottomleft_x and clic_y > bottomleft_y and self.plateau.joueur_qui_joue == self.plateau.joueur1) and self.sprite_carte_j1_zoomer is not None and self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
                             self.sprite_carte_j1_zoomer.dezoomer()
-                            print("joueur1 prend avant",self.sprite_carte_j1_zoomer.carte)
                             ret = self.__piocher_plateau(
                                 self.sprite_carte_j1_zoomer)
-                            print("joueur1 prend apres", self.sprite_carte_j1_zoomer.carte)
                             if ret == 2:
-                                print("fin du game")
                                 en_cours = False
                                 break
                             self.sprite_cartes_plateau.remove(

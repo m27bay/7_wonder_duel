@@ -10,28 +10,6 @@ if __name__ == '__main__':
 
     plateau.preparation_plateau()
 
-    # plateau.joueur1.ressources = {
-    #     "bois": 5,
-    #     "pierre": 5,
-    #     "argile": 0,
-    #     "verre": 5,
-    #     "papyrus": 5
-    # }
-    # plateau.joueur1.symb_scientifique = {
-    #     "sphere_armillaire": 1,
-    #     "roue": 1,
-    #     "cadran_solaire": 1,
-    #     "pilon": 1,
-    #     "compas_maconniques": 1,
-    #     "plume": 0
-    # }
-    # plateau.jetons_progres_plateau.clear()
-    # plateau.jetons_progres_plateau.append(JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"]))
-
-
-    # plateau.joueur1.jetons_progres.append(JetonProgres("strategie", ["bonus_attaque"]))
-    # print(plateau.joueur1.possede_jeton_scientifique("strategie"))
-
     # facile = 5
     # normal = 7
     # difficile = 9
