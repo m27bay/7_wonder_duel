@@ -196,8 +196,10 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
         max_eval = -math.inf
 
         liste_cartes_prenable = partie.liste_cartes_prenables()
+        
         if len(liste_cartes_prenable) == 0:
             return fonction_evaluation(partie), carte_a_sacrifier, merveille_a_construire, nbr_noeuds
+        
         cartes = liste_cartes_prenable + partie.joueur2.liste_merveilles_non_construite()
         for carte in cartes:
             print(f"boucle carte : {carte.nom}")
@@ -205,8 +207,8 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
 
             if isinstance(carte, Merveille):
                 merveille = carte
+                
                 if len(liste_cartes_prenable) >= 1:
-                    
                     print("construire merveille ?")
                     ret = copie_partie.construire_merveille(merveille)
                     if ret == (-1, None):
@@ -216,8 +218,8 @@ def alpha_beta_avec_merveille(partie, profondeur, alpha, beta, coup_bot, nbr_noe
                         print("non, deja construite")
 
                     else:
-                        liste_cartes_prenable = random.choice(liste_cartes_prenable)
-                        copie_partie.enlever_carte(liste_cartes_prenable)
+                        carte_random = random.choice(liste_cartes_prenable)
+                        copie_partie.enlever_carte(carte_random)
                         print("carte sacrifie : {liste_cartes_prenable}")
                         
                         copie_partie.joueur_qui_joue.merveilles.append(
