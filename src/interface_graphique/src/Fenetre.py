@@ -810,9 +810,12 @@ class Fenetre:
 
                         if (clic_x < bottomleft_x and clic_y > bottomleft_y and self.plateau.joueur_qui_joue == self.plateau.joueur1) and self.sprite_carte_j1_zoomer is not None and self.sprite_carte_j1_zoomer.carte in self.plateau.liste_cartes_prenables():
                             self.sprite_carte_j1_zoomer.dezoomer()
+                            print("joueur1 prend avant",self.sprite_carte_j1_zoomer.carte)
                             ret = self.__piocher_plateau(
                                 self.sprite_carte_j1_zoomer)
+                            print("joueur1 prend apres", self.sprite_carte_j1_zoomer.carte)
                             if ret == 2:
+                                print("fin du game")
                                 en_cours = False
                                 break
                             self.sprite_cartes_plateau.remove(
