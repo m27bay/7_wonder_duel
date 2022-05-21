@@ -60,7 +60,9 @@ tab_image = [
     "src/interface_graphique/ressources/images/image_menu/Pierre.jpg",
     "src/interface_graphique/ressources/images/image_menu/Bois.jpg",
     "src/interface_graphique/ressources/images/image_menu/Papier.jpg",
-    "src/interface_graphique/ressources/images/image_menu/Verre.jpg"
+    "src/interface_graphique/ressources/images/image_menu/Verre.jpg",
+    "src/interface_graphique/ressources/images/image_menu/Alea.xcf",
+    "src/interface_graphique/ressources/images/image_menu/Alea_off.xcf"
 ]
 
 
@@ -203,12 +205,12 @@ def affichage_mode_jouer():
 
     window_tempo = window_surface
 
-    bouton_merveille_aleatoire_non = Boutton.Button(image_mode_jouer[5], image_mode_jouer[5], (taille[0] / 2) - 75, (taille[1] / 2) + 70,
+    bouton_merveille_aleatoire_non = Boutton.Button(image_mode_jouer[19], image_mode_jouer[19], (taille[0] / 2) - 75, (taille[1] / 2) + 70,
                                                     LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
                                                     )
     bouton_merveille_aleatoire_non.affichage_du_bouton(window_surface)
 
-    bouton_merveille_aleatoire_oui = Boutton.Button(image_mode_jouer[4], image_mode_jouer[4], (taille[0] / 2) - 75,
+    bouton_merveille_aleatoire_oui = Boutton.Button(image_mode_jouer[18], image_mode_jouer[18], (taille[0] / 2) - 75,
                                                     (taille[1] / 2) +
                                                     70, LONGUEUR_BOUTON_MENU, LARGEUR_BOUTON_MENU
                                                     )
