@@ -13,7 +13,7 @@ if __name__ == '__main__':
     plateau.joueur1.ressources = {
         "bois": 5,
         "pierre": 5,
-        "argile": 5,
+        "argile": 0,
         "verre": 5,
         "papyrus": 5
     }
@@ -26,7 +26,8 @@ if __name__ == '__main__':
         "plume": 0
     }
     plateau.jetons_progres_plateau.clear()
-    plateau.jetons_progres_plateau.append(JetonProgres("philosophie", ["point_victoire_fin_partie 7"]))
+    plateau.jetons_progres_plateau.append(JetonProgres("agriculture", ["monnaie 6", "point_victoire 4"]))
+
 
     # plateau.joueur1.jetons_progres.append(JetonProgres("strategie", ["bonus_attaque"]))
     # print(plateau.joueur1.possede_jeton_scientifique("strategie"))
