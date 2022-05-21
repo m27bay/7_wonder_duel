@@ -892,29 +892,45 @@ class Plateau:
         self.enlever_carte(carte_prenable)
 
     def effet_jeton_architecture_et_maconnerie(self, liste_ressource_necessaire: list):
+        # on prend la première ressource necessaire
         ressource = liste_ressource_necessaire[0]
         ressource_split = ressource.split(" ")
         qte = int(ressource_split[2])
 
+        # s'il manque 1 qte de cette ressource
         if qte == 1:
-            ressource2 = liste_ressource_necessaire[1]
-            ressource_split2 = ressource2.split(" ")
-            qte2 = int(ressource_split2[2])
 
-            if qte2 == 1:
-                liste_ressource_necessaire.remove(ressource2)
+            # s'il y a d'autre ressource manquante
+            if len(liste_ressource_necessaire) >= 2:
+                ressource2 = liste_ressource_necessaire[1]
+                ressource_split2 = ressource2.split(" ")
+                qte2 = int(ressource_split2[2])
 
-            elif qte2 >= 2:
-                liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+                # si la deuxième ressource est en qte 1
+                if qte2 == 1:
+                    liste_ressource_necessaire.remove(ressource2)
+
+                # si la deuxième ressource est en qte >= 1
+                elif qte2 >= 2:
+                    # on fait la différence
+                    liste_ressource_necessaire[2] = f"{ressource_split[0]} {ressource_split[1]} {qte2 - 1}"
+                    return liste_ressource_necessaire
+
+                # on supprime la première ressource
+                liste_ressource_necessaire.remove(ressource)
                 return liste_ressource_necessaire
 
+            # else, il ne manque qu'une ressource
+            return []
+
+        # si la première ressource est en qte = 2
+        elif qte == 2:
+            # on la supprime
             liste_ressource_necessaire.remove(ressource)
             return liste_ressource_necessaire
 
-        if qte == 2:
-            liste_ressource_necessaire.remove(ressource)
-            return liste_ressource_necessaire
-
+        # si la premirèe qte >= 2
+        # on fait la différence
         liste_ressource_necessaire[0] = f"{ressource_split[0]} {ressource_split[1]} {qte - 2}"
         return liste_ressource_necessaire
 
